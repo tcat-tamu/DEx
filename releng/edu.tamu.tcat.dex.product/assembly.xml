@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- See https://maven.apache.org/guides/mini/guide-assemblies.html for more details on creating assemblies -->
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+   <id>edu.tamu.tcat.sda.catalog.war</id>
+
+   <formats>
+      <format>war</format>
+   </formats>
+
+   <includeBaseDirectory>false</includeBaseDirectory>
+
+   <fileSets>
+      <fileSet>
+         <directory>${basedir}/target/products/${artifactId}/linux/gtk/x86</directory>
+         <outputDirectory>/WEB-INF</outputDirectory>
+         <excludes>
+            <exclude>plugins/javax.servlet_*.jar</exclude>
+         </excludes>
+      </fileSet>
+   </fileSets>
+
+</assembly>
