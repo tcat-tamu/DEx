@@ -6,10 +6,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
-
 @Provider
-@Path("/")
-public class HelloWorldService
+@Path("/hello")
+public class HelloWorldResource
 {
    @GET
    @Produces(MediaType.TEXT_PLAIN)
