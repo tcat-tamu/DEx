@@ -2,16 +2,16 @@
 
 <!-- Copyright 2015 Texas Center for Applied Technology
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not 
-use this file except in compliance with the License. You may obtain a copy 
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy
 of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software 
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
-License for the specific language governing permissions and limitations 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -48,8 +48,6 @@ under the License.
       <repo-dex-path>dex.main/bundles</repo-dex-path>
       <repo-dex-tests-path>dex.main/tests</repo-dex-tests-path>
       <repo-dex-releng-path>dex.main/releng</repo-dex-releng-path>
-
-      <repo-base-url>https://build.citd.tamu.edu/hudson/job</repo-base-url>
    </properties>
 
    <modules>
@@ -63,27 +61,15 @@ under the License.
 
    <repositories>
       <repository>
-         <id>Eclipse Platform</id>
+         <id>Eclipse Platform Luna 4.4</id>
          <layout>p2</layout>
-         <url>${repo-base-url}/Eclipse.Repository.Mirror.Luna/lastSuccessfulBuild/artifact/target/repository/</url>
+         <url>http://download.eclipse.org/eclipse/updates/4.4</url>
       </repository>
 
       <repository>
-         <id>Eclipse Orbit</id>
+         <id>Eclipse Orbit Luna SR2</id>
          <layout>p2</layout>
-         <url>${repo-base-url}/Eclipse%20Orbit%20Repository%20Mirror/lastSuccessfulBuild/artifact/target/repository/</url>
-      </repository>
-
-      <repository>
-         <id>CITD Releases</id>
-         <layout>p2</layout>
-         <url>https://download.citd.tamu.edu/sdk</url>
-      </repository>
-      
-      <repository>
-         <id>Core Deps</id>
-         <layout>p2</layout>
-         <url>${repo-base-url}/mirror.dependencies/lastSuccessfulBuild/artifact/targetPlatform/</url>
+         <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</url>
       </repository>
    </repositories>
 

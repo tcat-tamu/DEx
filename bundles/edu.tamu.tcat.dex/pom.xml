@@ -27,8 +27,8 @@ under the License.
       <version>1</version>
    </parent>
 
-   <groupId>edu.tamu.tcat</groupId>
-   <artifactId>edu.tamu.tcat.dex.war</artifactId>
+	<groupId>edu.tamu.tcat</groupId>
+   <artifactId>edu.tamu.tcat.dex</artifactId>
    <packaging>eclipse-plugin</packaging>
    <version>1.0.0-SNAPSHOT</version>
 

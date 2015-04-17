@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.tamu.tcat.dex.feature"
+      id="edu.tamu.tcat.dex.war.feature"
       label="DEx Feature"
       version="1.0.0.qualifier"
       provider-name="Texas A&amp;M Engineering Experiment Station">
