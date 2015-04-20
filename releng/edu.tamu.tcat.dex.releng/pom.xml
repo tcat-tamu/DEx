@@ -51,6 +51,9 @@ under the License.
    </properties>
 
    <modules>
+      <!-- TODO: locate on eclipse-hosted p2 repo or move to different local p2 repo -->
+      <module>${repo-dex-releng-path}/org.eclipse.equinox.servletbridge.feature</module>
+   
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.product</module>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.deps.feature</module>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.feature</module>
