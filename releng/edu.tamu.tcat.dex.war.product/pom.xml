@@ -84,7 +84,7 @@ under the License.
                   </replacement>
                   <replacement>
                      <token>osgi\.bundles=</token>
-                     <token>osgi.bundles=org.eclipse.equinox.servletbridge.extensionbundle,</token>
+                     <value>osgi.bundles=org.eclipse.equinox.servletbridge.extensionbundle,</value>
                   </replacement>
                </replacements>
             </configuration>
