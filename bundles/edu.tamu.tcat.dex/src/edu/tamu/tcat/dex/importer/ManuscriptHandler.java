@@ -13,6 +13,51 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
 class ManuscriptHandler extends DefaultHandler
 {
+   private static class XmlStringBuilder
+   {
+      private StringBuilder sb;
+
+      public XmlStringBuilder()
+      {
+         sb = new StringBuilder();
+         sb.append("<?xml version=\"1.0\"?>");
+      }
+
+      public void startTag(String qName, Attributes attributes)
+      {
+         // write tag as string
+         sb.append('<')
+            .append(qName);
+
+         int numAttributes = attributes.getLength();
+         for (int i = 0; i < numAttributes; i++)
+         {
+            String attrName = attributes.getQName(i);
+            String attrValue = attributes.getValue(i);
+
+            sb.append(' ').append(attrName).append("=\"").append(attrValue).append('"');
+         }
+
+         sb.append('>');
+      }
+
+      public void endTag(String qName)
+      {
+         sb.append("</").append(qName).append('>');
+      }
+
+      public void text(String value)
+      {
+         sb.append(value);
+      }
+
+      @Override
+      public String toString()
+      {
+         return sb.toString();
+      }
+   }
+
    private static final Logger logger = Logger.getLogger(ManuscriptHandler.class.getName());
 
    private Stack<String> elementStack;
@@ -51,31 +96,13 @@ class ManuscriptHandler extends DefaultHandler
    {
       if (rawMode)
       {
-         StringBuilder sb = (StringBuilder)objectStack.peek();
-
-         // write tag as string
-         sb.append('<')
-            .append(qName);
-
-         int numAttributes = attributes.getLength();
-         for (int i = 0; i < numAttributes; i++)
-         {
-            String attrName = attributes.getQName(i);
-            String attrValue = attributes.getValue(i);
-
-            sb.append(' ')
-               .append(attrName)
-               .append("=\"")
-               .append(attrValue)
-               .append('"');
-         }
-
-         sb.append('>');
+         XmlStringBuilder xsb = (XmlStringBuilder)objectStack.peek();
+         xsb.startTag(qName, attributes);
       }
 
       elementStack.push(qName);
 
-      if (qName.equals("div") && isParentElement("body"))
+      if (qName.equals("div") && "extract".equals(attributes.getValue("type")))
       {
          String extractId = attributes.getValue("n");
          if (extractId == null)
@@ -96,9 +123,10 @@ class ManuscriptHandler extends DefaultHandler
 
          objectStack.push(extract);
 
-         StringBuilder sb = new StringBuilder();
+         XmlStringBuilder xsb = new XmlStringBuilder();
+         xsb.startTag(qName, attributes);
          rawMode = true;
-         objectStack.push(sb);
+         objectStack.push(xsb);
       }
       else if (qName.equals("sp") && isParentElement("div"))
       {
@@ -122,10 +150,11 @@ class ManuscriptHandler extends DefaultHandler
    {
       if (qName.equals("div"))
       {
-         StringBuilder sb = (StringBuilder)objectStack.pop();
+         XmlStringBuilder xsb = (XmlStringBuilder)objectStack.pop();
+         xsb.endTag("div");
 
          ExtractDTO extract = (ExtractDTO)objectStack.pop();
-         extract.setXMLContent(sb.toString().trim());
+         extract.setXMLContent(xsb.toString().trim());
 
          rawMode = false;
       }
@@ -134,10 +163,8 @@ class ManuscriptHandler extends DefaultHandler
 
       if (rawMode)
       {
-         StringBuilder sb = (StringBuilder)objectStack.peek();
-         sb.append("</")
-            .append(qName)
-            .append('>');
+         XmlStringBuilder xsb = (XmlStringBuilder)objectStack.peek();
+         xsb.endTag(qName);
       }
    }
 
@@ -148,8 +175,8 @@ class ManuscriptHandler extends DefaultHandler
 
       if (rawMode)
       {
-         StringBuilder sb = (StringBuilder)objectStack.peek();
-         sb.append(value);
+         XmlStringBuilder xsb = (XmlStringBuilder)objectStack.peek();
+         xsb.text(value);
          return;
       }
 
