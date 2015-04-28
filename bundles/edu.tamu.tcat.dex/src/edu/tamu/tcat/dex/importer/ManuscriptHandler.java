@@ -1,6 +1,8 @@
 package edu.tamu.tcat.dex.importer;
 
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -11,6 +13,8 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
 class ManuscriptHandler extends DefaultHandler
 {
+   private static final Logger logger = Logger.getLogger(ManuscriptHandler.class.getName());
+
    private Stack<String> elementStack;
    private Stack<Object> objectStack;
 
@@ -74,12 +78,21 @@ class ManuscriptHandler extends DefaultHandler
       if (qName.equals("div") && isParentElement("body"))
       {
          String extractId = attributes.getValue("n");
+         if (extractId == null)
+         {
+            logger.log(Level.WARNING, "Encountered extract with null ID: Skipping.");
+            return;
+         }
+
          ExtractDTO extract = new ExtractDTO(extractId);
          manuscript.addExtract(extract);
 
          String corresp = attributes.getValue("corresp");
-         String playId = corresp.substring(corresp.indexOf('#') + 1);
-         extract.setPlayId(playId);
+         if (corresp != null)
+         {
+            String playId = corresp.substring(corresp.indexOf('#') + 1);
+            extract.setPlayId(playId);
+         }
 
          objectStack.push(extract);
 
