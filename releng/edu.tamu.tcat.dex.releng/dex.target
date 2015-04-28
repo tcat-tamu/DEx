@@ -84,9 +84,6 @@
 <plugin id="org.eclipse.equinox.jsp.jasper.registry"/>
 <plugin id="org.eclipse.equinox.jsp.jasper.registry.source"/>
 <plugin id="org.eclipse.equinox.jsp.jasper.source"/>
-<plugin id="org.eclipse.equinox.launcher"/>
-<plugin id="org.eclipse.equinox.launcher.gtk.linux.x86_64"/>
-<plugin id="org.eclipse.equinox.launcher.source"/>
 <plugin id="org.eclipse.equinox.log"/>
 <plugin id="org.eclipse.equinox.log.source"/>
 <plugin id="org.eclipse.equinox.metatype"/>
