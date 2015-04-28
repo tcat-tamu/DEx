@@ -18,7 +18,7 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
 public class ManuscriptImporter
 {
-   private static Logger logger = Logger.getLogger(ManuscriptImporter.class.getName());
+   private static final Logger logger = Logger.getLogger(ManuscriptImporter.class.getName());
 
    private static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
    private static ManuscriptHandler handler = new ManuscriptHandler();

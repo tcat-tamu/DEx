@@ -21,7 +21,7 @@ import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
 
 public class PeopleAndPlaysImporter
 {
-   private static Logger logger = Logger.getLogger(PeopleAndPlaysImporter.class.getName());
+   private static final Logger logger = Logger.getLogger(PeopleAndPlaysImporter.class.getName());
 
    private static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
    private static PeopleAndPlaysHandler handler = new PeopleAndPlaysHandler();
