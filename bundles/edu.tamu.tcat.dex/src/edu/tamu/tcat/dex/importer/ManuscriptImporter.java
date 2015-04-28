@@ -3,12 +3,16 @@ package edu.tamu.tcat.dex.importer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -20,23 +24,35 @@ public class ManuscriptImporter
 {
    private static final Logger logger = Logger.getLogger(ManuscriptImporter.class.getName());
 
-   private static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-   private static ManuscriptHandler handler = new ManuscriptHandler();
-   private static SAXParser parser;
+   private static SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+   private static SAXParser saxParser;
    private static XMLReader reader;
+   private static ManuscriptHandler handler = new ManuscriptHandler();
+
+   private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+   private static DocumentBuilder documentBuilder;
 
    static {
-      parserFactory.setNamespaceAware(true);
+      saxParserFactory.setNamespaceAware(true);
 
       try
       {
-         parser = parserFactory.newSAXParser();
-         reader = parser.getXMLReader();
+         saxParser = saxParserFactory.newSAXParser();
+         reader = saxParser.getXMLReader();
          reader.setContentHandler(handler);
       }
       catch (Exception e)
       {
          logger.log(Level.SEVERE, "Could not create static instance of SAX XML reader", e);
+      }
+
+      try
+      {
+         documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, "Could not create static instance of Document XML parser", e);
       }
    }
 
@@ -70,7 +86,19 @@ public class ManuscriptImporter
          {
             System.out.println("      " + speakerId);
          }
-         System.out.println("   " + extract.getXMLContent());
+         String tei = extract.getTEIContent();
+         System.out.println("   " + tei);
+
+         StringReader sr = new StringReader(tei);
+         InputSource is = new InputSource(sr);
+
+         try {
+            Document d = documentBuilder.parse(is);
+         }
+         catch (SAXException e)
+         {
+            throw new IllegalStateException("Encountered a problem parsing a TEI DOM", e);
+         }
       }
    }
 

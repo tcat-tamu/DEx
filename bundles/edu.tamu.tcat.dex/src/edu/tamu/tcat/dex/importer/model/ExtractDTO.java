@@ -9,7 +9,7 @@ public class ExtractDTO
    private final String id;
 
    private String playId;
-   private String xmlContent;
+   private String teiContent;
 
    private final Set<String> speakers = new HashSet<>();
 
@@ -43,13 +43,13 @@ public class ExtractDTO
       return Collections.unmodifiableSet(speakers);
    }
 
-   public String getXMLContent()
+   public String getTEIContent()
    {
-      return xmlContent;
+      return teiContent;
    }
 
-   public void setXMLContent(String xmlContent)
+   public void setTEIContent(String teiContent)
    {
-      this.xmlContent = xmlContent;
+      this.teiContent = teiContent;
    }
 }

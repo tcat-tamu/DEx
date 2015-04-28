@@ -154,7 +154,7 @@ class ManuscriptHandler extends DefaultHandler
          xsb.endTag("div");
 
          ExtractDTO extract = (ExtractDTO)objectStack.pop();
-         extract.setXMLContent(xsb.toString().trim());
+         extract.setTEIContent(xsb.toString().trim());
 
          rawMode = false;
       }
