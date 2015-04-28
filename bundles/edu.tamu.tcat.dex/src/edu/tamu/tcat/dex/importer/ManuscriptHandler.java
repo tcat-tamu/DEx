@@ -87,6 +87,21 @@ class ManuscriptHandler extends DefaultHandler
          rawMode = true;
          objectStack.push(sb);
       }
+      else if (qName.equals("sp") && isParentElement("div"))
+      {
+         String who = attributes.getValue("who");
+         if (who != null)
+         {
+            String[] speakerRefs = who.trim().split("\\s+");
+            for (String ref : speakerRefs)
+            {
+               String speakerId = ref.substring(ref.indexOf('#') + 1);
+
+               ExtractDTO extract = (ExtractDTO)objectStack.get(objectStack.size() - 2);
+               extract.addSpeaker(speakerId);
+            }
+         }
+      }
    }
 
    @Override

@@ -62,10 +62,15 @@ public class ManuscriptImporter
       System.out.println(manuscript.getTitle());
       System.out.println("   by: " + manuscript.getAuthor());
 
-      for (ExtractDTO m : manuscript.getExtracts())
+      for (ExtractDTO extract : manuscript.getExtracts())
       {
-         System.out.println("extract #" + m.getId() + " from " + m.getPlayId() + ":");
-         System.out.println("   " + m.getXMLContent());
+         System.out.println("extract #" + extract.getId() + " from " + extract.getPlayId() + ":");
+         System.out.println("   speakers:");
+         for (String speakerId : extract.getSpeakers())
+         {
+            System.out.println("      " + speakerId);
+         }
+         System.out.println("   " + extract.getXMLContent());
       }
    }
 
