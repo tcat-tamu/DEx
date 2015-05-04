@@ -5,8 +5,11 @@ Bundle-SymbolicName: edu.tamu.tcat.dex
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Texas A&M Engineering Experiment Station
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: edu.tamu.tcat.dex.trc.entry,
+Import-Package: edu.tamu.tcat.db.exec.sql;version="1.0.0",
+ edu.tamu.tcat.dex.trc.entry,
+ edu.tamu.tcat.trc.entries.notification,
  javax.ws.rs;version="2.0.0",
  javax.ws.rs.core;version="2.0.0",
- javax.ws.rs.ext;version="2.0.0"
+ javax.ws.rs.ext;version="2.0.0",
+ org.postgresql.util;version="9.3.1102"
 Service-Component: OSGI-INF/hello.xml
