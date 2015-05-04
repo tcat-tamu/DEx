@@ -8,6 +8,12 @@ public class ExtractDTO
 {
    private final String id;
 
+   /**
+    * Author typically inherited from manuscript, but cases exist where extract author
+    * could differ from manuscript author
+    */
+   private String author;
+
    private String lineRef;
    private String playId;
    private String teiContent;
@@ -22,6 +28,16 @@ public class ExtractDTO
    public String getId()
    {
       return id;
+   }
+
+   public String getAuthor()
+   {
+      return author;
+   }
+
+   public void setAuthor(String author)
+   {
+      this.author = author;
    }
 
    public String getPlayId()

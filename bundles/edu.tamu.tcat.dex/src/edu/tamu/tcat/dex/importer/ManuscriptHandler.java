@@ -109,6 +109,10 @@ class ManuscriptHandler extends DefaultHandler
          String id = UUID.randomUUID().toString();
          ExtractDTO extract = new ExtractDTO(id);
 
+         // inherit manuscript author by default
+         // TODO: parse per-extract authors
+         extract.setAuthor(manuscript.getAuthor());
+
          String lineRef = attributes.getValue("n");
          extract.setLineRef(lineRef);
 
