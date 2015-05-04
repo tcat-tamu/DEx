@@ -3,14 +3,21 @@ package edu.tamu.tcat.dex.importer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -24,43 +31,40 @@ public class ManuscriptImporter
 {
    private static final Logger logger = Logger.getLogger(ManuscriptImporter.class.getName());
 
-   private static SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-   private static SAXParser saxParser;
-   private static XMLReader reader;
-   private static ManuscriptHandler handler = new ManuscriptHandler();
+   private SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+   private SAXParser saxParser;
+   private XMLReader reader;
+   private ManuscriptHandler handler;
 
-   private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-   private static DocumentBuilder documentBuilder;
+   private ManuscriptImporter()
+   {
+   }
 
-   static {
+   public void activate()
+   {
+      Objects.requireNonNull(handler);
+
       saxParserFactory.setNamespaceAware(true);
 
       try
       {
          saxParser = saxParserFactory.newSAXParser();
          reader = saxParser.getXMLReader();
-         reader.setContentHandler(handler);
       }
       catch (Exception e)
       {
-         logger.log(Level.SEVERE, "Could not create static instance of SAX XML reader", e);
+         logger.log(Level.SEVERE, "Could not create instance of SAX XML reader", e);
       }
 
-      try
-      {
-         documentBuilder = documentBuilderFactory.newDocumentBuilder();
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.SEVERE, "Could not create static instance of Document XML parser", e);
-      }
+      reader.setContentHandler(this.handler);
    }
 
-   private ManuscriptImporter()
+   public void setManuscriptHandler(ManuscriptHandler handler)
    {
+      this.handler = handler;
    }
 
-   public static void load(Reader xmlSource) throws XmlParseException, IOException
+   public void load(Reader xmlSource) throws XmlParseException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
 
@@ -86,27 +90,52 @@ public class ManuscriptImporter
          {
             System.out.println("      " + speakerId);
          }
-         String tei = extract.getTEIContent();
-         System.out.println("   " + tei);
 
-         StringReader sr = new StringReader(tei);
-         InputSource is = new InputSource(sr);
+         Document document = extract.getTEIContent();
+         DOMSource domSource = new DOMSource(document);
 
+         StringWriter writer = new StringWriter();
+         StreamResult result = new StreamResult(writer);
+
+         TransformerFactory tf = TransformerFactory.newInstance();
          try {
-            Document d = documentBuilder.parse(is);
+            Transformer transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
          }
-         catch (SAXException e)
-         {
-            throw new IllegalStateException("Encountered a problem parsing a TEI DOM", e);
+         catch (TransformerException e) {
+            throw new IllegalStateException(e);
          }
+
+         String tei = writer.toString();
+
+         System.out.println("   " + tei);
       }
    }
 
    public static void main(String[] args)
    {
-      try (Reader fileReader = new FileReader("/home/CITD/matt.barry/Documents/Projects/dex/WorkPlan/DEx_Sample_BLAddMS22608.xml"))
+      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder documentBuilder;
+
+      try {
+         documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      }
+      catch (ParserConfigurationException e) {
+         logger.log(Level.SEVERE, "Could not create instance of document builder", e);
+         return;
+      }
+
+      ManuscriptHandler handler = new ManuscriptHandler();
+      handler.setDocumentBuilder(documentBuilder);
+      handler.activate();
+
+      ManuscriptImporter importer = new ManuscriptImporter();
+      importer.setManuscriptHandler(handler);
+      importer.activate();
+
+      try (Reader fileReader = new FileReader("/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/DEx_Sample_BLAddMS22608.xml"))
       {
-         load(fileReader);
+         importer.load(fileReader);
       }
       catch (Exception e)
       {

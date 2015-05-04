@@ -1,11 +1,16 @@
 package edu.tamu.tcat.dex.importer;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -59,7 +64,7 @@ class ManuscriptHandler extends DefaultHandler
       }
    }
 
-   private static final Logger logger = Logger.getLogger(ManuscriptHandler.class.getName());
+   private DocumentBuilder documentBuilder;
 
    private Stack<String> elementStack;
    private Stack<Object> objectStack;
@@ -67,6 +72,17 @@ class ManuscriptHandler extends DefaultHandler
    private boolean rawMode;
 
    private ManuscriptDTO manuscript;
+
+
+   public void activate()
+   {
+      Objects.requireNonNull(documentBuilder);
+   }
+
+   public void setDocumentBuilder(DocumentBuilder documentBuilder)
+   {
+      this.documentBuilder = documentBuilder;
+   }
 
 
    public ManuscriptDTO getManuscript()
@@ -108,7 +124,7 @@ class ManuscriptHandler extends DefaultHandler
       {
          String id = UUID.randomUUID().toString();
          ExtractDTO extract = new ExtractDTO(id);
-
+         
          // inherit manuscript author by default
          // TODO: parse per-extract authors
          extract.setAuthor(manuscript.getAuthor());
@@ -159,7 +175,19 @@ class ManuscriptHandler extends DefaultHandler
          xsb.endTag("div");
 
          ExtractDTO extract = (ExtractDTO)objectStack.pop();
-         extract.setTEIContent(xsb.toString().trim());
+
+         // parse TEI XML string into W3C DOM
+         String tei = xsb.toString().trim();
+         StringReader sr = new StringReader(tei);
+         InputSource is = new InputSource(sr);
+         try {
+            Document document = documentBuilder.parse(is);
+            extract.setTEIContent(document);
+         }
+         catch (IOException e)
+         {
+            throw new IllegalStateException("I/O exception from a string reader while parsing document?", e);
+         }
 
          rawMode = false;
       }
@@ -204,6 +232,24 @@ class ManuscriptHandler extends DefaultHandler
    private boolean isParentElement(String qName)
    {
       return elementStack.size() > 2 && elementStack.get(elementStack.size() - 2).equals(qName);
+   }
+   
+   private boolean isAncestorElement(String qName)
+   {
+      if (elementStack.empty())
+      {
+         return false;
+      }
+      
+      for (int i = 0; i < elementStack.size(); i++)
+      {
+         if (elementStack.get(i).equals(qName))
+         {
+            return true;
+         }
+      }
+      
+      return false;
    }
 
 }

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.w3c.dom.Document;
+
 public class ExtractDTO
 {
    private final String id;
@@ -16,7 +18,7 @@ public class ExtractDTO
 
    private String lineRef;
    private String playId;
-   private String teiContent;
+   private Document teiContent;
 
    private final Set<String> speakers = new HashSet<>();
 
@@ -60,12 +62,12 @@ public class ExtractDTO
       return Collections.unmodifiableSet(speakers);
    }
 
-   public String getTEIContent()
+   public Document getTEIContent()
    {
       return teiContent;
    }
 
-   public void setTEIContent(String teiContent)
+   public void setTEIContent(Document teiContent)
    {
       this.teiContent = teiContent;
    }
