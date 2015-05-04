@@ -1,6 +1,7 @@
 package edu.tamu.tcat.dex.importer;
 
 import java.util.Stack;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,7 +80,8 @@ class ManuscriptHandler extends DefaultHandler
       elementStack = new Stack<>();
       objectStack = new Stack<>();
 
-      manuscript = new ManuscriptDTO();
+      String id = UUID.randomUUID().toString();
+      manuscript = new ManuscriptDTO(id);
 
       rawMode = false;
    }
@@ -104,14 +106,12 @@ class ManuscriptHandler extends DefaultHandler
 
       if (qName.equals("div") && "extract".equals(attributes.getValue("type")))
       {
-         String extractId = attributes.getValue("n");
-         if (extractId == null)
-         {
-            logger.log(Level.WARNING, "Encountered extract with null ID: Skipping.");
-            return;
-         }
+         String id = UUID.randomUUID().toString();
+         ExtractDTO extract = new ExtractDTO(id);
 
-         ExtractDTO extract = new ExtractDTO(extractId);
+         String lineRef = attributes.getValue("n");
+         extract.setLineRef(lineRef);
+
          manuscript.addExtract(extract);
 
          String corresp = attributes.getValue("corresp");
@@ -148,6 +148,7 @@ class ManuscriptHandler extends DefaultHandler
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException
    {
+      // just finished dramatic extract definition
       if (qName.equals("div"))
       {
          XmlStringBuilder xsb = (XmlStringBuilder)objectStack.pop();

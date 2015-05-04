@@ -6,13 +6,20 @@ import java.util.List;
 
 public class ManuscriptDTO
 {
+   private String id;
    private String title;
    private String author;
 
    private final List<ExtractDTO> extracts = new ArrayList<>();
 
-   public ManuscriptDTO()
+   public ManuscriptDTO(String id)
    {
+      this.id = id;
+   }
+
+   public String getId()
+   {
+      return id;
    }
 
    public String getTitle()

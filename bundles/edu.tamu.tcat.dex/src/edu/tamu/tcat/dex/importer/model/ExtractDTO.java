@@ -8,6 +8,7 @@ public class ExtractDTO
 {
    private final String id;
 
+   private String lineRef;
    private String playId;
    private String teiContent;
 
@@ -51,5 +52,15 @@ public class ExtractDTO
    public void setTEIContent(String teiContent)
    {
       this.teiContent = teiContent;
+   }
+
+   public String getLineRef()
+   {
+      return lineRef;
+   }
+
+   public void setLineRef(String lineRef)
+   {
+      this.lineRef = lineRef;
    }
 }
