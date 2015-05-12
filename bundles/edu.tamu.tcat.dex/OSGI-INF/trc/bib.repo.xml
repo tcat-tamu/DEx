@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" name="edu.tamu.tcat.trc.entries.bib.repo">
+   <implementation class="edu.tamu.tcat.trc.entries.bib.postgres.PsqlWorkRepo"/>
+   <service>
+      <provide interface="edu.tamu.tcat.trc.entries.bib.WorkRepository"/>
+   </service>
+   <reference bind="setDatabaseExecutor" cardinality="1..1" interface="edu.tamu.tcat.db.exec.sql.SqlExecutor" name="SqlExecutor" policy="static"/>
+   <reference bind="setPeopleRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.bio.PeopleRepository" name="PeopleRepository" policy="static"/>
+   <reference bind="setIdFactory" cardinality="1..1" interface="edu.tamu.tcat.catalogentries.IdFactory" name="IdFactory" policy="static"/>
+</scr:component>

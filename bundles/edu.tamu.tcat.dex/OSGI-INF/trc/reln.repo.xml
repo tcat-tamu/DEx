@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="edu.tamu.tcat.trc.entries.reln.repo">
+   <implementation class="edu.tamu.tcat.trc.entries.reln.postgres.PsqlRelationshipRepo"/>
+   <service>
+      <provide interface="edu.tamu.tcat.trc.entries.reln.RelationshipRepository"/>
+   </service>
+   <reference bind="setTypeRegistry" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.reln.RelationshipTypeRegistry" name="RelationshipTypeRegistry" policy="static"/>
+   <reference bind="setIdFactory" cardinality="1..1" interface="edu.tamu.tcat.catalogentries.IdFactory" name="IdFactory" policy="static"/>
+   <reference bind="setDatabaseExecutor" cardinality="1..1" interface="edu.tamu.tcat.db.exec.sql.SqlExecutor" name="SqlExecutor" policy="static"/>
+</scr:component>
