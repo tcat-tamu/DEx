@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="dex.tcat-internal" sequenceNumber="10">
+<?pde version="3.8"?><target name="dex.tcat-internal" sequenceNumber="20">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="edu.tamu.tcat.auth.sdk.feature.feature.group" version="1.0.6.20140611-1944"/>
-<unit id="edu.tamu.tcat.osgi.sdk.feature.feature.group" version="1.1.4.20140620-1612"/>
-<unit id="edu.tamu.tcat.crypto.sdk.feature.feature.group" version="2.0.1.20141008-2152"/>
-<repository location="https://download.citd.tamu.edu/sdk"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="com.eclipsesource.jaxrs.provider.sse.feature.feature.group" version="2.1.0.201503290743"/>
 <unit id="com.eclipsesource.jaxrs.provider.gson.feature.feature.group" version="2.2.0.201503290743"/>
@@ -58,8 +52,15 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="edu.tamu.tcat.coredeps.sdk.feature.feature.group" version="1.2.9.201504280848"/>
+<unit id="edu.tamu.tcat.coredeps.sdk.feature.feature.group" version="1.2.10.201504301402"/>
 <repository location="https://build.citd.tamu.edu/hudson/job/mirror.dependencies/lastSuccessfulBuild/artifact/targetPlatform/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="edu.tamu.tcat.osgi.sdk.feature.feature.group" version="1.1.4.20140620-1612"/>
+<unit id="edu.tamu.tcat.crypto.sdk.feature.feature.group" version="2.0.1.20141008-2152"/>
+<unit id="edu.tamu.tcat.auth.sdk.feature.feature.group" version="1.0.6.20140611-1944"/>
+<unit id="edu.tamu.tcat.db.sdk.feature.feature.group" version="1.1.0.20140818-1724"/>
+<repository location="https://download.citd.tamu.edu/sdk"/>
 </location>
 </locations>
 <includeBundles>
@@ -99,6 +100,14 @@
 <plugin id="edu.tamu.tcat.crypto.source"/>
 <plugin id="edu.tamu.tcat.crypto.spongycastle"/>
 <plugin id="edu.tamu.tcat.crypto.spongycastle.source"/>
+<plugin id="edu.tamu.tcat.db.core"/>
+<plugin id="edu.tamu.tcat.db.core.source"/>
+<plugin id="edu.tamu.tcat.db.exec"/>
+<plugin id="edu.tamu.tcat.db.exec.source"/>
+<plugin id="edu.tamu.tcat.db.postgresql"/>
+<plugin id="edu.tamu.tcat.db.postgresql.exec"/>
+<plugin id="edu.tamu.tcat.db.postgresql.exec.source"/>
+<plugin id="edu.tamu.tcat.db.postgresql.source"/>
 <plugin id="edu.tamu.tcat.javamail"/>
 <plugin id="edu.tamu.tcat.osgi.config"/>
 <plugin id="edu.tamu.tcat.osgi.config.source"/>
@@ -141,8 +150,8 @@
 <plugin id="org.apache.httpcomponents.httpcore" version="4.3.3.v201411290715"/>
 <plugin id="org.apache.httpcomponents.httpcore.nio"/>
 <plugin id="org.apache.httpcomponents.httpcore.nio.source"/>
-<plugin id="org.apache.jasper.glassfish" version="2.2.2.v201409190955"/>
 <plugin id="org.apache.jasper.glassfish" version="2.2.2.v201501141630"/>
+<plugin id="org.apache.jasper.glassfish" version="2.2.2.v201409190955"/>
 <plugin id="org.apache.jasper.glassfish.source" version="2.2.2.v201409190955"/>
 <plugin id="org.apache.jasper.glassfish.source" version="2.2.2.v201501141630"/>
 <plugin id="org.apache.lucene.analysis"/>
@@ -374,7 +383,7 @@
 <plugin id="org.junit" version="4.11.0.v201303080030"/>
 <plugin id="org.junit.source" version="4.11.0.v201303080030"/>
 <plugin id="org.mongodb.mongo-java-driver"/>
-<plugin id="org.postgis"/>
+<plugin id="org.postgis" version="2.1.0"/>
 <plugin id="org.postgresql" version="9.3.1102"/>
 <plugin id="org.sat4j.core"/>
 <plugin id="org.sat4j.pb"/>
