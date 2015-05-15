@@ -1,7 +1,9 @@
 package edu.tamu.tcat.dex.trc.entry.tei.transform;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Objects;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -13,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 
 /**
  *  Utilities for manipulating the content of a {@link DramaticExtract}.
@@ -22,13 +25,31 @@ public class ExtractManipulationUtil
 {
    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
-   private static final Transformer originalTransformer;
-   private static final Transformer normalizedTransformer;
+   private static final String CONFIG_TRANSFORMER_ORIGINAL = "dex.xslt.tei.original";
+   private static final String CONFIG_TRANSFORMER_NORMALIZED = "dex.xslt.tei.normalized";
 
-   static {
-      // TODO: get XSLT source as a bundle resource
-      StreamSource originalSource = new StreamSource();
-      StreamSource normalizedSource = new StreamSource();
+   private Transformer originalTransformer;
+   private Transformer normalizedTransformer;
+
+   private ConfigurationProperties config;
+
+   public void setConfiguration(ConfigurationProperties config)
+   {
+      this.config = config;
+   }
+
+   public void activate()
+   {
+      Objects.requireNonNull(config, "No configuration provided");
+
+      String originalXsltPath = config.getPropertyValue(CONFIG_TRANSFORMER_ORIGINAL, String.class);
+      String normalizedXsltPath = config.getPropertyValue(CONFIG_TRANSFORMER_NORMALIZED, String.class);
+
+      File originalXslt = new File(originalXsltPath);
+      File normalizedXslt = new File(normalizedXsltPath);
+
+      StreamSource originalSource = new StreamSource(originalXslt);
+      StreamSource normalizedSource = new StreamSource(normalizedXslt);
 
       try
       {
@@ -41,17 +62,21 @@ public class ExtractManipulationUtil
       }
    }
 
-   public static String toHtml(Document teiContent)
+   public void dispose()
+   {
+   }
+
+   public String toHtml(Document teiContent)
    {
       throw new UnsupportedOperationException();
    }
 
-   public static String toOriginal(Document teiContent) throws ExtractManipulationException
+   public String toOriginal(Document teiContent) throws ExtractManipulationException
    {
       return applyTransformer(originalTransformer, teiContent);
    }
 
-   public static String toNormalized(Document teiContent) throws ExtractManipulationException
+   public String toNormalized(Document teiContent) throws ExtractManipulationException
    {
       return applyTransformer(normalizedTransformer, teiContent);
    }
