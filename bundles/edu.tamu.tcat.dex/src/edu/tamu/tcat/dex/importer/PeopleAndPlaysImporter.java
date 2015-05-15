@@ -14,6 +14,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.tamu.tcat.dex.importer.model.CharacterDTO;
 import edu.tamu.tcat.dex.importer.model.PlayDTO;
 import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
@@ -74,11 +76,18 @@ public class PeopleAndPlaysImporter
       Map<String, CharacterDTO> characters = handler.getCharacters();
 
       System.out.println(String.format("Parsed %d play(s), %d playwright(s), and %d character(s).", plays.size(), playwrights.size(), characters.size()));
+
+      ObjectMapper mapper = new ObjectMapper();
+      String playsJson = mapper.writeValueAsString(plays);
+      String playwrightsJson = mapper.writeValueAsString(playwrights);
+      String charactersJson = mapper.writeValueAsString(characters);
+
+      System.out.println(String.format("{\"plays\":%s,\"playwrights\":%s,\"characters\":%s}", playsJson, playwrightsJson, charactersJson));
    }
 
    public static void main(String[] args)
    {
-      try (FileReader fileReader = new FileReader("/home/CITD/matt.barry/Documents/Projects/dex/WorkPlan/peopleandplays.xml"))
+      try (FileReader fileReader = new FileReader("/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml"))
       {
          load(fileReader);
       }
