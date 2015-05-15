@@ -25,6 +25,7 @@ Import-Package: edu.tamu.tcat.db.core;version="1.0.1",
  javax.ws.rs.core;version="2.0.0",
  javax.ws.rs.ext;version="2.0.0",
  org.apache.commons.dbcp;version="1.4.0",
+ org.apache.commons.lang;version="2.6.0",
  org.postgresql.util;version="9.3.1102"
 Service-Component: OSGI-INF/hello.xml,
  OSGI-INF/config.xml,

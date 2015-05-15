@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -54,7 +55,8 @@ class ManuscriptHandler extends DefaultHandler
 
       public void text(String value)
       {
-         sb.append(value);
+         String escapedValue = StringEscapeUtils.escapeXml(value);
+         sb.append(escapedValue);
       }
 
       @Override

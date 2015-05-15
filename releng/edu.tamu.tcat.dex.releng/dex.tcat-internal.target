@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="dex.tcat-internal" sequenceNumber="20">
+<target name="dex.tcat-internal" sequenceNumber="21">
     <locations>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
             <repository location="http://hstaudacher.github.io/osgi-jax-rs-connector"/>
@@ -30,6 +30,8 @@
             <unit id="org.apache.commons.dbcp.source" version="1.4.0.v201204271417"/>
             <unit id="org.apache.commons.io" version="2.2.0.v201405211200"/>
             <unit id="org.apache.commons.io.source" version="2.2.0.v201405211200"/>
+            <unit id="org.apache.commons.lang" version="2.6.0.v201404270220"/>
+            <unit id="org.apache.commons.lang.source" version="2.6.0.v201404270220"/>
             <unit id="org.apache.commons.math" version="2.1.0.v201105210652"/>
             <unit id="org.apache.commons.math.source" version="2.1.0.v201105210652"/>
             <unit id="org.apache.commons.pool" version="1.6.0.v201204271246"/>
@@ -56,7 +58,7 @@
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
             <repository location="https://build.citd.tamu.edu/hudson/job/mirror.dependencies/lastSuccessfulBuild/artifact/targetPlatform/"/>
-            <unit id="edu.tamu.tcat.coredeps.sdk.feature.feature.group" version="1.2.10.201504301402"/>
+            <unit id="edu.tamu.tcat.coredeps.sdk.feature.feature.group" version="1.2.11.201505121810"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
             <repository location="https://download.citd.tamu.edu/sdk"/>
@@ -139,6 +141,8 @@
         <plugin id="org.apache.commons.dbcp.source"/>
         <plugin id="org.apache.commons.io"/>
         <plugin id="org.apache.commons.io.source"/>
+        <plugin id="org.apache.commons.lang"/>
+        <plugin id="org.apache.commons.lang.source"/>
         <plugin id="org.apache.commons.logging"/>
         <plugin id="org.apache.commons.math"/>
         <plugin id="org.apache.commons.math.source"/>
