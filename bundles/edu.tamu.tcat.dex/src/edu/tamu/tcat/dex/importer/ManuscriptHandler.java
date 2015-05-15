@@ -75,6 +75,12 @@ class ManuscriptHandler extends DefaultHandler
 
    private ManuscriptDTO manuscript;
 
+   /**
+    * Set to {@code false} when the current {@code <div>} element does not represent a dramatic
+    * extract, but, for example, a heading.
+    */
+   private boolean divIsExtract;
+
 
    public void activate()
    {
@@ -122,11 +128,18 @@ class ManuscriptHandler extends DefaultHandler
 
       elementStack.push(qName);
 
-      if (qName.equals("div") && "extract".equals(attributes.getValue("type")))
+      if (qName.equals("div"))
       {
+         divIsExtract = "extract".equals(attributes.getValue("type"));
+
+         if (!divIsExtract)
+         {
+            return;
+         }
+
          String id = UUID.randomUUID().toString();
          ExtractDTO extract = new ExtractDTO(id);
-         
+
          // inherit manuscript author by default
          // TODO: parse per-extract authors
          extract.setAuthor(manuscript.getAuthor());
@@ -150,7 +163,7 @@ class ManuscriptHandler extends DefaultHandler
          rawMode = true;
          objectStack.push(xsb);
       }
-      else if (qName.equals("sp") && isParentElement("div"))
+      else if (qName.equals("sp") && isParentElement("div") && divIsExtract)
       {
          String who = attributes.getValue("who");
          if (who != null)
@@ -171,7 +184,7 @@ class ManuscriptHandler extends DefaultHandler
    public void endElement(String uri, String localName, String qName) throws SAXException
    {
       // just finished dramatic extract definition
-      if (qName.equals("div"))
+      if (qName.equals("div") && divIsExtract)
       {
          XmlStringBuilder xsb = (XmlStringBuilder)objectStack.pop();
          xsb.endTag("div");
@@ -235,14 +248,14 @@ class ManuscriptHandler extends DefaultHandler
    {
       return elementStack.size() > 2 && elementStack.get(elementStack.size() - 2).equals(qName);
    }
-   
+
    private boolean isAncestorElement(String qName)
    {
       if (elementStack.empty())
       {
          return false;
       }
-      
+
       for (int i = 0; i < elementStack.size(); i++)
       {
          if (elementStack.get(i).equals(qName))
@@ -250,7 +263,7 @@ class ManuscriptHandler extends DefaultHandler
             return true;
          }
       }
-      
+
       return false;
    }
 
