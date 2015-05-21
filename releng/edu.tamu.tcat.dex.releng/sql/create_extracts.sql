@@ -1,0 +1,9 @@
+CREATE TABLE extracts (
+    id VARCHAR(255) NOT NULL,
+    extract JSON,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified TIMESTAMP,
+
+    CONSTRAINT extracts_pkey PRIMARY KEY (id)
+);
