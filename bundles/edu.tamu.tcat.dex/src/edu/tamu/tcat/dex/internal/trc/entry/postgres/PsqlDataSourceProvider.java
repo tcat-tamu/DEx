@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.internal;
+package edu.tamu.tcat.dex.internal.trc.entry.postgres;
 
 import java.sql.SQLException;
 import java.util.Objects;
