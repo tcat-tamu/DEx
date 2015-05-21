@@ -3,9 +3,14 @@ package edu.tamu.tcat.dex.internal.trc.entry.postgres;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.postgresql.util.PGobject;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.db.exec.sql.SqlExecutor;
 import edu.tamu.tcat.db.exec.sql.SqlExecutor.ExecutorTask;
@@ -29,6 +34,7 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final int SQL_DELETE_PARAM_ID = 1;
 
    private SqlExecutor executor;
+   private ObjectMapper mapper;
 
    @Override
    public DramaticExtract get(URI id) throws ExtractNotAvailableException, DramaticExtractException
@@ -47,10 +53,22 @@ public class PsqlExtractRepo implements ExtractRepository
       this.executor = executor;
    }
 
+   public void activate()
+   {
+      Objects.requireNonNull(executor, "No SQL Executor provided");
+
+      // HACK: pass in as service?
+      mapper = new ObjectMapper();
+   }
+
    @Override
    public EditExtractCommand create() throws DramaticExtractException
    {
       ExtractDTO extractDTO = new ExtractDTO();
+
+      // HACK: this ID needs to come from somewhere
+      extractDTO.id = UUID.randomUUID().toString();
+
       EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
       command.setCommitHook(dto -> updateExtract(dto, ChangeType.CREATED));
       return command;
@@ -83,13 +101,19 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param dto The extract to persist
     * @param changeType The type of change to perform
     * @return A future that resolves to the ID of the saved extract
+    * @throws DramaticExtractException
     */
    private Future<String> updateExtract(ExtractDTO dto, ChangeType changeType)
    {
       String sql = getUpdateSql(changeType);
 
-      // TODO: json-serialize extract
-      String json = "";
+      String json;
+      try {
+         json = mapper.writeValueAsString(dto);
+      }
+      catch (JsonProcessingException e) {
+         throw new IllegalStateException("Unable to serialize extract into JSON string.", e);
+      }
 
       ExecutorTask<String> task = makeUpdateTask(dto.id, json, sql);
       return executor.submit(task);
@@ -155,7 +179,7 @@ public class PsqlExtractRepo implements ExtractRepository
          }
          catch (SQLException e)
          {
-            throw new IllegalStateException("Failed to update extract: [" + id + "]\n" + json);
+            throw new IllegalStateException("Failed to update extract: [" + id + "]\n" + json, e);
          }
       };
    }
@@ -184,7 +208,7 @@ public class PsqlExtractRepo implements ExtractRepository
          }
          catch (SQLException e)
          {
-            throw new IllegalStateException("Failed to deactivate extract [" + id + "]");
+            throw new IllegalStateException("Failed to deactivate extract [" + id + "]", e);
          }
       };
    }
