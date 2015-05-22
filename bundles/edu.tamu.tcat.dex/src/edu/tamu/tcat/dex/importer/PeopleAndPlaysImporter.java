@@ -1,11 +1,10 @@
 package edu.tamu.tcat.dex.importer;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -14,6 +13,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.dex.importer.model.CharacterDTO;
@@ -23,14 +23,47 @@ import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
 
 public class PeopleAndPlaysImporter
 {
-   private static final Logger logger = Logger.getLogger(PeopleAndPlaysImporter.class.getName());
+   public static class ImportResult
+   {
+      private final Map<String, PlayDTO> plays;
+      private final Map<String, PlaywrightDTO> playwrights;
+      private final Map<String, CharacterDTO> characters;
 
-   private static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-   private static PeopleAndPlaysHandler handler = new PeopleAndPlaysHandler();
-   private static SAXParser parser;
-   private static XMLReader reader;
 
-   static {
+      private ImportResult(Map<String, PlayDTO> plays, Map<String, PlaywrightDTO> playwrights, Map<String, CharacterDTO> characters)
+      {
+         this.plays = plays;
+         this.playwrights = playwrights;
+         this.characters = characters;
+      }
+
+      public Map<String, PlayDTO> getPlays()
+      {
+         return plays;
+      }
+
+      public Map<String, PlaywrightDTO> getPlaywrights()
+      {
+         return playwrights;
+      }
+      public Map<String, CharacterDTO> getCharacters()
+      {
+         return characters;
+      }
+   }
+
+
+   private SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+   private final SAXParser parser;
+   private final XMLReader reader;
+   private final PeopleAndPlaysHandler handler = new PeopleAndPlaysHandler();
+
+
+   /**
+    * Singleton class; static load() method is primary interface
+    */
+   private PeopleAndPlaysImporter()
+   {
       parserFactory.setNamespaceAware(true);
 
       try
@@ -41,15 +74,8 @@ public class PeopleAndPlaysImporter
       }
       catch (Exception e)
       {
-         logger.log(Level.SEVERE, "Could not create static instance of SAX XML reader", e);
+         throw new IllegalStateException("Could not create static instance of SAX XML reader", e);
       }
-   }
-
-   /**
-    * Singleton class; static load() method is primary interface
-    */
-   private PeopleAndPlaysImporter()
-   {
    }
 
    /**
@@ -59,11 +85,12 @@ public class PeopleAndPlaysImporter
     * @throws XmlParseException
     * @throws IOException
     */
-   public static void load(Reader xmlSource) throws XmlParseException, IOException
+   public ImportResult load(Reader xmlSource) throws XmlParseException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
 
-      try {
+      try
+      {
          reader.parse(inputSource);
       }
       catch (SAXException e)
@@ -75,26 +102,55 @@ public class PeopleAndPlaysImporter
       Map<String, PlaywrightDTO> playwrights = handler.getPlaywrights();
       Map<String, CharacterDTO> characters = handler.getCharacters();
 
-      System.out.println(String.format("Parsed %d play(s), %d playwright(s), and %d character(s).", plays.size(), playwrights.size(), characters.size()));
-
-      ObjectMapper mapper = new ObjectMapper();
-      String playsJson = mapper.writeValueAsString(plays);
-      String playwrightsJson = mapper.writeValueAsString(playwrights);
-      String charactersJson = mapper.writeValueAsString(characters);
-
-      System.out.println(String.format("{\"plays\":%s,\"playwrights\":%s,\"characters\":%s}", playsJson, playwrightsJson, charactersJson));
+      return new ImportResult(plays, playwrights, characters);
    }
 
    public static void main(String[] args)
    {
-      try (FileReader fileReader = new FileReader("/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml"))
+      PeopleAndPlaysImporter importer = new PeopleAndPlaysImporter();
+
+      String inputFilePath = "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml";
+
+      ImportResult result;
+      try (FileReader fileReader = new FileReader(inputFilePath))
       {
-         load(fileReader);
+         result = importer.load(fileReader);
       }
-      catch (Exception e)
+      catch (FileNotFoundException e)
       {
+         System.err.println("Unable to find input file: " + inputFilePath);
+         return;
+      }
+      catch (IOException e)
+      {
+         System.err.println("Could not read input file");
+         e.printStackTrace();
+         return;
+      }
+      catch (XmlParseException e)
+      {
+         System.err.println("Malformed input file");
+         e.printStackTrace();
+         return;
+      }
+
+      System.out.println(String.format("Parsed %d play(s), %d playwright(s), and %d character(s).", result.getPlays().size(), result.getPlaywrights().size(), result.getCharacters().size()));
+
+      ObjectMapper mapper = new ObjectMapper();
+      try
+      {
+         mapper.writeValue(System.out, result);
+      }
+      catch (JsonProcessingException e)
+      {
+         System.err.println("Problem processing JSON output");
          e.printStackTrace();
       }
+      catch (IOException e) {
+         System.err.println("Unable to output result");
+         e.printStackTrace();
+      }
+
 
    }
 }

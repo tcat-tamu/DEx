@@ -6,12 +6,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -26,21 +21,13 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
 public class ManuscriptImporter
 {
-   private static final Logger logger = Logger.getLogger(ManuscriptImporter.class.getName());
-
-   private SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-   private SAXParser saxParser;
-   private XMLReader reader;
-   private ManuscriptHandler handler;
+   private final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+   private final SAXParser saxParser;
+   private final XMLReader reader;
+   private final ManuscriptHandler handler = new ManuscriptHandler();
 
    private ManuscriptImporter()
    {
-   }
-
-   public void activate()
-   {
-      Objects.requireNonNull(handler);
-
       saxParserFactory.setNamespaceAware(true);
 
       try
@@ -48,18 +35,14 @@ public class ManuscriptImporter
          saxParser = saxParserFactory.newSAXParser();
          reader = saxParser.getXMLReader();
       }
-      catch (Exception e)
+      catch (ParserConfigurationException | SAXException e)
       {
-         logger.log(Level.SEVERE, "Could not create instance of SAX XML reader", e);
+         throw new IllegalStateException("Could not create instance of SAX XML reader", e);
       }
 
-      reader.setContentHandler(this.handler);
+      reader.setContentHandler(handler);
    }
 
-   public void setManuscriptHandler(ManuscriptHandler handler)
-   {
-      this.handler = handler;
-   }
 
    public ManuscriptDTO load(Reader xmlSource) throws XmlParseException, IOException
    {
@@ -79,26 +62,7 @@ public class ManuscriptImporter
 
    public static void main(String[] args)
    {
-      DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder documentBuilder;
-
-      try
-      {
-         documentBuilder = documentBuilderFactory.newDocumentBuilder();
-      }
-      catch (ParserConfigurationException e)
-      {
-         logger.log(Level.SEVERE, "Could not create instance of document builder", e);
-         return;
-      }
-
-      ManuscriptHandler handler = new ManuscriptHandler();
-      handler.setDocumentBuilder(documentBuilder);
-      handler.activate();
-
       ManuscriptImporter importer = new ManuscriptImporter();
-      importer.setManuscriptHandler(handler);
-      importer.activate();
 
       String[] files = {
          "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/BLMSAdd10309.xml",

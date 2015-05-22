@@ -2,11 +2,12 @@ package edu.tamu.tcat.dex.importer;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Objects;
 import java.util.Stack;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.w3c.dom.Document;
@@ -66,6 +67,7 @@ class ManuscriptHandler extends DefaultHandler
       }
    }
 
+   private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
    private DocumentBuilder documentBuilder;
 
    private Stack<String> elementStack;
@@ -82,14 +84,16 @@ class ManuscriptHandler extends DefaultHandler
    private boolean divIsExtract;
 
 
-   public void activate()
+   public ManuscriptHandler()
    {
-      Objects.requireNonNull(documentBuilder);
-   }
-
-   public void setDocumentBuilder(DocumentBuilder documentBuilder)
-   {
-      this.documentBuilder = documentBuilder;
+      try
+      {
+         documentBuilder = documentBuilderFactory.newDocumentBuilder();
+      }
+      catch (ParserConfigurationException e)
+      {
+         throw new IllegalStateException("Could not create instance of document builder", e);
+      }
    }
 
 
