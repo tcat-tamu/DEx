@@ -24,7 +24,7 @@ public class ExtractDTO
 {
    private static final Logger logger = Logger.getLogger(ExtractDTO.class.getName());
 
-   public String id;
+   public URI id;
    public String author;
    public String manuscript;
    public String source;
@@ -105,7 +105,7 @@ public class ExtractDTO
 
    public static class DramaticExtractImpl implements DramaticExtract
    {
-      private String id;
+      private URI id;
       private String author;
       private URI manuscript;
       private URI source;
@@ -115,7 +115,7 @@ public class ExtractDTO
 
 
       @Override
-      public String getId()
+      public URI getId()
       {
          return id;
       }

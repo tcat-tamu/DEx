@@ -46,5 +46,5 @@ public interface EditExtractCommand
     * @return Future ID of the persisted object once persist actions have finished.
     * @throws DramaticExtractException
     */
-   Future<String> execute() throws DramaticExtractException;
+   Future<URI> execute() throws DramaticExtractException;
 }

@@ -7,13 +7,13 @@ import edu.tamu.tcat.trc.entries.notification.UpdateListener;
 public interface ExtractRepository
 {
    DramaticExtract get(URI id) throws ExtractNotAvailableException, DramaticExtractException;
-   
+
    EditExtractCommand create() throws DramaticExtractException;
-   
-   EditExtractCommand edit(URI id) throws ExtractNotAvailableException;
-   
+
+   EditExtractCommand edit(URI id) throws ExtractNotAvailableException, DramaticExtractException;
+
    void remove(URI id) throws DramaticExtractException;
-   
+
    /**
     * Add listener to be notified whenever an extract is modified (created, updated or deleted).
     *
