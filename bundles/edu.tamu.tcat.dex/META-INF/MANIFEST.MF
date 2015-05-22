@@ -40,4 +40,6 @@ Service-Component: OSGI-INF/hello.xml,
  OSGI-INF/trc/bio.repo.xml,
  OSGI-INF/trc/reln.repo.xml,
  OSGI-INF/trc/reln.type.registry.xml
-Export-Package: edu.tamu.tcat.trc.extract.postgres
+Export-Package: edu.tamu.tcat.dex.importer,
+ edu.tamu.tcat.dex.importer.model,
+ edu.tamu.tcat.trc.extract.postgres

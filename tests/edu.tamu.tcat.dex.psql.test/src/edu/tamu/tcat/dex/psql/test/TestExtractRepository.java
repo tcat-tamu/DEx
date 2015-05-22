@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -35,52 +33,6 @@ import edu.tamu.tcat.trc.extract.postgres.PsqlExtractRepo;
 
 public class TestExtractRepository
 {
-   private static class BasicConfigurationProperties implements ConfigurationProperties
-   {
-      private final Map<String, Object> properties;
-
-      public BasicConfigurationProperties()
-      {
-         this.properties = new HashMap<>();
-      }
-
-      public BasicConfigurationProperties(Map<String, Object> properties)
-      {
-         this.properties = properties;
-      }
-
-      public void setProperty(String name, Object value)
-      {
-         properties.put(name, value);
-      }
-
-      @Override
-      public <T> T getPropertyValue(String name, Class<T> type) throws IllegalStateException
-      {
-         if (!properties.containsKey(name))
-         {
-            throw new IllegalStateException("No property with name {" + name + "}");
-         }
-
-         Object property = properties.get(name);
-         return type.cast(property);
-      }
-
-      @Override
-      public <T> T getPropertyValue(String name, Class<T> type, T defaultValue) throws IllegalStateException
-      {
-         if (!properties.containsKey(name))
-         {
-            return defaultValue;
-         }
-
-         Object property = properties.get(name);
-         return type.cast(property);
-      }
-
-   }
-
-
    private static ConfigurationProperties makeConfig()
    {
       BasicConfigurationProperties config = new BasicConfigurationProperties();
