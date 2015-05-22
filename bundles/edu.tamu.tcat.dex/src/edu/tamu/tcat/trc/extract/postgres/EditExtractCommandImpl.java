@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.internal.trc.entry.postgres;
+package edu.tamu.tcat.trc.extract.postgres;
 
 import java.io.StringWriter;
 import java.net.URI;
@@ -17,9 +17,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.dex.internal.trc.entry.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
+import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class EditExtractCommandImpl implements EditExtractCommand
 {

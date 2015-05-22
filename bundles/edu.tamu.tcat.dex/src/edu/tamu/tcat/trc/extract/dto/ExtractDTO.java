@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.internal.trc.entry.dto;
+package edu.tamu.tcat.trc.extract.dto;
 
 import java.io.StringReader;
 import java.io.StringWriter;

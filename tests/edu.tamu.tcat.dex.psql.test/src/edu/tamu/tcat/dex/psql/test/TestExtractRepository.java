@@ -26,12 +26,12 @@ import org.xml.sax.SAXException;
 import edu.tamu.tcat.db.exec.sql.SqlExecutor;
 import edu.tamu.tcat.db.postgresql.exec.PostgreSqlExecutorService;
 import edu.tamu.tcat.db.provider.DataSourceProvider;
-import edu.tamu.tcat.dex.internal.trc.entry.postgres.PsqlDataSourceProvider;
-import edu.tamu.tcat.dex.internal.trc.entry.postgres.PsqlExtractRepo;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
+import edu.tamu.tcat.trc.extract.postgres.PsqlDataSourceProvider;
+import edu.tamu.tcat.trc.extract.postgres.PsqlExtractRepo;
 
 public class TestExtractRepository
 {

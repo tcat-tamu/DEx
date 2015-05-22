@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.internal.trc.entry.postgres;
+package edu.tamu.tcat.trc.extract.postgres;
 
 import java.net.URI;
 import java.sql.PreparedStatement;
@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.db.exec.sql.SqlExecutor;
 import edu.tamu.tcat.db.exec.sql.SqlExecutor.ExecutorTask;
-import edu.tamu.tcat.dex.internal.trc.entry.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
@@ -22,6 +21,7 @@ import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.dex.trc.entry.ExtractsChangeEvent.ChangeType;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
+import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class PsqlExtractRepo implements ExtractRepository
 {
@@ -59,6 +59,11 @@ public class PsqlExtractRepo implements ExtractRepository
 
       // HACK: pass in as service?
       mapper = new ObjectMapper();
+   }
+
+   public void dispose()
+   {
+      mapper = null;
    }
 
    @Override
