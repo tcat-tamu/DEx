@@ -8,6 +8,9 @@ import org.w3c.dom.Document;
 
 public class ExtractDTO
 {
+   // TODO: member variables should be public
+
+
    private final String id;
 
    /**

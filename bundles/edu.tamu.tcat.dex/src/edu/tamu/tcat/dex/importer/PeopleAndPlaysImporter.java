@@ -77,10 +77,10 @@ public class PeopleAndPlaysImporter
     * Load People and Plays data from TEI XML source
     *
     * @param xmlSource
-    * @throws XmlParseException
+    * @throws DexImportException
     * @throws IOException
     */
-   public ImportResult load(Reader xmlSource) throws XmlParseException, IOException
+   public ImportResult load(Reader xmlSource) throws DexImportException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
 
@@ -90,7 +90,7 @@ public class PeopleAndPlaysImporter
       }
       catch (SAXException e)
       {
-         throw new XmlParseException("malformed XML input", e);
+         throw new DexImportException("malformed XML input", e);
       }
 
       Map<String, PlayDTO> plays = handler.getPlays();

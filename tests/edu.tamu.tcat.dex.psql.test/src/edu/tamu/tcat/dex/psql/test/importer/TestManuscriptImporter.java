@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.tamu.tcat.dex.importer.ManuscriptImporter;
-import edu.tamu.tcat.dex.importer.XmlParseException;
+import edu.tamu.tcat.dex.importer.ManuscriptParser;
+import edu.tamu.tcat.dex.importer.DexImportException;
 import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
 public class TestManuscriptImporter
@@ -28,11 +28,11 @@ public class TestManuscriptImporter
       "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/UChicago_MS824.xml"
    };
 
-   private static final ManuscriptImporter importer = new ManuscriptImporter();
+   private static final ManuscriptParser importer = new ManuscriptParser();
 
 
    @Test
-   public void testLoad() throws XmlParseException, IOException
+   public void testLoad() throws DexImportException, IOException
    {
       Map<String, ManuscriptDTO> manuscripts = new HashMap<>();
 

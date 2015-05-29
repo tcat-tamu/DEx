@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -90,15 +91,15 @@ public class TestExtractRepository
    @Test
    public void testSaveEntry() throws InterruptedException, ExecutionException, DramaticExtractException, SAXException, IOException, ParserConfigurationException
    {
-      EditExtractCommand extractCommand = repo.create();
+      EditExtractCommand editCommand = repo.create(UUID.randomUUID().toString());
 
-      extractCommand.setAuthor("Matthew J. Barry");
-      extractCommand.setManuscript(URI.create("manuscripts/MJB_1234"));
-      extractCommand.setSource(URI.create("plays/Shakespeare_Hamlet"));
-      extractCommand.setSourceRef("3.1.64");
+      editCommand.setAuthor("Matthew J. Barry");
+      editCommand.setManuscript(URI.create("manuscripts/MJB_1234"));
+      editCommand.setSource(URI.create("plays/Shakespeare_Hamlet"));
+      editCommand.setSourceRef("3.1.64");
 
       Set<URI> speakers = new HashSet<>(Arrays.asList(URI.create("people/Hamlet_Hamlet")));
-      extractCommand.setSpeakers(speakers);
+      editCommand.setSpeakers(speakers);
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
@@ -107,9 +108,9 @@ public class TestExtractRepository
       InputSource is = new InputSource(new StringReader(tei));
       Document document = documentBuilder.parse(is);
 
-      extractCommand.setTEIContent(document);
+      editCommand.setTEIContent(document);
 
-      Future<String> idFuture = extractCommand.execute();
+      Future<String> idFuture = editCommand.execute();
       String id = idFuture.get();
 
       assertNotNull("No ID returned", id);

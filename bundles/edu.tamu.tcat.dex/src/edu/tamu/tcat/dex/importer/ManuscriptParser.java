@@ -13,34 +13,33 @@ import org.xml.sax.XMLReader;
 
 import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
 
-public class ManuscriptImporter
+public class ManuscriptParser
 {
-   private final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-   private final SAXParser saxParser;
-   private final XMLReader reader;
-   private final ManuscriptHandler handler = new ManuscriptHandler();
 
-   public ManuscriptImporter()
+   private static XMLReader getReader()
    {
+      SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
       saxParserFactory.setNamespaceAware(true);
 
       try
       {
-         saxParser = saxParserFactory.newSAXParser();
-         reader = saxParser.getXMLReader();
+         SAXParser saxParser = saxParserFactory.newSAXParser();
+         return saxParser.getXMLReader();
       }
       catch (ParserConfigurationException | SAXException e)
       {
          throw new IllegalStateException("Could not create instance of SAX XML reader", e);
       }
 
-      reader.setContentHandler(handler);
    }
 
-
-   public ManuscriptDTO load(Reader xmlSource) throws XmlParseException, IOException
+   public static ManuscriptDTO load(Reader xmlSource) throws DexImportException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
+
+      ManuscriptHandler handler = new ManuscriptHandler();
+      XMLReader reader = getReader();
+      reader.setContentHandler(handler);
 
       try
       {
@@ -48,7 +47,7 @@ public class ManuscriptImporter
       }
       catch (SAXException e)
       {
-         throw new XmlParseException("malformed XML input", e);
+         throw new DexImportException("malformed XML input", e);
       }
 
       return handler.getManuscript();

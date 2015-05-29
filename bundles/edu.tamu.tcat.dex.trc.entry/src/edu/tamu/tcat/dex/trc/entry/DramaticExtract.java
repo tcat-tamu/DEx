@@ -18,6 +18,8 @@ public interface DramaticExtract
 
    /**
     * @return The name of the extract's author. Usually the author of the manuscript.
+    *       On occasion, the author of the manuscript will collect extracts written by friends or others.
+    *       See, for example, birthday books, autograph books.
     */
    String getAuthor();
 

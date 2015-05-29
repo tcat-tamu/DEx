@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.dex.importer.PeopleAndPlaysImporter;
 import edu.tamu.tcat.dex.importer.PeopleAndPlaysImporter.ImportResult;
-import edu.tamu.tcat.dex.importer.XmlParseException;
+import edu.tamu.tcat.dex.importer.DexImportException;
 
 public class TestPeopleAndPlaysImporter
 {
@@ -17,7 +17,7 @@ public class TestPeopleAndPlaysImporter
    private static PeopleAndPlaysImporter importer = new PeopleAndPlaysImporter();
 
    @Test
-   public void testLoad() throws XmlParseException, IOException
+   public void testLoad() throws DexImportException, IOException
    {
       String inputFilePath = "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml";
 
