@@ -7,14 +7,12 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.tamu.tcat.dex.importer.PeopleAndPlaysImporter;
-import edu.tamu.tcat.dex.importer.PeopleAndPlaysImporter.ImportResult;
 import edu.tamu.tcat.dex.importer.DexImportException;
+import edu.tamu.tcat.dex.importer.PeopleAndPlaysParser;
+import edu.tamu.tcat.dex.importer.PeopleAndPlaysParser.ImportResult;
 
 public class TestPeopleAndPlaysImporter
 {
-
-   private static PeopleAndPlaysImporter importer = new PeopleAndPlaysImporter();
 
    @Test
    public void testLoad() throws DexImportException, IOException
@@ -24,10 +22,10 @@ public class TestPeopleAndPlaysImporter
       ImportResult result;
       try (FileReader fileReader = new FileReader(inputFilePath))
       {
-         result = importer.load(fileReader);
+         result = PeopleAndPlaysParser.load(fileReader);
       }
 
-      System.out.println(String.format("Parsed %d play(s), %d playwright(s), and %d character(s).", result.getPlays().size(), result.getPlaywrights().size(), result.getCharacters().size()));
+      System.out.println(String.format("Parsed %d play(s), %d playwright(s), and %d character(s).", result.plays.size(), result.playwrights.size(), result.characters.size()));
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.writeValue(System.out, result);
