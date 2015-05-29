@@ -27,14 +27,14 @@ public class EditExtractCommandImpl implements EditExtractCommand
 
    private final ExtractDTO dto;
 
-   private Function<ExtractDTO, Future<URI>> commitHook;
+   private Function<ExtractDTO, Future<String>> commitHook;
 
    public EditExtractCommandImpl(ExtractDTO dto)
    {
       this.dto = dto;
    }
 
-   public void setCommitHook(Function<ExtractDTO, Future<URI>> hook)
+   public void setCommitHook(Function<ExtractDTO, Future<String>> hook)
    {
       commitHook = hook;
    }
@@ -89,7 +89,7 @@ public class EditExtractCommandImpl implements EditExtractCommand
    }
 
    @Override
-   public Future<URI> execute() throws DramaticExtractException
+   public Future<String> execute() throws DramaticExtractException
    {
       Objects.requireNonNull(commitHook);
       return commitHook.apply(dto);

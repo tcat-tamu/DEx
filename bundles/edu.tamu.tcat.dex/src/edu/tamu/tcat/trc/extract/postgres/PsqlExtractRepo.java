@@ -1,16 +1,12 @@
 package edu.tamu.tcat.trc.extract.postgres;
 
 import java.io.IOException;
-import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.postgresql.util.PGobject;
 
@@ -42,9 +38,6 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final int SQL_UPDATE_PARAM_ID = 2;
    private static final int SQL_DELETE_PARAM_ID = 1;
 
-   private static final Pattern REGEX_EXTRACT_URI = Pattern.compile("^extracts/([^/]+)$");
-   private static final int REGEX_EXTRACT_URI_GROUP_ID = 1;
-
    private SqlExecutor executor;
 
    // TODO: should this be passed in as a service?
@@ -72,27 +65,23 @@ public class PsqlExtractRepo implements ExtractRepository
 
 
    @Override
-   public DramaticExtract get(URI uri) throws ExtractNotAvailableException, DramaticExtractException
+   public DramaticExtract get(String id) throws ExtractNotAvailableException, DramaticExtractException
    {
-      String id = parseUri(uri);
-
       Future<ExtractDTO> extractFuture = executor.submit(makeSelectTask(id));
       try {
          ExtractDTO dto = extractFuture.get();
          return ExtractDTO.instantiate(dto);
       }
       catch (InterruptedException | ExecutionException e) {
-         throw new DramaticExtractException("Unable to get extract [" + uri.toString() + "]", e);
+         throw new DramaticExtractException("Unable to get extract [" + id + "]", e);
       }
    }
 
    @Override
-   public EditExtractCommand create() throws DramaticExtractException
+   public EditExtractCommand create(String id) throws DramaticExtractException
    {
       ExtractDTO extractDTO = new ExtractDTO();
-
-      // HACK: this ID needs to come from somewhere
-      extractDTO.id = URI.create("extracts/" + UUID.randomUUID().toString());
+      extractDTO.id = id;
 
       EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
       command.setCommitHook(dto -> updateExtract(dto, ChangeType.CREATED));
@@ -100,9 +89,8 @@ public class PsqlExtractRepo implements ExtractRepository
    }
 
    @Override
-   public EditExtractCommand edit(URI uri) throws ExtractNotAvailableException, DramaticExtractException
+   public EditExtractCommand edit(String id) throws ExtractNotAvailableException, DramaticExtractException
    {
-      String id = parseUri(uri);
 
       Future<ExtractDTO> extractFuture = executor.submit(makeSelectTask(id));
       try {
@@ -112,14 +100,13 @@ public class PsqlExtractRepo implements ExtractRepository
          return command;
       }
       catch (InterruptedException | ExecutionException e) {
-         throw new DramaticExtractException("Unable to get extract [" + uri.toString() + "]", e);
+         throw new DramaticExtractException("Unable to get extract [" + id + "]", e);
       }
    }
 
    @Override
-   public void remove(URI uri) throws DramaticExtractException
+   public void remove(String id) throws DramaticExtractException
    {
-      String id = parseUri(uri);
       ExecutorTask<String> task = makeDeleteTask(id);
       executor.submit(task);
    }
@@ -139,7 +126,7 @@ public class PsqlExtractRepo implements ExtractRepository
     * @return A future that resolves to the ID of the saved extract
     * @throws DramaticExtractException
     */
-   private Future<URI> updateExtract(ExtractDTO dto, ChangeType changeType)
+   private Future<String> updateExtract(ExtractDTO dto, ChangeType changeType)
    {
       String sql = getUpdateSql(changeType);
 
@@ -151,7 +138,7 @@ public class PsqlExtractRepo implements ExtractRepository
          throw new IllegalStateException("Unable to serialize extract into JSON string.", e);
       }
 
-      ExecutorTask<URI> task = makeUpdateTask(dto.id, json, sql);
+      ExecutorTask<String> task = makeUpdateTask(dto.id, json, sql);
       return executor.submit(task);
    }
 
@@ -208,13 +195,13 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param sql The parameterized SQL create or update statement to execute
     * @return An executor task that resolves to the ID of the extract when saved.
     */
-   private ExecutorTask<URI> makeUpdateTask(URI id, String json, String sql)
+   private ExecutorTask<String> makeUpdateTask(String id, String json, String sql)
    {
       return (conn) ->
       {
          try (PreparedStatement ps = conn.prepareStatement(sql))
          {
-            ps.setString(SQL_UPDATE_PARAM_ID, id.toString());
+            ps.setString(SQL_UPDATE_PARAM_ID, id);
 
             PGobject jsonObject = new PGobject();
             jsonObject.setType("json");
@@ -283,24 +270,6 @@ public class PsqlExtractRepo implements ExtractRepository
          // NOTE: possible data leak. If this exception is propagated to someone who isn't authorized to see this record...
          throw new IllegalStateException("Cannot parse person from JSON:\n" + json, je);
       }
-   }
-
-   /**
-    * Parses the ID string from a URI
-    *
-    * @param uri URI to parse
-    * @return ID of extract represented by URI
-    * @throws DramaticExtractException
-    */
-   private static String parseUri(URI uri) throws DramaticExtractException
-   {
-      Matcher uriMatcher = REGEX_EXTRACT_URI.matcher(uri.toString());
-      if (!uriMatcher.matches())
-      {
-         throw new DramaticExtractException("Malformed dramatic extract ID [" + uri.toString() + "]");
-      }
-
-      return uriMatcher.group(REGEX_EXTRACT_URI_GROUP_ID);
    }
 
 }

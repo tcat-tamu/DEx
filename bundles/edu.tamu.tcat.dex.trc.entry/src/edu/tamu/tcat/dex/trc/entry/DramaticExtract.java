@@ -13,7 +13,7 @@ public interface DramaticExtract
    /**
     * @return A unique, persistent identifier for this extract
     */
-   URI getId();
+   String getId();
 
 
    /**

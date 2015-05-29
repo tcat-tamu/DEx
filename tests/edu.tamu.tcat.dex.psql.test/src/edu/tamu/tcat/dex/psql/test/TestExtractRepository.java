@@ -109,10 +109,10 @@ public class TestExtractRepository
 
       extractCommand.setTEIContent(document);
 
-      Future<URI> uriFuture = extractCommand.execute();
-      URI uri = uriFuture.get();
+      Future<String> idFuture = extractCommand.execute();
+      String id = idFuture.get();
 
-      assertNotNull("No ID returned", uri);
+      assertNotNull("No ID returned", id);
    }
 
 }
