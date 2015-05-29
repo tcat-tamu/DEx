@@ -1,8 +1,12 @@
 package edu.tamu.tcat.dex.importer;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -10,11 +14,14 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import edu.tamu.tcat.dex.importer.model.CharacterDTO;
 import edu.tamu.tcat.dex.importer.model.PlayDTO;
+import edu.tamu.tcat.dex.importer.model.PlayDTO.EditionDTO;
 import edu.tamu.tcat.dex.importer.model.PlayDTO.PlaywrightReferenceDTO;
 import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
 
 class PeopleAndPlaysHandler extends DefaultHandler
 {
+   private static final Logger logger = Logger.getLogger(PeopleAndPlaysHandler.class.getName());
+
    /**
     * data transfer objects instantiated during the parse
     */
@@ -116,6 +123,29 @@ class PeopleAndPlaysHandler extends DefaultHandler
 
          objectStack.push(playwrightRef);
       }
+      else if (qName.equals("edition") && "bibl".equals(getParentElement()))
+      {
+         if (objectStack.peek() instanceof EditionDTO) {
+            objectStack.pop();
+         }
+
+         EditionDTO edition = new EditionDTO();
+
+         PlayDTO play = (PlayDTO)objectStack.peek();
+         play.editions.add(edition);
+
+         objectStack.push(edition);
+      }
+      else if (qName.equals("link") && objectStack.peek() instanceof EditionDTO)
+      {
+         EditionDTO edition = (EditionDTO)objectStack.peek();
+         try {
+            edition.link = new URI(attributes.getValue("target"));
+         }
+         catch (URISyntaxException e) {
+            logger.log(Level.WARNING, "malformed URI in link attribute", e);
+         }
+      }
       else if (qName.equals("person"))
       {
          // person tag corresponds to either a playwright or a character in a play
@@ -170,7 +200,15 @@ class PeopleAndPlaysHandler extends DefaultHandler
    {
       elementStack.pop();
 
-      if (qName.equals("bibl") || qName.equals("person"))
+      if (qName.equals("bibl"))
+      {
+         if (objectStack.peek() instanceof EditionDTO) {
+            objectStack.pop();
+         }
+
+         objectStack.pop();
+      }
+      else if (qName.equals("person"))
       {
          objectStack.pop();
       }
@@ -224,23 +262,23 @@ class PeopleAndPlaysHandler extends DefaultHandler
          }
          else if (getCurrentElement().equals("edition"))
          {
-            PlayDTO play = (PlayDTO)objectStack.peek();
-            play.editions.add(value);
+            EditionDTO edition = (EditionDTO)objectStack.peek();
+            edition.title = value;
          }
          else if (getCurrentElement().equals("publisher"))
          {
-            PlayDTO play = (PlayDTO)objectStack.peek();
-            play.publishers.add(value);
+            EditionDTO edition = (EditionDTO)objectStack.peek();
+            edition.publisher = value;
          }
          else if (getCurrentElement().equals("editor"))
          {
-            PlayDTO play = (PlayDTO)objectStack.peek();
-            play.editors.add(value);
+            EditionDTO edition = (EditionDTO)objectStack.peek();
+            edition.editors.add(value);
          }
          else if (getCurrentElement().equals("date"))
          {
-            PlayDTO play = (PlayDTO)objectStack.peek();
-            play.date = value;
+            EditionDTO edition = (EditionDTO)objectStack.peek();
+            edition.date = value;
          }
       }
       else if (getParentElement().equals("person"))
