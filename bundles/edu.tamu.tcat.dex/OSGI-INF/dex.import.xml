@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" dispose="dispose" name="edu.tamu.tcat.dex.import">
+   <implementation class="edu.tamu.tcat.dex.importer.DexImportService"/>
+   <service>
+      <provide interface="edu.tamu.tcat.dex.importer.DexImportService"/>
+   </service>
+   <reference bind="setExtractRepository" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository" name="ExtractRepository" policy="static"/>
+   <reference bind="setPeopleRepository" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository" name="PeopleRepository" policy="static"/>
+   <reference bind="setWorksRepository" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository" name="WorkRepository" policy="static"/>
+</scr:component>
