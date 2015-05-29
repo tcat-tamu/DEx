@@ -45,7 +45,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
    }
 
    /**
-    * @return playwrights from last successful parse
+    * @return playwrightRefs from last successful parse
     */
    public Map<String, PlaywrightDTO> getPlaywrights()
    {
@@ -93,9 +93,10 @@ class PeopleAndPlaysHandler extends DefaultHandler
       {
          // each bibl tag corresponds to a single play entity
 
-         String id = attributes.getValue("xml:id");
-         PlayDTO play = new PlayDTO(id);
-         plays.put(id, play);
+         PlayDTO play = new PlayDTO();
+         play.id = attributes.getValue("xml:id");
+
+         plays.put(play.id, play);
          objectStack.push(play);
       }
       else if (qName.equals("author") && getParentElement() != null && getParentElement().equals("bibl"))
@@ -104,15 +105,14 @@ class PeopleAndPlaysHandler extends DefaultHandler
          //    bibl/author/text() is the name as it appears on the work
          //    bibl/author/@corresp is the ID of the referenced playwright (if known)
 
-         String corresp = attributes.getValue("corresp");
+         PlaywrightReferenceDTO playwrightRef = new PlaywrightReferenceDTO();
 
          // strip leading '#' from reference
-         String playwrightId = corresp == null ? null : corresp.substring(1);
-
-         PlaywrightReferenceDTO playwrightRef = new PlaywrightReferenceDTO(playwrightId);
+         String corresp = attributes.getValue("corresp");
+         playwrightRef.playwrightId = corresp == null ? null : corresp.substring(1);
 
          PlayDTO play = (PlayDTO)objectStack.peek();
-         play.addPlaywright(playwrightRef);
+         play.playwrightRefs.add(playwrightRef);
 
          objectStack.push(playwrightRef);
       }
@@ -124,9 +124,10 @@ class PeopleAndPlaysHandler extends DefaultHandler
          {
             // person[@role="playwright"] corresponds to a single playwright entity
 
-            String id = attributes.getValue("xml:id");
-            PlaywrightDTO playwright = new PlaywrightDTO(id);
-            playwrights.put(id, playwright);
+            PlaywrightDTO playwright = new PlaywrightDTO();
+            playwright.id = attributes.getValue("xml:id");
+
+            playwrights.put(playwright.id, playwright);
             objectStack.push(playwright);
          }
          else if (attributes.getValue("role").equals("character"))
@@ -134,7 +135,8 @@ class PeopleAndPlaysHandler extends DefaultHandler
             // person[@role="character"] corresponds to a single play character entity
 
             String id = attributes.getValue("xml:id");
-            CharacterDTO character = new CharacterDTO(id);
+            CharacterDTO character = new CharacterDTO();
+            character.id = id;
             characters.put(id, character);
             objectStack.push(character);
          }
@@ -151,7 +153,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
             String playId = target.substring(1);
 
             CharacterDTO character = (CharacterDTO)objectStack.peek();
-            character.addPlayId(playId);
+            character.playIds.add(playId);
          }
       }
    }
@@ -179,7 +181,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
             PlaywrightReferenceDTO playwrightRef = (PlaywrightReferenceDTO)objectStack.pop();
 
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.addPlaywright(playwrightRef);
+            play.playwrightRefs.add(playwrightRef);
          }
       }
    }
@@ -213,32 +215,32 @@ class PeopleAndPlaysHandler extends DefaultHandler
          if (getCurrentElement().equals("author"))
          {
             PlaywrightReferenceDTO playwrightRef = (PlaywrightReferenceDTO)objectStack.peek();
-            playwrightRef.setDisplayName(value);
+            playwrightRef.displayName = value;
          }
          else if (getCurrentElement().equals("title"))
          {
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.addTitle(value);
+            play.titles.add(value);
          }
          else if (getCurrentElement().equals("edition"))
          {
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.addEdition(value);
+            play.editions.add(value);
          }
          else if (getCurrentElement().equals("publisher"))
          {
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.addPublisher(value);
+            play.publishers.add(value);
          }
          else if (getCurrentElement().equals("editor"))
          {
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.addEditor(value);
+            play.editors.add(value);
          }
          else if (getCurrentElement().equals("date"))
          {
             PlayDTO play = (PlayDTO)objectStack.peek();
-            play.setDate(value);
+            play.date = value;
          }
       }
       else if (getParentElement().equals("person"))
@@ -248,12 +250,12 @@ class PeopleAndPlaysHandler extends DefaultHandler
             if (objectStack.peek() instanceof PlaywrightDTO)
             {
                PlaywrightDTO playwright = (PlaywrightDTO)objectStack.peek();
-               playwright.addName(value);
+               playwright.names.add(value);
             }
             else if(objectStack.peek() instanceof CharacterDTO)
             {
                CharacterDTO character = (CharacterDTO)objectStack.peek();
-               character.addName(value);
+               character.names.add(value);
             }
          }
       }

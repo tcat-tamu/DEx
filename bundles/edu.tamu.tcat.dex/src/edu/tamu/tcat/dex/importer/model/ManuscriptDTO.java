@@ -1,54 +1,13 @@
 package edu.tamu.tcat.dex.importer.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ManuscriptDTO
 {
-   private String id;
-   private String title;
-   private String author;
+   public String id;
+   public String title;
+   public String author;
 
-   private final List<ExtractDTO> extracts = new ArrayList<>();
-
-   public ManuscriptDTO(String id)
-   {
-      this.id = id;
-   }
-
-   public String getId()
-   {
-      return id;
-   }
-
-   public String getTitle()
-   {
-      return title;
-   }
-
-   public void setTitle(String title)
-   {
-      this.title = title;
-   }
-
-   public String getAuthor()
-   {
-      return author;
-   }
-
-   public void setAuthor(String author)
-   {
-      this.author = author;
-   }
-
-   public void addExtract(ExtractDTO extract)
-   {
-      extracts.add(extract);
-   }
-
-   public List<ExtractDTO> getExtracts()
-   {
-      return Collections.unmodifiableList(extracts);
-   }
+   public final List<ExtractDTO> extracts = new ArrayList<>();
 }

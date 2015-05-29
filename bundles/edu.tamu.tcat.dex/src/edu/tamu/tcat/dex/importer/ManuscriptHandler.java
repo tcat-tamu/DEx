@@ -10,7 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -108,8 +107,8 @@ class ManuscriptHandler extends DefaultHandler
       elementStack = new Stack<>();
       objectStack = new Stack<>();
 
-      String id = UUID.randomUUID().toString();
-      manuscript = new ManuscriptDTO(id);
+      manuscript = new ManuscriptDTO();
+      manuscript.id = UUID.randomUUID().toString();
 
       rawMode = false;
    }
@@ -141,23 +140,21 @@ class ManuscriptHandler extends DefaultHandler
             return;
          }
 
-         String id = UUID.randomUUID().toString();
-         ExtractDTO extract = new ExtractDTO(id);
+         ExtractDTO extract = new ExtractDTO();
+         extract.id = UUID.randomUUID().toString();
 
          // inherit manuscript author by default
          // TODO: parse per-extract authors
-         extract.setAuthor(manuscript.getAuthor());
+         extract.author = manuscript.author;
 
-         String lineRef = attributes.getValue("n");
-         extract.setLineRef(lineRef);
+         extract.lineRef = attributes.getValue("n");
 
-         manuscript.addExtract(extract);
+         manuscript.extracts.add(extract);
 
          String corresp = attributes.getValue("corresp");
          if (corresp != null)
          {
-            String playId = corresp.substring(corresp.indexOf('#') + 1);
-            extract.setPlayId(playId);
+            extract.playId = corresp.substring(corresp.indexOf('#') + 1);
          }
 
          objectStack.push(extract);
@@ -178,7 +175,7 @@ class ManuscriptHandler extends DefaultHandler
                String speakerId = ref.substring(ref.indexOf('#') + 1);
 
                ExtractDTO extract = (ExtractDTO)objectStack.get(objectStack.size() - 2);
-               extract.addSpeaker(speakerId);
+               extract.speakers.add(speakerId);
             }
          }
       }
@@ -200,8 +197,7 @@ class ManuscriptHandler extends DefaultHandler
          StringReader sr = new StringReader(tei);
          InputSource is = new InputSource(sr);
          try {
-            Document document = documentBuilder.parse(is);
-            extract.setTEIContent(document);
+            extract.teiContent = documentBuilder.parse(is);
          }
          catch (IOException e)
          {
@@ -234,11 +230,11 @@ class ManuscriptHandler extends DefaultHandler
 
       if (isCurrentElement("title"))
       {
-         manuscript.setTitle(value);
+         manuscript.title = value;
       }
       else if (isCurrentElement("persName") && isParentElement("author"))
       {
-         manuscript.setAuthor(value);
+         manuscript.author = value;
       }
    }
 
