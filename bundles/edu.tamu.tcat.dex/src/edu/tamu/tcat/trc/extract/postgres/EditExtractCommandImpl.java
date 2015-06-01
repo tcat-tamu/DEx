@@ -77,12 +77,18 @@ public class EditExtractCommandImpl implements EditExtractCommand
          TransformerFactory transformerFactory = TransformerFactory.newInstance();
          Transformer transformer = transformerFactory.newTransformer();
          transformer.transform(new DOMSource(teiContent), new StreamResult(writer));
-         dto.teiContent = writer.toString();
+         setTEIContent(writer.toString());
       }
       catch (Exception e)
       {
          logger.log(Level.WARNING, "Unable to serialize TEI DOM", e);
       }
+   }
+
+   @Override
+   public void setTEIContent(String teiContent)
+   {
+      dto.teiContent = teiContent;
    }
 
    @Override

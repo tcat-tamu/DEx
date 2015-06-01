@@ -38,6 +38,7 @@ public interface EditExtractCommand
     * @param teiContent An XML Document representing the original TEI source of this extract
     */
    void setTEIContent(Document teiContent);
+   void setTEIContent(String teiContent);
 
    /**
     * Persists the modifications made to the underlying DramaticExtract object.
