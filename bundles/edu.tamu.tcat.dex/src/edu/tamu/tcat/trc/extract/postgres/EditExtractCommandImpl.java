@@ -1,14 +1,13 @@
 package edu.tamu.tcat.trc.extract.postgres;
 
 import java.io.StringWriter;
-import java.net.URI;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -46,15 +45,15 @@ public class EditExtractCommandImpl implements EditExtractCommand
    }
 
    @Override
-   public void setManuscript(URI manuscript)
+   public void setManuscriptId(String manuscriptId)
    {
-      dto.manuscript = manuscript.toString();
+      dto.manuscriptId = manuscriptId;
    }
 
    @Override
-   public void setSource(URI source)
+   public void setSourceId(String sourceId)
    {
-      dto.source = source.toString();
+      dto.source = sourceId;
    }
 
    @Override
@@ -64,11 +63,9 @@ public class EditExtractCommandImpl implements EditExtractCommand
    }
 
    @Override
-   public void setSpeakers(Set<URI> speakers)
+   public void setSpeakerIds(Set<String> speakers)
    {
-      dto.speakers = speakers.stream()
-            .map(URI::toString)
-            .collect(Collectors.toSet());
+      dto.speakerIds = Collections.unmodifiableSet(speakers);
    }
 
    @Override

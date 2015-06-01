@@ -43,13 +43,23 @@ public class ExtractDTO
       DramaticExtractImpl extract = new DramaticExtractImpl();
       extract.id = dto.id;
       extract.author = dto.author;
-      extract.manuscript = URI.create(dto.manuscript);
-      extract.source = URI.create(dto.source);
-      extract.sourceRef = dto.sourceRef;
+      extract.manuscriptId = dto.manuscriptId;
+      extract.source = new SourceRef()
+      {
+         @Override
+         public String getId()
+         {
+            return dto.id;
+         }
 
-      extract.speakers = dto.speakers.stream()
-            .map(URI::create)
-            .collect(Collectors.toSet());
+         @Override
+         public String getLineReference()
+         {
+            return dto.sourceRef;
+         }
+      };
+
+      extract.speakers = Collections.unmodifiableSet(dto.speakerIds);
 
       try
       {
@@ -72,18 +82,13 @@ public class ExtractDTO
 
       dto.id = extract.getId();
       dto.author = extract.getAuthor();
+      dto.manuscriptId = extract.getManuscriptId();
 
-      URI manuscriptUri = extract.getManuscript();
-      dto.manuscript = manuscriptUri == null ? null : manuscriptUri.toString();
+      SourceRef sourceRef = extract.getSource();
+      dto.source = sourceRef == null ? null : sourceRef.getId();
+      dto.sourceRef = sourceRef == null ? null : sourceRef.getLineReference();
 
-      URI sourceUri = extract.getSource();
-      dto.source = sourceUri == null ? null : sourceUri.toString();
-
-      dto.sourceRef = extract.getSourceRef();
-
-      dto.speakers = extract.getSpeakers().stream()
-            .map(URI::toString)
-            .collect(Collectors.toSet());
+      dto.speakerIds = Collections.unmodifiableSet(extract.getSpeakerIds());
 
       try
       {
@@ -107,10 +112,9 @@ public class ExtractDTO
    {
       private String id;
       private String author;
-      private URI manuscript;
-      private URI source;
-      private String sourceRef;
-      private Set<URI> speakers;
+      private String manuscriptId;
+      private SourceRef source;
+      private Set<String> speakers;
       private Document teiDoc;
 
 
@@ -127,25 +131,19 @@ public class ExtractDTO
       }
 
       @Override
-      public URI getManuscript()
+      public String getManuscriptId()
       {
-         return manuscript;
+         return manuscriptId;
       }
 
       @Override
-      public URI getSource()
+      public SourceRef getSource()
       {
          return source;
       }
 
       @Override
-      public String getSourceRef()
-      {
-         return sourceRef;
-      }
-
-      @Override
-      public Set<URI> getSpeakers()
+      public Set<String> getSpeakerIds()
       {
          return speakers;
       }
@@ -154,18 +152,6 @@ public class ExtractDTO
       public Document getTEIContent()
       {
          return teiDoc;
-      }
-
-      @Override
-      public String getOriginalContent()
-      {
-         throw new UnsupportedOperationException();
-      }
-
-      @Override
-      public String getNormalizedContent()
-      {
-         throw new UnsupportedOperationException();
       }
 
    }

@@ -1,6 +1,5 @@
 package edu.tamu.tcat.dex.trc.entry;
 
-import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -14,14 +13,14 @@ public interface EditExtractCommand
    void setAuthor(String author);
 
    /**
-    * @param manuscript URI of the manuscript to which this extract belongs
+    * @param manuscriptId ID of the manuscript to which this extract belongs
     */
-   void setManuscript(URI manuscript);
+   void setManuscriptId(String manuscriptId);
 
    /**
-    * @param source URI of the bibliographic entry (e.g. play) from which this extract was taken
+    * @param sourceId ID of the bibliographic entry (e.g. play) from which this extract was taken
     */
-   void setSource(URI source);
+   void setSourceId(String sourceId);
 
    /**
     * @param sourceRef String representing the exact location within the bibliographic
@@ -33,7 +32,7 @@ public interface EditExtractCommand
     * @param speakers A set of URIs corresponding to the characters who spoke the lines
     *       recorded in this extract
     */
-   void setSpeakers(Set<URI> speakers);
+   void setSpeakerIds(Set<String> speakerIds);
 
    /**
     * @param teiContent An XML Document representing the original TEI source of this extract
