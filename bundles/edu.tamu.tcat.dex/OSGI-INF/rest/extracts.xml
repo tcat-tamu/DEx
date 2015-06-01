@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="edu.tamu.tcat.dex.rest.hello">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="edu.tamu.tcat.dex.rest.hello">
    <implementation class="edu.tamu.tcat.dex.rest.ExtractsResource"/>
    <service>
       <provide interface="edu.tamu.tcat.dex.rest.ExtractsResource"/>
    </service>
+   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository" name="ExtractRepository" policy="static"/>
 </scr:component>
