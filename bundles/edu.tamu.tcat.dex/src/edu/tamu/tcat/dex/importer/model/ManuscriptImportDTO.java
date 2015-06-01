@@ -3,11 +3,9 @@ package edu.tamu.tcat.dex.importer.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManuscriptImportDTO
-{
-   public String id;
-   public String title;
-   public String author;
+import edu.tamu.tcat.trc.extract.dto.ManuscriptDTO;
 
+public class ManuscriptImportDTO extends ManuscriptDTO
+{
    public final List<ExtractImportDTO> extracts = new ArrayList<>();
 }
