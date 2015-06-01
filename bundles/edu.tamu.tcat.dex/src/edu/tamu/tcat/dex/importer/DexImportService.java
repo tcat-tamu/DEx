@@ -72,23 +72,23 @@ public class DexImportService
       ManuscriptImportDTO manuscript;
       try
       {
-         dto = ManuscriptParser.load(teiReader);
+         manuscript = ManuscriptParser.load(teiReader);
       }
       catch (IOException e)
       {
          throw new IllegalStateException("IO Exception from StringReader!?", e);
       }
 
-      for (ExtractImportDTO extract : dto.extracts)
+      for (ExtractImportDTO extract : manuscript.extracts)
       {
+         extract.manuscriptId = manuscript.id;
+
          try
          {
-            EditExtractCommand editCommand = extractRepo.create(extract.id);
-            editCommand.setAuthor(extract.author);
-            // TODO: manuscript, source play, line reference, speakers
-            editCommand.setTEIContent(extract.teiContent);
+            EditExtractCommand editExtractCommand = extractRepo.create(extract.id);
+            editExtractCommand.setAll(extract);
 
-            editCommand.execute();
+            editExtractCommand.execute();
          }
          catch (DramaticExtractException e)
          {
