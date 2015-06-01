@@ -86,7 +86,6 @@ class ManuscriptHandler extends DefaultHandler
       objectStack = new Stack<>();
 
       manuscript = new ManuscriptImportDTO();
-      manuscript.id = UUID.randomUUID().toString();
 
       rawMode = false;
    }

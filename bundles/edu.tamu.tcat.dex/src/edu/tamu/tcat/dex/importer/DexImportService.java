@@ -22,9 +22,11 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
+import edu.tamu.tcat.trc.entries.types.bib.Work;
 import edu.tamu.tcat.trc.entries.types.bib.dto.AuthorRefDV;
 import edu.tamu.tcat.trc.entries.types.bib.dto.PublicationInfoDV;
 import edu.tamu.tcat.trc.entries.types.bib.dto.TitleDV;
+import edu.tamu.tcat.trc.entries.types.bib.dto.WorkDV;
 import edu.tamu.tcat.trc.entries.types.bib.repo.EditWorkCommand;
 import edu.tamu.tcat.trc.entries.types.bib.repo.EditionMutator;
 import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
@@ -79,6 +81,12 @@ public class DexImportService
          throw new IllegalStateException("IO Exception from StringReader!?", e);
       }
 
+      // TODO: set manuscript ID
+
+      EditWorkCommand editManuscriptCommand = worksRepo.create(manuscript.id);
+      Work manuscriptWork = ManuscriptImportDTO.instantiate(manuscript);
+      editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
+
       for (ExtractImportDTO extract : manuscript.extracts)
       {
          extract.manuscriptId = manuscript.id;
@@ -96,8 +104,6 @@ public class DexImportService
             logger.log(Level.WARNING, "unable to import extract [" + extract.id + "]", e);
          }
       }
-
-      // TODO: import manuscript
    }
 
    public void importPeopleAndPlays(String tei) throws DexImportException
