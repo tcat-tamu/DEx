@@ -15,8 +15,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import edu.tamu.tcat.dex.importer.model.ExtractDTO;
-import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
+import edu.tamu.tcat.dex.importer.model.ExtractImportDTO;
+import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 
 class ManuscriptHandler extends DefaultHandler
 {
@@ -74,7 +74,7 @@ class ManuscriptHandler extends DefaultHandler
 
    private boolean rawMode;
 
-   private ManuscriptDTO manuscript;
+   private ManuscriptImportDTO manuscript;
 
    /**
     * Set to {@code false} when the current {@code <div>} element does not represent a dramatic
@@ -96,7 +96,7 @@ class ManuscriptHandler extends DefaultHandler
    }
 
 
-   public ManuscriptDTO getManuscript()
+   public ManuscriptImportDTO getManuscript()
    {
       return manuscript;
    }
@@ -107,7 +107,7 @@ class ManuscriptHandler extends DefaultHandler
       elementStack = new Stack<>();
       objectStack = new Stack<>();
 
-      manuscript = new ManuscriptDTO();
+      manuscript = new ManuscriptImportDTO();
       manuscript.id = UUID.randomUUID().toString();
 
       rawMode = false;
@@ -140,7 +140,7 @@ class ManuscriptHandler extends DefaultHandler
             return;
          }
 
-         ExtractDTO extract = new ExtractDTO();
+         ExtractImportDTO extract = new ExtractImportDTO();
          extract.id = UUID.randomUUID().toString();
 
          // inherit manuscript author by default
@@ -174,7 +174,7 @@ class ManuscriptHandler extends DefaultHandler
             {
                String speakerId = ref.substring(ref.indexOf('#') + 1);
 
-               ExtractDTO extract = (ExtractDTO)objectStack.get(objectStack.size() - 2);
+               ExtractImportDTO extract = (ExtractImportDTO)objectStack.get(objectStack.size() - 2);
                extract.speakers.add(speakerId);
             }
          }
@@ -190,7 +190,7 @@ class ManuscriptHandler extends DefaultHandler
          XmlStringBuilder xsb = (XmlStringBuilder)objectStack.pop();
          xsb.endTag("div");
 
-         ExtractDTO extract = (ExtractDTO)objectStack.pop();
+         ExtractImportDTO extract = (ExtractImportDTO)objectStack.pop();
 
          // parse TEI XML string into W3C DOM
          String tei = xsb.toString().trim();

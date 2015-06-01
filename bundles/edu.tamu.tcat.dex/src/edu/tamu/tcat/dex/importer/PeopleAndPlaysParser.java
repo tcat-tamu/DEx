@@ -11,18 +11,18 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import edu.tamu.tcat.dex.importer.model.CharacterDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO;
-import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
+import edu.tamu.tcat.dex.importer.model.CharacterImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 
 
 public class PeopleAndPlaysParser
 {
    public static class ImportResult
    {
-      public Map<String, PlayDTO> plays;
-      public Map<String, PlaywrightDTO> playwrights;
-      public Map<String, CharacterDTO> characters;
+      public Map<String, PlayImportDTO> plays;
+      public Map<String, PlaywrightImportDTO> playwrights;
+      public Map<String, CharacterImportDTO> characters;
    }
 
 

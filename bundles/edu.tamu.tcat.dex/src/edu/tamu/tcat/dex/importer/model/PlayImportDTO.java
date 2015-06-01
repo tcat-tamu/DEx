@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class PlayDTO
+public class PlayImportDTO
 {
    public static class PlaywrightReferenceDTO
    {

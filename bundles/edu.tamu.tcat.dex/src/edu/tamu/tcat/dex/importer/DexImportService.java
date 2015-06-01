@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import edu.tamu.tcat.dex.importer.PeopleAndPlaysParser.ImportResult;
-import edu.tamu.tcat.dex.importer.model.CharacterDTO;
-import edu.tamu.tcat.dex.importer.model.ExtractDTO;
-import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO.EditionDTO;
-import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
+import edu.tamu.tcat.dex.importer.model.CharacterImportDTO;
+import edu.tamu.tcat.dex.importer.model.ExtractImportDTO;
+import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO.EditionDTO;
+import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
@@ -69,7 +69,7 @@ public class DexImportService
    {
       Reader teiReader = new StringReader(tei);
 
-      ManuscriptDTO dto;
+      ManuscriptImportDTO manuscript;
       try
       {
          dto = ManuscriptParser.load(teiReader);
@@ -79,7 +79,7 @@ public class DexImportService
          throw new IllegalStateException("IO Exception from StringReader!?", e);
       }
 
-      for (ExtractDTO extract : dto.extracts)
+      for (ExtractImportDTO extract : dto.extracts)
       {
          try
          {
@@ -114,7 +114,7 @@ public class DexImportService
          throw new IllegalStateException("IO Exception from StringReader!?", e);
       }
 
-      for (PlaywrightDTO playwright : importResult.playwrights.values())
+      for (PlaywrightImportDTO playwright : importResult.playwrights.values())
       {
          if (playwright.names.isEmpty()) {
             logger.log(Level.WARNING, "skipping playwright with no names");
@@ -140,7 +140,7 @@ public class DexImportService
          editCommand.execute();
       }
 
-      for (PlayDTO play : importResult.plays.values())
+      for (PlayImportDTO play : importResult.plays.values())
       {
          // save plays
          EditWorkCommand editCommand = worksRepo.create(play.id);
@@ -197,7 +197,7 @@ public class DexImportService
          editCommand.execute();
       }
 
-      for (CharacterDTO character : importResult.characters.values())
+      for (CharacterImportDTO character : importResult.characters.values())
       {
          if (character.names.isEmpty()) {
             logger.log(Level.WARNING, "skipping character with no names");

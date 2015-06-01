@@ -11,7 +11,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
+import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 
 public class ManuscriptParser
 {
@@ -33,7 +33,7 @@ public class ManuscriptParser
 
    }
 
-   public static ManuscriptDTO load(Reader xmlSource) throws DexImportException, IOException
+   public static ManuscriptImportDTO load(Reader xmlSource) throws DexImportException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
 

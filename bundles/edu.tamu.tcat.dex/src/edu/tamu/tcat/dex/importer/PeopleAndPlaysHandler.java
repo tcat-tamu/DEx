@@ -12,11 +12,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import edu.tamu.tcat.dex.importer.model.CharacterDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO.EditionDTO;
-import edu.tamu.tcat.dex.importer.model.PlayDTO.PlaywrightReferenceDTO;
-import edu.tamu.tcat.dex.importer.model.PlaywrightDTO;
+import edu.tamu.tcat.dex.importer.model.CharacterImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO.EditionDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO.PlaywrightReferenceDTO;
+import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 
 class PeopleAndPlaysHandler extends DefaultHandler
 {
@@ -25,9 +25,9 @@ class PeopleAndPlaysHandler extends DefaultHandler
    /**
     * data transfer objects instantiated during the parse
     */
-   private Map<String, PlayDTO> plays;
-   private Map<String, CharacterDTO> characters;
-   private Map<String, PlaywrightDTO> playwrights;
+   private Map<String, PlayImportDTO> plays;
+   private Map<String, CharacterImportDTO> characters;
+   private Map<String, PlaywrightImportDTO> playwrights;
 
    /**
     * keep track of context while traversing XML tree
@@ -38,7 +38,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
    /**
     * @return plays from last successful parse
     */
-   public Map<String, PlayDTO> getPlays()
+   public Map<String, PlayImportDTO> getPlays()
    {
       return new HashMap<>(plays);
    }
@@ -46,7 +46,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
    /**
     * @return characters from last successful parse
     */
-   public Map<String, CharacterDTO> getCharacters()
+   public Map<String, CharacterImportDTO> getCharacters()
    {
       return new HashMap<>(characters);
    }
@@ -54,7 +54,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
    /**
     * @return playwrightRefs from last successful parse
     */
-   public Map<String, PlaywrightDTO> getPlaywrights()
+   public Map<String, PlaywrightImportDTO> getPlaywrights()
    {
       return new HashMap<>(playwrights);
    }
@@ -100,7 +100,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
       {
          // each bibl tag corresponds to a single play entity
 
-         PlayDTO play = new PlayDTO();
+         PlayImportDTO play = new PlayImportDTO();
          play.id = attributes.getValue("xml:id");
 
          plays.put(play.id, play);
@@ -118,7 +118,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
          String corresp = attributes.getValue("corresp");
          playwrightRef.playwrightId = corresp == null ? null : corresp.substring(1);
 
-         PlayDTO play = (PlayDTO)objectStack.peek();
+         PlayImportDTO play = (PlayImportDTO)objectStack.peek();
          play.playwrightRefs.add(playwrightRef);
 
          objectStack.push(playwrightRef);
@@ -131,7 +131,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
 
          EditionDTO edition = new EditionDTO();
 
-         PlayDTO play = (PlayDTO)objectStack.peek();
+         PlayImportDTO play = (PlayImportDTO)objectStack.peek();
          play.editions.add(edition);
 
          objectStack.push(edition);
@@ -154,7 +154,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
          {
             // person[@role="playwright"] corresponds to a single playwright entity
 
-            PlaywrightDTO playwright = new PlaywrightDTO();
+            PlaywrightImportDTO playwright = new PlaywrightImportDTO();
             playwright.id = attributes.getValue("xml:id");
 
             playwrights.put(playwright.id, playwright);
@@ -165,7 +165,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
             // person[@role="character"] corresponds to a single play character entity
 
             String id = attributes.getValue("xml:id");
-            CharacterDTO character = new CharacterDTO();
+            CharacterImportDTO character = new CharacterImportDTO();
             character.id = id;
             characters.put(id, character);
             objectStack.push(character);
@@ -175,14 +175,14 @@ class PeopleAndPlaysHandler extends DefaultHandler
       {
          // person[@role="character"]/notes/ptr/@target contains the ID of the play that the character appears in
 
-         if (objectStack.peek() instanceof CharacterDTO)
+         if (objectStack.peek() instanceof CharacterImportDTO)
          {
             String target = attributes.getValue("target");
 
             // strip leading '#' from reference if defined
             String playId = target.substring(1);
 
-            CharacterDTO character = (CharacterDTO)objectStack.peek();
+            CharacterImportDTO character = (CharacterImportDTO)objectStack.peek();
             character.playIds.add(playId);
          }
       }
@@ -218,7 +218,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
          {
             PlaywrightReferenceDTO playwrightRef = (PlaywrightReferenceDTO)objectStack.pop();
 
-            PlayDTO play = (PlayDTO)objectStack.peek();
+            PlayImportDTO play = (PlayImportDTO)objectStack.peek();
             play.playwrightRefs.add(playwrightRef);
          }
       }
@@ -257,7 +257,7 @@ class PeopleAndPlaysHandler extends DefaultHandler
          }
          else if (getCurrentElement().equals("title"))
          {
-            PlayDTO play = (PlayDTO)objectStack.peek();
+            PlayImportDTO play = (PlayImportDTO)objectStack.peek();
             play.titles.add(value);
          }
          else if (getCurrentElement().equals("edition"))
@@ -285,14 +285,14 @@ class PeopleAndPlaysHandler extends DefaultHandler
       {
          if (getCurrentElement().equals("persName"))
          {
-            if (objectStack.peek() instanceof PlaywrightDTO)
+            if (objectStack.peek() instanceof PlaywrightImportDTO)
             {
-               PlaywrightDTO playwright = (PlaywrightDTO)objectStack.peek();
+               PlaywrightImportDTO playwright = (PlaywrightImportDTO)objectStack.peek();
                playwright.names.add(value);
             }
-            else if(objectStack.peek() instanceof CharacterDTO)
+            else if(objectStack.peek() instanceof CharacterImportDTO)
             {
-               CharacterDTO character = (CharacterDTO)objectStack.peek();
+               CharacterImportDTO character = (CharacterImportDTO)objectStack.peek();
                character.names.add(value);
             }
          }

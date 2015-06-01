@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.dex.importer.ManuscriptParser;
 import edu.tamu.tcat.dex.importer.DexImportException;
-import edu.tamu.tcat.dex.importer.model.ManuscriptDTO;
+import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 
 public class TestManuscriptImporter
 {
@@ -34,7 +34,7 @@ public class TestManuscriptImporter
    @Test
    public void testLoad() throws DexImportException, IOException
    {
-      Map<String, ManuscriptDTO> manuscripts = new HashMap<>();
+      Map<String, ManuscriptImportDTO> manuscripts = new HashMap<>();
 
       for (String filePath : files)
       {
@@ -45,7 +45,7 @@ public class TestManuscriptImporter
 
          try (Reader fileReader = new FileReader(file))
          {
-            ManuscriptDTO manuscript = importer.load(fileReader);
+            ManuscriptImportDTO manuscript = importer.load(fileReader);
             manuscripts.put(basename, manuscript);
          }
       }

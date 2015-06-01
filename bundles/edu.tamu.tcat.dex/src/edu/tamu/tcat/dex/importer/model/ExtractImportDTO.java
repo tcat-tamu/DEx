@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.w3c.dom.Document;
 
-public class ExtractDTO
+public class ExtractImportDTO
 {
    // TODO: member variables should be public
 
