@@ -2,11 +2,11 @@ package edu.tamu.tcat.trc.extract.dto;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.dex.trc.entry.SourceRef;
 
 public class ExtractDTO
 {
@@ -26,10 +27,10 @@ public class ExtractDTO
 
    public String id;
    public String author;
-   public String manuscript;
+   public String manuscriptId;
    public String source;
    public String sourceRef;
-   public Set<String> speakers;
+   public Set<String> speakerIds = new HashSet<>();
    public String teiContent;
 
    /**
