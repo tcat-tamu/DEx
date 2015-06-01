@@ -16,6 +16,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
@@ -28,6 +29,7 @@ public class EditExtractCommandImpl implements EditExtractCommand
 
    private Function<ExtractDTO, Future<String>> commitHook;
 
+
    public EditExtractCommandImpl(ExtractDTO dto)
    {
       this.dto = dto;
@@ -36,6 +38,24 @@ public class EditExtractCommandImpl implements EditExtractCommand
    public void setCommitHook(Function<ExtractDTO, Future<String>> hook)
    {
       commitHook = hook;
+   }
+
+
+   @Override
+   public void setAll(ExtractDTO extract)
+   {
+      setAuthor(extract.author);
+      setManuscriptId(extract.manuscriptId);
+      setSourceId(extract.source);
+      setSourceRef(extract.sourceRef);
+      setTEIContent(extract.teiContent);
+      setSpeakerIds(extract.speakerIds);
+   }
+
+   @Override
+   public void setAll(DramaticExtract extract)
+   {
+      setAll(ExtractDTO.create(extract));
    }
 
    @Override

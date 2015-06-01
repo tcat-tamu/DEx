@@ -5,8 +5,18 @@ import java.util.concurrent.Future;
 
 import org.w3c.dom.Document;
 
+import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
+
 public interface EditExtractCommand
 {
+   /**
+    * Set all properties to match those from the provided extract
+    *
+    * @param extract
+    */
+   void setAll(ExtractDTO extract);
+   void setAll(DramaticExtract extract);
+
    /**
     * @param author Name of this extract's author (could differ from manuscript author)
     */
@@ -47,4 +57,5 @@ public interface EditExtractCommand
     * @throws DramaticExtractException
     */
    Future<String> execute() throws DramaticExtractException;
+
 }
