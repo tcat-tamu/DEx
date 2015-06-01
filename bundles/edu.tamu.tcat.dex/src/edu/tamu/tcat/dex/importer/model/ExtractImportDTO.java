@@ -18,9 +18,9 @@ public class ExtractImportDTO
     */
    public String author;
 
-   public String lineRef;
-   public String playId;
-   public Document teiContent;
+   public String sourceRef;
+   public String source;
+   public String teiContent;
 
-   public final Set<String> speakers = new HashSet<>();
+   public final Set<String> speakerIds = new HashSet<>();
 }

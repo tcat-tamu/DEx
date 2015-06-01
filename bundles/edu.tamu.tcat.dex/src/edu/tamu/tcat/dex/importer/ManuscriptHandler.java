@@ -1,17 +1,10 @@
 package edu.tamu.tcat.dex.importer;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Stack;
 import java.util.UUID;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -66,8 +59,6 @@ class ManuscriptHandler extends DefaultHandler
       }
    }
 
-   private static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-   private DocumentBuilder documentBuilder;
 
    private Stack<String> elementStack;
    private Stack<Object> objectStack;
@@ -81,19 +72,6 @@ class ManuscriptHandler extends DefaultHandler
     * extract, but, for example, a heading.
     */
    private boolean divIsExtract;
-
-
-   public ManuscriptHandler()
-   {
-      try
-      {
-         documentBuilder = documentBuilderFactory.newDocumentBuilder();
-      }
-      catch (ParserConfigurationException e)
-      {
-         throw new IllegalStateException("Could not create instance of document builder", e);
-      }
-   }
 
 
    public ManuscriptImportDTO getManuscript()
@@ -147,14 +125,14 @@ class ManuscriptHandler extends DefaultHandler
          // TODO: parse per-extract authors
          extract.author = manuscript.author;
 
-         extract.lineRef = attributes.getValue("n");
+         extract.sourceRef = attributes.getValue("n");
 
          manuscript.extracts.add(extract);
 
          String corresp = attributes.getValue("corresp");
          if (corresp != null)
          {
-            extract.playId = corresp.substring(corresp.indexOf('#') + 1);
+            extract.source = corresp.substring(corresp.indexOf('#') + 1);
          }
 
          objectStack.push(extract);
@@ -175,7 +153,7 @@ class ManuscriptHandler extends DefaultHandler
                String speakerId = ref.substring(ref.indexOf('#') + 1);
 
                ExtractImportDTO extract = (ExtractImportDTO)objectStack.get(objectStack.size() - 2);
-               extract.speakers.add(speakerId);
+               extract.speakerIds.add(speakerId);
             }
          }
       }
@@ -193,17 +171,7 @@ class ManuscriptHandler extends DefaultHandler
          ExtractImportDTO extract = (ExtractImportDTO)objectStack.pop();
 
          // parse TEI XML string into W3C DOM
-         String tei = xsb.toString().trim();
-         StringReader sr = new StringReader(tei);
-         InputSource is = new InputSource(sr);
-         try {
-            extract.teiContent = documentBuilder.parse(is);
-         }
-         catch (IOException e)
-         {
-            throw new IllegalStateException("I/O exception from a string reader while parsing document?", e);
-         }
-
+         extract.teiContent = xsb.toString().trim();
          rawMode = false;
       }
 
