@@ -33,6 +33,7 @@ import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.dto.PersonNameDTO;
 import edu.tamu.tcat.trc.entries.types.bio.repo.EditPersonCommand;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
+import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class DexImportService
 {
@@ -94,7 +95,7 @@ public class DexImportService
          try
          {
             EditExtractCommand editExtractCommand = extractRepo.create(extract.id);
-            editExtractCommand.setAll(extract);
+            editExtractCommand.setAll(ExtractDTO.instantiate(extract));
 
             editExtractCommand.execute();
          }

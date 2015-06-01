@@ -5,8 +5,6 @@ import java.util.concurrent.Future;
 
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
-
 public interface EditExtractCommand
 {
    /**
@@ -14,7 +12,6 @@ public interface EditExtractCommand
     *
     * @param extract
     */
-   void setAll(ExtractDTO extract);
    void setAll(DramaticExtract extract);
 
    /**

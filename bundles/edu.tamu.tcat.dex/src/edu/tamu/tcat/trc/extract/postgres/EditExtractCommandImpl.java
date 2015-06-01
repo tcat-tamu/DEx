@@ -42,20 +42,16 @@ public class EditExtractCommandImpl implements EditExtractCommand
 
 
    @Override
-   public void setAll(ExtractDTO extract)
-   {
-      setAuthor(extract.author);
-      setManuscriptId(extract.manuscriptId);
-      setSourceId(extract.source);
-      setSourceRef(extract.sourceRef);
-      setTEIContent(extract.teiContent);
-      setSpeakerIds(extract.speakerIds);
-   }
-
-   @Override
    public void setAll(DramaticExtract extract)
    {
-      setAll(ExtractDTO.create(extract));
+      ExtractDTO dto = ExtractDTO.create(extract);
+
+      setAuthor(dto.author);
+      setManuscriptId(dto.manuscriptId);
+      setSourceId(dto.source);
+      setSourceRef(dto.sourceRef);
+      setTEIContent(dto.teiContent);
+      setSpeakerIds(dto.speakerIds);
    }
 
    @Override

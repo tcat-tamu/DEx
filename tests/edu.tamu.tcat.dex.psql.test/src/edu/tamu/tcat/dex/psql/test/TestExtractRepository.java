@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -94,12 +93,12 @@ public class TestExtractRepository
       EditExtractCommand editCommand = repo.create(UUID.randomUUID().toString());
 
       editCommand.setAuthor("Matthew J. Barry");
-      editCommand.setManuscript(URI.create("manuscripts/MJB_1234"));
-      editCommand.setSource(URI.create("plays/Shakespeare_Hamlet"));
+      editCommand.setManuscriptId("MJB_1234");
+      editCommand.setSourceId("Shakespeare_Hamlet");
       editCommand.setSourceRef("3.1.64");
 
-      Set<URI> speakers = new HashSet<>(Arrays.asList(URI.create("people/Hamlet_Hamlet")));
-      editCommand.setSpeakers(speakers);
+      Set<String> speakers = new HashSet<>(Arrays.asList("Hamlet_Hamlet"));
+      editCommand.setSpeakerIds(speakers);
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
