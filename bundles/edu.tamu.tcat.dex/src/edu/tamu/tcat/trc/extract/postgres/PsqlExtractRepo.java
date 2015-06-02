@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.postgresql.util.PGobject;
 
@@ -20,12 +22,18 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
-import edu.tamu.tcat.dex.trc.entry.ExtractsChangeEvent.ChangeType;
+import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;
+import edu.tamu.tcat.trc.entries.notification.DataUpdateObserverAdapter;
+import edu.tamu.tcat.trc.entries.notification.EntryUpdateHelper;
+import edu.tamu.tcat.trc.entries.notification.ObservableTaskWrapper;
+import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class PsqlExtractRepo implements ExtractRepository
 {
+   private static final Logger logger = Logger.getLogger(PsqlExtractRepo.class.getName());
+
    private static final String SELECT_EXTRACT_SQL = "SELECT extract FROM extracts WHERE id = ?";
    private static final String UPDATE_EXTRACT_SQL = "UPDATE extracts SET extract = ? WHERE id = ?";
    private static final String CREATE_EXTRACT_SQL = "INSERT INTO extracts (extract, id) VALUES (?, ?)";
@@ -39,9 +47,10 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final int SQL_DELETE_PARAM_ID = 1;
 
    private SqlExecutor executor;
+   private EntryUpdateHelper<DramaticExtract> listeners;
+   private ObjectMapper mapper;
+   private BasicUpdateEventFactory<DramaticExtract> eventFactory;
 
-   // TODO: should this be passed in as a service?
-   private final ObjectMapper mapper = new ObjectMapper();
 
 
    /**
@@ -57,20 +66,37 @@ public class PsqlExtractRepo implements ExtractRepository
    public void activate()
    {
       Objects.requireNonNull(executor, "No SQL Executor provided");
+      eventFactory = new BasicUpdateEventFactory<>();
+      listeners = new EntryUpdateHelper<>();
+      mapper = new ObjectMapper();
    }
 
    public void dispose()
    {
+      if (listeners != null)
+      {
+         listeners.close();
+      }
+      eventFactory = null;
+      executor = null;
+      mapper = null;
+      listeners = null;
    }
 
 
    @Override
    public DramaticExtract get(String id) throws ExtractNotAvailableException, DramaticExtractException
    {
+      ExtractDTO dto = getDTO(id);
+      return ExtractDTO.instantiate(dto);
+   }
+
+   private ExtractDTO getDTO(String id) throws DramaticExtractException
+   {
       Future<ExtractDTO> extractFuture = executor.submit(makeSelectTask(id));
-      try {
-         ExtractDTO dto = extractFuture.get();
-         return ExtractDTO.instantiate(dto);
+      try
+      {
+         return extractFuture.get();
       }
       catch (InterruptedException | ExecutionException e) {
          throw new DramaticExtractException("Unable to get extract [" + id + "]", e);
@@ -84,79 +110,93 @@ public class PsqlExtractRepo implements ExtractRepository
       extractDTO.id = id;
 
       EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
-      command.setCommitHook(dto -> updateExtract(dto, ChangeType.CREATED));
+      command.setCommitHook(dto ->
+      {
+         DramaticExtract extract = ExtractDTO.instantiate(dto);
+         UpdateEvent<DramaticExtract> evt = eventFactory.makeCreateEvent(id, extract);
+         boolean shouldExecute = listeners.before(evt);
+         ExecutorTask<String> task = makeUpdateTask(dto, CREATE_EXTRACT_SQL, shouldExecute);
+         DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
+         {
+            @Override
+            protected void onFinish(String id)
+            {
+               if (id != null)
+               {
+                  listeners.after(evt);
+               }
+            }
+         };
+         ObservableTaskWrapper<String> observableTask = new ObservableTaskWrapper<>(task, observer);
+         return executor.submit(observableTask);
+      });
       return command;
    }
 
    @Override
    public EditExtractCommand edit(String id) throws ExtractNotAvailableException, DramaticExtractException
    {
-
-      Future<ExtractDTO> extractFuture = executor.submit(makeSelectTask(id));
-      try {
-         ExtractDTO extractDTO = extractFuture.get();
-         EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
-         command.setCommitHook(dto -> updateExtract(dto, ChangeType.MODIFIED));
-         return command;
-      }
-      catch (InterruptedException | ExecutionException e) {
-         throw new DramaticExtractException("Unable to get extract [" + id + "]", e);
-      }
+      ExtractDTO originalDTO = getDTO(id);
+      EditExtractCommandImpl command = new EditExtractCommandImpl(originalDTO);
+      command.setCommitHook(updatedDTO ->
+      {
+         DramaticExtract original = ExtractDTO.instantiate(originalDTO);
+         DramaticExtract updated = ExtractDTO.instantiate(updatedDTO);
+         UpdateEvent<DramaticExtract> evt = eventFactory.makeUpdateEvent(id, original, updated);
+         boolean shouldExecute = listeners.before(evt);
+         ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL, shouldExecute);
+         DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
+         {
+            @Override
+            protected void onFinish(String id)
+            {
+               if (id != null)
+               {
+                  listeners.after(evt);
+               }
+            }
+         };
+         ObservableTaskWrapper<String> observableTask = new ObservableTaskWrapper<>(task, observer);
+         return executor.submit(observableTask);
+      });
+      return command;
    }
 
    @Override
    public void remove(String id) throws DramaticExtractException
    {
-      ExecutorTask<String> task = makeDeleteTask(id);
-      executor.submit(task);
+      DramaticExtract extract = null;
+      try
+      {
+         extract = get(id);
+      }
+      catch (DramaticExtractException | ExtractNotAvailableException e)
+      {
+         logger.log(Level.WARNING, "attempted to delete seemingly non-existant extract [" + id + "]", e);
+      }
+
+      UpdateEvent<DramaticExtract> evt = eventFactory.makeDeleteEvent(id, extract);
+      boolean shouldExecute = listeners.before(evt);
+      ExecutorTask<Boolean> task = makeDeleteTask(id, shouldExecute);
+      DataUpdateObserver<Boolean> observer = new DataUpdateObserverAdapter<Boolean>()
+      {
+         @Override
+         protected void onFinish(Boolean result)
+         {
+            if (result.booleanValue())
+            {
+               listeners.after(evt);
+            }
+         }
+      };
+      ObservableTaskWrapper<Boolean> observableTask = new ObservableTaskWrapper<Boolean>(task, observer);
+      executor.submit(observableTask);
    }
 
    @Override
    public AutoCloseable register(UpdateListener<DramaticExtract> ears)
    {
-      throw new UnsupportedOperationException();
-   }
-
-
-   /**
-    * Creates or updates the dramatic extract in the database.
-    *
-    * @param dto The extract to persist
-    * @param changeType The type of change to perform
-    * @return A future that resolves to the ID of the saved extract
-    * @throws DramaticExtractException
-    */
-   private Future<String> updateExtract(ExtractDTO dto, ChangeType changeType)
-   {
-      String sql = getUpdateSql(changeType);
-
-      String json;
-      try {
-         json = mapper.writeValueAsString(dto);
-      }
-      catch (JsonProcessingException e) {
-         throw new IllegalStateException("Unable to serialize extract into JSON string.", e);
-      }
-
-      ExecutorTask<String> task = makeUpdateTask(dto.id, json, sql);
-      return executor.submit(task);
-   }
-
-   /**
-    * @param changeType Type of change to perform.
-    * @return A parameterized SQL statement (as a string) to create or update an extract.
-    */
-   private String getUpdateSql(ChangeType changeType)
-   {
-      switch (changeType)
-      {
-         case MODIFIED:
-            return UPDATE_EXTRACT_SQL;
-         case CREATED:
-            return CREATE_EXTRACT_SQL;
-         default:
-            throw new IllegalArgumentException("Expected change type to be 'created' or 'modified', but received [" + changeType + "].");
-      }
+      return listeners.register(ears);
    }
 
    /**
@@ -181,7 +221,17 @@ public class PsqlExtractRepo implements ExtractRepository
                }
 
                PGobject pgo = (PGobject)rs.getObject(SQL_SELECT_COLUMN_EXTRACT);
-               return parseJson(pgo.toString(), mapper);
+               String json = pgo.toString();
+
+               try
+               {
+                  return mapper.readValue(json, ExtractDTO.class);
+               }
+               catch (IOException e)
+               {
+                  // NOTE: possible data leak. If this exception is propagated to someone who isn't authorized to see this record...
+                  throw new IllegalStateException("Cannot parse person from JSON:\n" + json, e);
+               }
             }
          }
       };
@@ -195,13 +245,28 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param sql The parameterized SQL create or update statement to execute
     * @return An executor task that resolves to the ID of the extract when saved.
     */
-   private ExecutorTask<String> makeUpdateTask(String id, String json, String sql)
+   private ExecutorTask<String> makeUpdateTask(ExtractDTO dto, String sql, boolean shouldExecute)
    {
+      String json;
+      try
+      {
+         json = mapper.writeValueAsString(dto);
+      }
+      catch (JsonProcessingException e)
+      {
+         throw new IllegalStateException("Unable to serialize extract into JSON string.", e);
+      }
+
       return (conn) ->
       {
+         if (!shouldExecute)
+         {
+            return null;
+         }
+
          try (PreparedStatement ps = conn.prepareStatement(sql))
          {
-            ps.setString(SQL_UPDATE_PARAM_ID, id);
+            ps.setString(SQL_UPDATE_PARAM_ID, dto.id);
 
             PGobject jsonObject = new PGobject();
             jsonObject.setType("json");
@@ -214,11 +279,11 @@ public class PsqlExtractRepo implements ExtractRepository
                throw new IllegalStateException("Failed to update extract. Unexpected number of rows updated [" + ct + "]");
             }
 
-            return id;
+            return dto.id;
          }
          catch (SQLException e)
          {
-            throw new IllegalStateException("Failed to update extract: [" + id + "]\n" + json, e);
+            throw new IllegalStateException("Failed to update extract: [" + dto.id + "]\n" + json, e);
          }
       };
    }
@@ -229,10 +294,15 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param id The ID of the extract to delete
     * @return An executor task that resolves to the ID of the extract when removed.
     */
-   private ExecutorTask<String> makeDeleteTask(String id)
+   private ExecutorTask<Boolean> makeDeleteTask(String id, boolean shouldExecute)
    {
       return (conn) ->
       {
+         if (!shouldExecute)
+         {
+            return Boolean.valueOf(false);
+         }
+
          try (PreparedStatement ps = conn.prepareCall(DELETE_EXTRACT_SQL))
          {
             ps.setString(SQL_DELETE_PARAM_ID, id);
@@ -240,10 +310,11 @@ public class PsqlExtractRepo implements ExtractRepository
             int ct = ps.executeUpdate();
             if (ct != 1)
             {
-               throw new IllegalStateException("Failed to deactivate extract [" + id + "]. Unexpected number of rows updated [" + ct + "]");
+               logger.log(Level.WARNING, "Failed to deactivate extract [" + id + "]. Unexpected number of rows updated [" + ct + "]");
+               return Boolean.valueOf(false);
             }
 
-            return id;
+            return Boolean.valueOf(true);
          }
          catch (SQLException e)
          {
@@ -251,25 +322,4 @@ public class PsqlExtractRepo implements ExtractRepository
          }
       };
    }
-
-   /**
-    * Deserializes a {@link DramaticExtract} from a JSON blob.
-    *
-    * @param json JSON Blob representing an {@link ExtractDTO}
-    * @param mapper ObjectMapper to use for deserialization
-    * @return
-    */
-   private static ExtractDTO parseJson(String json, ObjectMapper mapper)
-   {
-      try
-      {
-         return mapper.readValue(json, ExtractDTO.class);
-      }
-      catch (IOException je)
-      {
-         // NOTE: possible data leak. If this exception is propagated to someone who isn't authorized to see this record...
-         throw new IllegalStateException("Cannot parse person from JSON:\n" + json, je);
-      }
-   }
-
 }
