@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" dispose="dispose" name="edu.tamu.tcat.dex.extracts.search">
+   <implementation class="edu.tamu.tcat.trc.extract.search.solr.DramaticExtractsSearchService"/>
+   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository" name="ExtractRepository" policy="static"/>
+   <reference bind="setConfig" cardinality="1..1" interface="edu.tamu.tcat.osgi.config.ConfigurationProperties" name="ConfigurationProperties" policy="static"/>
+   <service>
+      <provide interface="edu.tamu.tcat.trc.extract.search.ExtractSearchService"/>
+   </service>
+   <reference bind="setExtractManipulationUtil" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil" name="ExtractManipulationUtil" policy="static"/>
+</scr:component>
