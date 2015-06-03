@@ -1,5 +1,7 @@
 package edu.tamu.tcat.dex.rest;
 
+import java.util.Objects;
+
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -22,6 +24,11 @@ public class ManuscriptsResource
    public void setRepo(WorkRepository repo)
    {
       this.repo = repo;
+   }
+
+   public void activate()
+   {
+      Objects.requireNonNull(repo, "No works repository provided.");
    }
 
    @GET
