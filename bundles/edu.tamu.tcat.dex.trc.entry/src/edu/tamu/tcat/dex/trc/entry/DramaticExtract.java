@@ -23,10 +23,10 @@ public interface DramaticExtract
    String getAuthor();
 
    /**
-    * @return The ID of the bibliographic entry for the manuscript this extract was
+    * @return A reference to the bibliographic entry for the manuscript this extract was
     *       compiled in.
     */
-   String getManuscriptId();
+   ManuscriptRef getManuscriptRef();
 
    /**
     * @return The URI of the bibliographic entry for the play or other source this
@@ -35,10 +35,10 @@ public interface DramaticExtract
    SourceRef getSource();
 
    /**
-    * @return A set of IDs for the biographical entries corresponding to the characters
+    * @return A set of references for the biographical entries corresponding to the characters
     *       who spoke the lines recorded in this extract.
     */
-   Set<String> getSpeakerIds();
+   Set<SpeakerRef> getSpeakerRefs();
 
    /**
     * @return The TEI encoded transcription of this extract as defined by the project

@@ -25,6 +25,11 @@ public interface EditExtractCommand
    void setManuscriptId(String manuscriptId);
 
    /**
+    * @param manuscriptTitle Title of the manuscript to which this extract belongs
+    */
+   void setManuscriptTitle(String manuscriptTitle);
+
+   /**
     * @param sourceId ID of the bibliographic entry (e.g. play) from which this extract was taken
     */
    void setSourceId(String sourceId);
@@ -39,7 +44,7 @@ public interface EditExtractCommand
     * @param speakers A set of URIs corresponding to the characters who spoke the lines
     *       recorded in this extract
     */
-   void setSpeakerIds(Set<String> speakerIds);
+   void setSpeakers(Set<Pair<String, String>> speakers);
 
    /**
     * @param teiContent An XML Document representing the original TEI source of this extract

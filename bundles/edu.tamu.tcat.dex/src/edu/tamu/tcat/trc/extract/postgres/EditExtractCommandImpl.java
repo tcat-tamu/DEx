@@ -2,12 +2,14 @@ package edu.tamu.tcat.trc.extract.postgres;
 
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -19,6 +21,8 @@ import org.w3c.dom.Document;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
+import edu.tamu.tcat.dex.trc.entry.Pair;
+import edu.tamu.tcat.trc.extract.dto.AnchorDTO;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class EditExtractCommandImpl implements EditExtractCommand
@@ -47,11 +51,17 @@ public class EditExtractCommandImpl implements EditExtractCommand
       ExtractDTO dto = ExtractDTO.create(extract);
 
       setAuthor(dto.author);
-      setManuscriptId(dto.manuscriptId);
+      setManuscriptId(dto.manuscript == null ? null : dto.manuscript.id);
+      setManuscriptTitle(dto.manuscript == null ? null : dto.manuscript.title);
       setSourceId(dto.source);
       setSourceRef(dto.sourceRef);
       setTEIContent(dto.teiContent);
-      setSpeakerIds(dto.speakerIds);
+
+      // speedup by not using converting to API types just to convert back
+      this.dto.speakers = Collections.unmodifiableSet(new HashSet<>(dto.speakers));
+//      setSpeakers(dto.speakers.parallelStream()
+//            .map(anchor -> Pair.of(anchor.id, anchor.title))
+//            .collect(Collectors.toSet()));
    }
 
    @Override
@@ -63,7 +73,13 @@ public class EditExtractCommandImpl implements EditExtractCommand
    @Override
    public void setManuscriptId(String manuscriptId)
    {
-      dto.manuscriptId = manuscriptId;
+      dto.manuscript.id = manuscriptId;
+   }
+
+   @Override
+   public void setManuscriptTitle(String manuscriptTitle)
+   {
+      dto.manuscript.title = manuscriptTitle;
    }
 
    @Override
@@ -79,9 +95,11 @@ public class EditExtractCommandImpl implements EditExtractCommand
    }
 
    @Override
-   public void setSpeakerIds(Set<String> speakers)
+   public void setSpeakers(Set<Pair<String, String>> speakers)
    {
-      dto.speakerIds = Collections.unmodifiableSet(speakers);
+      dto.speakers = speakers.parallelStream()
+            .map(pair -> AnchorDTO.create(pair.first, pair.second))
+            .collect(Collectors.toSet());
    }
 
    @Override

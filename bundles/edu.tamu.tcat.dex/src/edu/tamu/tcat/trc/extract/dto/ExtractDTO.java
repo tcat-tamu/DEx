@@ -2,11 +2,11 @@ package edu.tamu.tcat.trc.extract.dto;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,7 +19,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.dex.trc.entry.ManuscriptRef;
 import edu.tamu.tcat.dex.trc.entry.SourceRef;
+import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
 
 public class ExtractDTO
 {
@@ -27,10 +29,10 @@ public class ExtractDTO
 
    public String id;
    public String author;
-   public String manuscriptId;
+   public AnchorDTO manuscript;
    public String source;
    public String sourceRef;
-   public Set<String> speakerIds = new HashSet<>();
+   public Set<AnchorDTO> speakers = new HashSet<>();
    public String teiContent;
 
    /**
@@ -44,13 +46,31 @@ public class ExtractDTO
       DramaticExtractImpl extract = new DramaticExtractImpl();
       extract.id = dto.id;
       extract.author = dto.author;
-      extract.manuscriptId = dto.manuscriptId;
+
+      if (dto.manuscript != null)
+      {
+         extract.manuscript = new ManuscriptRef()
+         {
+            @Override
+            public String getId()
+            {
+               return dto.manuscript.id;
+            }
+
+            @Override
+            public String getDisplayTitle()
+            {
+               return dto.manuscript.title;
+            }
+         };
+      }
+
       extract.source = new SourceRef()
       {
          @Override
          public String getId()
          {
-            return dto.id;
+            return dto.source;
          }
 
          @Override
@@ -60,7 +80,28 @@ public class ExtractDTO
          }
       };
 
-      extract.speakers = Collections.unmodifiableSet(dto.speakerIds);
+      extract.speakers = dto.speakers.parallelStream()
+            .map(anchor ->
+            {
+               SpeakerRef ref = new SpeakerRef()
+               {
+
+                  @Override
+                  public String getId()
+                  {
+                     return anchor.id;
+                  }
+
+                  @Override
+                  public String getDisplayName()
+                  {
+                     return anchor.title;
+                  }
+               };
+
+               return ref;
+            })
+            .collect(Collectors.toSet());
 
       try
       {
@@ -83,13 +124,17 @@ public class ExtractDTO
 
       dto.id = extract.getId();
       dto.author = extract.getAuthor();
-      dto.manuscriptId = extract.getManuscriptId();
+
+      ManuscriptRef mRef = extract.getManuscriptRef();
+      dto.manuscript = AnchorDTO.create(mRef.getId(), mRef.getDisplayTitle());
 
       SourceRef sourceRef = extract.getSource();
       dto.source = sourceRef == null ? null : sourceRef.getId();
       dto.sourceRef = sourceRef == null ? null : sourceRef.getLineReference();
 
-      dto.speakerIds = Collections.unmodifiableSet(extract.getSpeakerIds());
+      dto.speakers = extract.getSpeakerRefs().parallelStream()
+            .map(ref -> AnchorDTO.create(ref.getId(), ref.getDisplayName()))
+            .collect(Collectors.toSet());
 
       try
       {
@@ -113,9 +158,9 @@ public class ExtractDTO
    {
       private String id;
       private String author;
-      private String manuscriptId;
+      private ManuscriptRef manuscript;
       private SourceRef source;
-      private Set<String> speakers;
+      private Set<SpeakerRef> speakers;
       private Document teiDoc;
 
 
@@ -132,9 +177,9 @@ public class ExtractDTO
       }
 
       @Override
-      public String getManuscriptId()
+      public ManuscriptRef getManuscriptRef()
       {
-         return manuscriptId;
+         return manuscript;
       }
 
       @Override
@@ -144,7 +189,7 @@ public class ExtractDTO
       }
 
       @Override
-      public Set<String> getSpeakerIds()
+      public Set<SpeakerRef> getSpeakerRefs()
       {
          return speakers;
       }
@@ -154,6 +199,5 @@ public class ExtractDTO
       {
          return teiDoc;
       }
-
    }
 }

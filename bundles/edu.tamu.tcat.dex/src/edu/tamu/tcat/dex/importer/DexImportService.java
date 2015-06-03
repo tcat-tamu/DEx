@@ -33,6 +33,7 @@ import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.dto.PersonNameDTO;
 import edu.tamu.tcat.trc.entries.types.bio.repo.EditPersonCommand;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
+import edu.tamu.tcat.trc.extract.dto.AnchorDTO;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class DexImportService
@@ -90,7 +91,25 @@ public class DexImportService
 
       for (ExtractImportDTO extract : manuscript.extracts)
       {
-         extract.manuscriptId = manuscript.id;
+         extract.manuscript = AnchorDTO.create(manuscript.id, manuscript.title);
+
+         extract.speakers = extract.speakerIds.parallelStream()
+               .map(id ->
+               {
+                  String name = null;
+                  try
+                  {
+                     name = peopleRepo.get(id).getCanonicalName().getDisplayName();
+                  }
+                  catch (Exception e)
+                  {
+                     logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "].", e);
+                  }
+
+                  return AnchorDTO.create(id, name);
+               })
+               .filter(Objects::nonNull)
+               .collect(Collectors.toSet());
 
          try
          {
