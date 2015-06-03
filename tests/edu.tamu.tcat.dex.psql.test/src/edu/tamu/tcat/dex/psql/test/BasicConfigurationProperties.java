@@ -29,7 +29,7 @@ class BasicConfigurationProperties implements ConfigurationProperties
    {
       if (!properties.containsKey(name))
       {
-         throw new IllegalStateException("No property with name {" + name + "}");
+         throw new IllegalStateException("No property with display {" + name + "}");
       }
 
       Object property = properties.get(name);
