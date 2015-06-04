@@ -1,0 +1,9 @@
+CREATE TABLE works (
+    id VARCHAR(255) NOT NULL,
+    work JSON,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified TIMESTAMP,
+
+    CONSTRAINT works_pkey PRIMARY KEY (id)
+);

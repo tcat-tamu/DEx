@@ -73,6 +73,17 @@ public class ServiceHelper
       return dataSourceProvider;
    }
 
+   public static IdFactory getIdFactory()
+   {
+      if (idFactory == null)
+      {
+         idFactory = context -> UUID.randomUUID().toString();
+      }
+
+      Objects.requireNonNull(idFactory, "id factory service not set");
+      return idFactory;
+   }
+
    public static SqlExecutor getSqlExecutor()
    {
       if (sqlExecutor == null)
@@ -89,6 +100,51 @@ public class ServiceHelper
 
       Objects.requireNonNull(sqlExecutor, "sql executor service not set");
       return sqlExecutor;
+   }
+
+   public static PeopleRepository getPeopleRepository()
+   {
+      if (peopleRepository == null)
+      {
+         PsqlPeopleRepo repo = new PsqlPeopleRepo();
+
+         SqlExecutor executor = getSqlExecutor();
+         repo.setDatabaseExecutor(executor);
+
+         IdFactory idFactory = getIdFactory();
+         repo.setIdFactory(idFactory);
+
+         repo.activate();
+
+         peopleRepository = repo;
+      }
+
+      Objects.requireNonNull(peopleRepository, "people repository service not set");
+      return peopleRepository;
+   }
+
+   public static WorkRepository getWorkRepository()
+   {
+      if (workRepository == null)
+      {
+         PsqlWorkRepo repo = new PsqlWorkRepo();
+
+         SqlExecutor executor = getSqlExecutor();
+         repo.setDatabaseExecutor(executor);
+
+         IdFactory factory = getIdFactory();
+         repo.setIdFactory(factory);
+
+         PeopleRepository peopleRepo = getPeopleRepository();
+         repo.setPeopleRepo(peopleRepo);
+
+         repo.activate();
+
+         workRepository = repo;
+      }
+
+      Objects.requireNonNull(workRepository, "works repository service not set");
+      return workRepository;
    }
 
    public static ExtractRepository getExtractRepository()
@@ -147,5 +203,27 @@ public class ServiceHelper
 
       Objects.requireNonNull(extractSearchService, "extract search service not set");
       return extractSearchService;
+   }
+
+   public static DexImportService getImportService()
+   {
+      if (importService == null)
+      {
+         importService = new DexImportService();
+
+         ExtractRepository extractsRepo = getExtractRepository();
+         importService.setExtractRepository(extractsRepo);
+
+         PeopleRepository peopleRepo = getPeopleRepository();
+         importService.setPeopleRepository(peopleRepo);
+
+         WorkRepository workRepo = getWorkRepository();
+         importService.setWorksRepository(workRepo);
+
+         importService.activate();
+      }
+
+      Objects.requireNonNull(importService, "import service not set");
+      return importService;
    }
 }
