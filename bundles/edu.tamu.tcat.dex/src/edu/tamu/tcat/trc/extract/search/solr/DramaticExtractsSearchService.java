@@ -17,6 +17,7 @@ import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.search.SearchException;
+import edu.tamu.tcat.trc.entries.search.solr.impl.TrcQueryBuilder;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 
@@ -95,7 +96,8 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    @Override
    public ExtractQueryCommand createQueryCommand() throws SearchException
    {
-      return null;
+      TrcQueryBuilder qb = new TrcQueryBuilder(solrServer, new ExtractSolrConfig());
+      return new ExtractSolrQueryCommand(solrServer, qb);
    }
 
    /**

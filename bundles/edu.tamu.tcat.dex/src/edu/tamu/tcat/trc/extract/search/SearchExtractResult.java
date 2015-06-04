@@ -2,10 +2,10 @@ package edu.tamu.tcat.trc.extract.search;
 
 import java.util.List;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
 
 /**
- * The result set of {@link DramaticExtract}s matched by an {@link ExtractQueryCommand}.
+ * The result set of {@link ExtractSearchProxy}'s matched by an {@link ExtractQueryCommand}.
  *
  * A result set has no functionality other than retrieving matched results from an executed query.
  * It should be considered "stale" as soon as it is acquired due to the inherently unstable nature
@@ -23,7 +23,7 @@ public interface SearchExtractResult
    /**
     * @return The extracts that match the current search.
     */
-   List<DramaticExtract> get();
+   List<ExtractSearchProxy> get();
 
    // TODO: add support for retrieving facet information
 }

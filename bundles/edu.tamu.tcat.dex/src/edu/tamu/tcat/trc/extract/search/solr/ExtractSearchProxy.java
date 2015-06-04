@@ -56,7 +56,6 @@ public class ExtractSearchProxy
          throw new SearchException("Unable to transform TEI for search proxy", e);
       }
 
-      // TODO: this does not store speaker names yet
       extract.getSpeakerRefs().parallelStream()
          .map(ref -> new Anchor(ref.getId(), ref.getDisplayName()))
          .forEach(proxy.speakers::add);
