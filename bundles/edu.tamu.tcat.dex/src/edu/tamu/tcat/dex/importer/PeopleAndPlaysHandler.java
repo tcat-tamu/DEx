@@ -171,6 +171,11 @@ class PeopleAndPlaysHandler extends DefaultHandler
             objectStack.push(character);
          }
       }
+      else if (qName.equals("persName") && "person".equals(getParentElement()))
+      {
+         StringBuilder nameBuilder = new StringBuilder();
+         objectStack.push(nameBuilder);
+      }
       else if (qName.equals("ptr"))
       {
          // person[@role="character"]/notes/ptr/@target contains the ID of the play that the character appears in
@@ -211,6 +216,21 @@ class PeopleAndPlaysHandler extends DefaultHandler
       else if (qName.equals("person"))
       {
          objectStack.pop();
+      }
+      else if (qName.equals("persName") && getCurrentElement().equals("person"))
+      {
+         String name = objectStack.pop().toString();
+
+         if (objectStack.peek() instanceof PlaywrightImportDTO)
+         {
+            PlaywrightImportDTO playwright = (PlaywrightImportDTO)objectStack.peek();
+            playwright.names.add(name);
+         }
+         else if(objectStack.peek() instanceof CharacterImportDTO)
+         {
+            CharacterImportDTO character = (CharacterImportDTO)objectStack.peek();
+            character.names.add(name);
+         }
       }
       else if (getCurrentElement() != null && getCurrentElement().equals("bibl"))
       {
@@ -285,16 +305,8 @@ class PeopleAndPlaysHandler extends DefaultHandler
       {
          if (getCurrentElement().equals("persName"))
          {
-            if (objectStack.peek() instanceof PlaywrightImportDTO)
-            {
-               PlaywrightImportDTO playwright = (PlaywrightImportDTO)objectStack.peek();
-               playwright.names.add(value);
-            }
-            else if(objectStack.peek() instanceof CharacterImportDTO)
-            {
-               CharacterImportDTO character = (CharacterImportDTO)objectStack.peek();
-               character.names.add(value);
-            }
+            StringBuilder nameBuilder = (StringBuilder)objectStack.peek();
+            nameBuilder.append(value);
          }
       }
    }

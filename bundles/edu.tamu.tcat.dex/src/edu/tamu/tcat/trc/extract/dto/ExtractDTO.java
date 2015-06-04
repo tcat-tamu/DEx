@@ -29,7 +29,7 @@ public class ExtractDTO
 
    public String id;
    public String author;
-   public AnchorDTO manuscript;
+   public AnchorDTO manuscript = new AnchorDTO();
    public String source;
    public String sourceRef;
    public Set<AnchorDTO> speakers = new HashSet<>();

@@ -2,6 +2,7 @@ package edu.tamu.tcat.trc.extract.dto;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class ManuscriptDTO
       titleDTO.title = titleStr;
       titleDTO.type = "Canonical";
       Title title = TitleDV.instantiate(titleDTO);
-      Set<Title> titleSet = Collections.singleton(title);
+      Set<Title> titleSet = new HashSet<>();
 
       return new TitleDefinition()
       {
@@ -147,7 +148,26 @@ public class ManuscriptDTO
       @Override
       public AuthorList getOtherAuthors()
       {
-         return null;
+         return new AuthorList()
+         {
+            @Override
+            public Iterator<AuthorReference> iterator()
+            {
+               return Collections.<AuthorReference>emptyList().iterator();
+            }
+
+            @Override
+            public int size()
+            {
+               return 0;
+            }
+
+            @Override
+            public AuthorReference get(int ix) throws IndexOutOfBoundsException
+            {
+               throw new IndexOutOfBoundsException("tried to get element of empty Author List");
+            }
+         };
       }
 
       @Override
@@ -159,7 +179,7 @@ public class ManuscriptDTO
       @Override
       public Collection<Edition> getEditions()
       {
-         return null;
+         return Collections.emptyList();
       }
 
       @Override

@@ -2,7 +2,6 @@ package edu.tamu.tcat.dex.importer;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -62,6 +61,8 @@ public class DexImportService
    public void activate()
    {
       Objects.requireNonNull(extractRepo, "No extract repository provided");
+      Objects.requireNonNull(peopleRepo, "No people repository provided");
+      Objects.requireNonNull(worksRepo, "No works repository provided");
    }
 
    public void dispose()
@@ -69,26 +70,29 @@ public class DexImportService
    }
 
 
-   public void importManuscriptTEI(String tei) throws DexImportException
+   public void importManuscriptTEI(String manuscriptId, Reader tei) throws DexImportException
    {
-      Reader teiReader = new StringReader(tei);
-
       ManuscriptImportDTO manuscript;
       try
       {
-         manuscript = ManuscriptParser.load(teiReader);
+         manuscript = ManuscriptParser.load(tei);
       }
       catch (IOException e)
       {
-         throw new IllegalStateException("IO Exception from StringReader!?", e);
+         throw new IllegalStateException("Unable to load TEI content", e);
       }
 
-      // TODO: set manuscript ID
+      manuscript.id = manuscriptId;
 
+      // save manuscript biblio entry
+      // TODO: use an "edit or create" method to edit an existing work by ID or create a work with
+      //       the given ID if it does not exist
       EditWorkCommand editManuscriptCommand = worksRepo.create(manuscript.id);
       Work manuscriptWork = ManuscriptImportDTO.instantiate(manuscript);
       editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
+      editManuscriptCommand.execute();
 
+      // save extracts
       for (ExtractImportDTO extract : manuscript.extracts)
       {
          extract.manuscript = AnchorDTO.create(manuscript.id, manuscript.title);
@@ -126,18 +130,16 @@ public class DexImportService
       }
    }
 
-   public void importPeopleAndPlays(String tei) throws DexImportException
+   public void importPeopleAndPlaysTEI(Reader tei) throws DexImportException
    {
-      Reader teiReader = new StringReader(tei);
-
       ImportResult importResult;
       try
       {
-         importResult = PeopleAndPlaysParser.load(teiReader);
+         importResult = PeopleAndPlaysParser.load(tei);
       }
       catch (IOException e)
       {
-         throw new IllegalStateException("IO Exception from StringReader!?", e);
+         throw new DexImportException("Unable to load TEI content", e);
       }
 
       for (PlaywrightImportDTO playwright : importResult.playwrights.values())
@@ -217,7 +219,9 @@ public class DexImportService
             editionMutator.setPublicationInfo(pubInfoDTO);
 
             // HACK: store link as summary
-            editionMutator.setSummary(edition.link.toString());
+            if (edition.link != null) {
+               editionMutator.setSummary(edition.link.toString());
+            }
          }
 
          editCommand.execute();
