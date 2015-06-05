@@ -37,6 +37,13 @@ public interface ExtractQueryCommand
     */
    void query(String basicQueryString) throws SearchException;
 
+   /**
+    * A shorthand method to query all extracts from the search index.
+    *
+    * @throws SearchException
+    */
+   void queryAll() throws SearchException;
+
    // TODO: add "query" and "filter" methods
 
    /**

@@ -35,7 +35,7 @@ public class ManuscriptsResource
    @Path("/")
    @Produces(MediaType.APPLICATION_JSON)
    public void browseAll(@DefaultValue("1") @QueryParam("page") int page,
-                         @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
+                         @DefaultValue("-1") @QueryParam("numResultsPerPage") int numResultsPerPage)
    {
       throw new UnsupportedOperationException("not yet implemented");
    }
@@ -46,7 +46,7 @@ public class ManuscriptsResource
    @Produces(MediaType.APPLICATION_JSON)
    public void search(@QueryParam("q") String query,
                       @DefaultValue("1") @QueryParam("page") int page,
-                      @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
+                      @DefaultValue("-1") @QueryParam("numResultsPerPage") int numResultsPerPage)
    {
       throw new UnsupportedOperationException("not yet implemented");
    }

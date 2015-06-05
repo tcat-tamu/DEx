@@ -5,4 +5,5 @@
       <provide interface="edu.tamu.tcat.dex.rest.ExtractsResource"/>
    </service>
    <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository" name="ExtractRepository" policy="static"/>
+   <reference bind="setSearchService" cardinality="1..1" interface="edu.tamu.tcat.trc.extract.search.ExtractSearchService" name="ExtractSearchService" policy="static"/>
 </scr:component>

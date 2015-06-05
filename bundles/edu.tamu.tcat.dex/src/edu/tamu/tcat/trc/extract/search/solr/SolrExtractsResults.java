@@ -9,12 +9,14 @@ public class SolrExtractsResults implements SearchExtractResult
 {
    private final ExtractQueryCommand command;
    private final List<ExtractSearchProxy> extracts;
+   private final long numFound;
 
 
-   public SolrExtractsResults(ExtractQueryCommand command, List<ExtractSearchProxy> extracts)
+   public SolrExtractsResults(ExtractQueryCommand command, List<ExtractSearchProxy> extracts, long numFound)
    {
       this.command = command;
       this.extracts = extracts;
+      this.numFound = numFound;
    }
 
    @Override
@@ -27,6 +29,12 @@ public class SolrExtractsResults implements SearchExtractResult
    public List<ExtractSearchProxy> get()
    {
       return extracts;
+   }
+
+   @Override
+   public long getNumFound()
+   {
+      return numFound;
    }
 
 }

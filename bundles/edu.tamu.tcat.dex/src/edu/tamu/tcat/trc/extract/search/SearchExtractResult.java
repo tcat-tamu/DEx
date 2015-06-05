@@ -25,5 +25,13 @@ public interface SearchExtractResult
     */
    List<ExtractSearchProxy> get();
 
+   /**
+    * Only the results that fall within the current window [offset .. offset + maxResults]
+    * are included in this data structure. This value allows clients to compute pagination values.
+    *
+    * @return the total number of results.
+    */
+   long getNumFound();
+
    // TODO: add support for retrieving facet information
 }

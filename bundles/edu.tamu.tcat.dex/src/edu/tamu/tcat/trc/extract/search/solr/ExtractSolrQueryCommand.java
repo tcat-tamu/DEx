@@ -38,8 +38,9 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
          QueryResponse response = solrServer.query(queryBuilder.get());
          SolrDocumentList results = response.getResults();
 
+         long totalFound = results.getNumFound();
          List<ExtractSearchProxy> extracts = queryBuilder.unpack(results, ExtractSolrConfig.SEARCH_PROXY);
-         return new SolrExtractsResults(this, extracts);
+         return new SolrExtractsResults(this, extracts, totalFound);
       }
       catch (SolrServerException e)
       {
@@ -53,6 +54,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       queryBuilder.basic(basicQueryString);
    }
 
+   @Override
    public void queryAll() throws SearchException
    {
       queryBuilder.basic("*:*");
@@ -76,7 +78,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    {
       if (count < 0)
       {
-         throw new IllegalArgumentException("Maximum number of results cannot be negative");
+         count = Integer.MAX_VALUE;
       }
 
       queryBuilder.max(count);

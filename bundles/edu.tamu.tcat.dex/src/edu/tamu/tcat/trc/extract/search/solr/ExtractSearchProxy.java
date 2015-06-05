@@ -17,10 +17,12 @@ public class ExtractSearchProxy
       public String id;
       public String display;
 
-      public Anchor(String id, String display)
+      public static Anchor create(String id, String display)
       {
-         this.id = id;
-         this.display = display;
+         Anchor a = new Anchor();
+         a.id = id;
+         a.display = display;
+         return a;
       }
    }
 
@@ -40,7 +42,7 @@ public class ExtractSearchProxy
       proxy.id = extract.getId();
 
       ManuscriptRef mRef = extract.getManuscriptRef();
-      proxy.manuscript = new Anchor(mRef.getId(), mRef.getDisplayTitle());
+      proxy.manuscript = Anchor.create(mRef.getId(), mRef.getDisplayTitle());
 
       SourceRef srcRef = extract.getSource();
       proxy.sourceId = srcRef.getId();
@@ -57,7 +59,7 @@ public class ExtractSearchProxy
       }
 
       extract.getSpeakerRefs().parallelStream()
-         .map(ref -> new Anchor(ref.getId(), ref.getDisplayName()))
+         .map(ref -> Anchor.create(ref.getId(), ref.getDisplayName()))
          .forEach(proxy.speakers::add);
 
       // TODO: set playwrights
