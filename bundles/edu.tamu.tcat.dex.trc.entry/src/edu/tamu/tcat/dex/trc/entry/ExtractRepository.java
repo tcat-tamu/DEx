@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.trc.entry;
 
+import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
 
 public interface ExtractRepository
@@ -18,5 +19,5 @@ public interface ExtractRepository
     * @param ears The listener to be added.
     * @return A registration handle that allows the listener to be removed.
     */
-   AutoCloseable register(UpdateListener<DramaticExtract> ears);
+   AutoCloseable register(UpdateListener<UpdateEvent> ears);
 }

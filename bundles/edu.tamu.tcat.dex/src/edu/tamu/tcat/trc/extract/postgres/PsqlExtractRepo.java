@@ -47,9 +47,9 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final int SQL_DELETE_PARAM_ID = 1;
 
    private SqlExecutor executor;
-   private EntryUpdateHelper<DramaticExtract> listeners;
+   private EntryUpdateHelper<UpdateEvent> listeners;
    private ObjectMapper mapper;
-   private BasicUpdateEventFactory<DramaticExtract> eventFactory;
+   private BaseUpdateEventFactory eventFactory;
 
 
 
@@ -66,7 +66,7 @@ public class PsqlExtractRepo implements ExtractRepository
    public void activate()
    {
       Objects.requireNonNull(executor, "No SQL Executor provided");
-      eventFactory = new BasicUpdateEventFactory<>();
+      eventFactory = new BaseUpdateEventFactory();
       listeners = new EntryUpdateHelper<>();
       mapper = new ObjectMapper();
    }
@@ -112,10 +112,9 @@ public class PsqlExtractRepo implements ExtractRepository
       EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
       command.setCommitHook(dto ->
       {
-         DramaticExtract extract = ExtractDTO.instantiate(dto);
-         UpdateEvent<DramaticExtract> evt = eventFactory.makeCreateEvent(id, extract);
-         boolean shouldExecute = listeners.before(evt);
-         ExecutorTask<String> task = makeUpdateTask(dto, CREATE_EXTRACT_SQL, shouldExecute);
+         // TODO: supply actor UUID to makeCreateEvent
+         UpdateEvent evt = eventFactory.makeCreateEvent(id, null);
+         ExecutorTask<String> task = makeUpdateTask(dto, CREATE_EXTRACT_SQL);
          DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
          {
             @Override
@@ -140,11 +139,9 @@ public class PsqlExtractRepo implements ExtractRepository
       EditExtractCommandImpl command = new EditExtractCommandImpl(originalDTO);
       command.setCommitHook(updatedDTO ->
       {
-         DramaticExtract original = ExtractDTO.instantiate(originalDTO);
-         DramaticExtract updated = ExtractDTO.instantiate(updatedDTO);
-         UpdateEvent<DramaticExtract> evt = eventFactory.makeUpdateEvent(id, original, updated);
-         boolean shouldExecute = listeners.before(evt);
-         ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL, shouldExecute);
+         // TODO: supply actor UUID to makeUpdateEvent
+         UpdateEvent evt = eventFactory.makeUpdateEvent(id, null);
+         ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL);
          DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
          {
             @Override
@@ -165,19 +162,9 @@ public class PsqlExtractRepo implements ExtractRepository
    @Override
    public void remove(String id) throws DramaticExtractException
    {
-      DramaticExtract extract = null;
-      try
-      {
-         extract = get(id);
-      }
-      catch (DramaticExtractException | ExtractNotAvailableException e)
-      {
-         logger.log(Level.WARNING, "attempted to delete seemingly non-existant extract [" + id + "]", e);
-      }
-
-      UpdateEvent<DramaticExtract> evt = eventFactory.makeDeleteEvent(id, extract);
-      boolean shouldExecute = listeners.before(evt);
-      ExecutorTask<Boolean> task = makeDeleteTask(id, shouldExecute);
+      // TODO: supply actor UUID to makeDeleteEvent
+      UpdateEvent evt = eventFactory.makeDeleteEvent(id, null);
+      ExecutorTask<Boolean> task = makeDeleteTask(id);
       DataUpdateObserver<Boolean> observer = new DataUpdateObserverAdapter<Boolean>()
       {
          @Override
@@ -194,7 +181,7 @@ public class PsqlExtractRepo implements ExtractRepository
    }
 
    @Override
-   public AutoCloseable register(UpdateListener<DramaticExtract> ears)
+   public AutoCloseable register(UpdateListener<UpdateEvent> ears)
    {
       return listeners.register(ears);
    }
@@ -245,7 +232,7 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param sql The parameterized SQL create or update statement to execute
     * @return An executor task that resolves to the ID of the extract when saved.
     */
-   private ExecutorTask<String> makeUpdateTask(ExtractDTO dto, String sql, boolean shouldExecute)
+   private ExecutorTask<String> makeUpdateTask(ExtractDTO dto, String sql)
    {
       String json;
       try
@@ -259,11 +246,6 @@ public class PsqlExtractRepo implements ExtractRepository
 
       return (conn) ->
       {
-         if (!shouldExecute)
-         {
-            return null;
-         }
-
          try (PreparedStatement ps = conn.prepareStatement(sql))
          {
             ps.setString(SQL_UPDATE_PARAM_ID, dto.id);
@@ -294,15 +276,10 @@ public class PsqlExtractRepo implements ExtractRepository
     * @param id The ID of the extract to delete
     * @return An executor task that resolves to the ID of the extract when removed.
     */
-   private ExecutorTask<Boolean> makeDeleteTask(String id, boolean shouldExecute)
+   private ExecutorTask<Boolean> makeDeleteTask(String id)
    {
       return (conn) ->
       {
-         if (!shouldExecute)
-         {
-            return Boolean.valueOf(false);
-         }
-
          try (PreparedStatement ps = conn.prepareCall(DELETE_EXTRACT_SQL))
          {
             ps.setString(SQL_DELETE_PARAM_ID, id);

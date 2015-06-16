@@ -12,6 +12,8 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
@@ -105,9 +107,9 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     *
     * @param evt
     */
-   private void handleUpdateEvent(UpdateEvent<DramaticExtract> evt)
+   private void handleUpdateEvent(UpdateEvent evt)
    {
-      switch (evt.getAction())
+      switch (evt.getUpdateAction())
       {
          case CREATE:
             onCreate(evt);
@@ -126,24 +128,29 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     *
     * @param evt
     */
-   protected void onCreate(UpdateEvent<DramaticExtract> evt)
+   protected void onCreate(UpdateEvent evt)
    {
-      DramaticExtract extract = evt.get();
-
-      try
-      {
+      String id = evt.getEntityId();
+      try {
+         DramaticExtract extract = repo.get(id);
          ExtractDocument extractDocument = ExtractDocument.create(extract, extractManipulationUtil);
          SolrInputDocument solrDocument = extractDocument.getDocument();
          solrServer.add(solrDocument);
          solrServer.commit();
       }
+      catch (ExtractNotAvailableException e) {
+         logger.log(Level.SEVERE, "Failed to retrieve seemingly non-existant extract [" + id + "] on create event.", e);
+      }
+      catch (DramaticExtractException e) {
+         logger.log(Level.SEVERE, "Failed to retrieve extract [" + id + "] on create event.", e);
+      }
       catch (SearchException e)
       {
-         logger.log(Level.SEVERE, "Failed to create extract search document.", e);
+         logger.log(Level.SEVERE, "Failed to create extract search document for extract [" + id + "].", e);
       }
       catch (SolrServerException | IOException e)
       {
-         logger.log(Level.SEVERE, "Failed to commit extract [" + extract.getId() + "] to the Solr server.", e);
+         logger.log(Level.SEVERE, "Failed to commit extract [" + id + "] to the Solr server.", e);
       }
    }
 
@@ -152,7 +159,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     *
     * @param evt
     */
-   protected void onUpdate(UpdateEvent<DramaticExtract> evt)
+   protected void onUpdate(UpdateEvent evt)
    {
       onCreate(evt);
    }
@@ -161,7 +168,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     * Called when an extract is removed from the database
     * @param evt
     */
-   protected void onDelete(UpdateEvent<DramaticExtract> evt)
+   protected void onDelete(UpdateEvent evt)
    {
       String id = evt.getEntityId();
 

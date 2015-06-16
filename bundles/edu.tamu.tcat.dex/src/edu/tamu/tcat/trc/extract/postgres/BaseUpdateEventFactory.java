@@ -1,6 +1,9 @@
 package edu.tamu.tcat.trc.extract.postgres;
 
-import edu.tamu.tcat.trc.entries.notification.BasicUpdateEvent;
+import java.time.Instant;
+import java.util.UUID;
+
+import edu.tamu.tcat.trc.entries.notification.BaseUpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent.UpdateAction;
 
@@ -11,42 +14,38 @@ import edu.tamu.tcat.trc.entries.notification.UpdateEvent.UpdateAction;
  *
  * @param <T> The type of object that will be referenced in the constructed {@link UpdateEvent} instances
  */
-public class BasicUpdateEventFactory<T>
+public class BaseUpdateEventFactory
 {
    /**
     * Creates an update event to notify listeners of an object's creation.
     *
     * @param id
-    * @param entity
     * @return
     */
-   public UpdateEvent<T> makeCreateEvent(String id, T entity)
+   public UpdateEvent makeCreateEvent(String id, UUID actor)
    {
-      return new BasicUpdateEvent<>(id, UpdateAction.CREATE, () -> null, () -> entity);
+      return new BaseUpdateEvent(id, UpdateAction.CREATE, actor, Instant.now());
    }
 
    /**
     * Creates an update event to notify listeners of an object's modification.
     *
     * @param id
-    * @param original The original entity prior to any updates.
-    * @param updated The entity in its current, updated state.
     * @return
     */
-   public UpdateEvent<T> makeUpdateEvent(String id, T original, T updated)
+   public UpdateEvent makeUpdateEvent(String id, UUID actor)
    {
-      return new BasicUpdateEvent<>(id, UpdateAction.UPDATE, () -> original, () -> updated);
+      return new BaseUpdateEvent(id, UpdateAction.UPDATE, actor, Instant.now());
    }
 
    /**
     * Creates an update event to notify listeners of an object's deletion.
     *
     * @param id
-    * @param entity The entity that was deleted. This parameter may be null.
     * @return
     */
-   public UpdateEvent<T> makeDeleteEvent(String id, T entity)
+   public UpdateEvent makeDeleteEvent(String id, UUID actor)
    {
-      return new BasicUpdateEvent<>(id, UpdateAction.DELETE, () -> entity, () -> null);
+      return new BaseUpdateEvent(id, UpdateAction.DELETE, actor, Instant.now());
    }
 }
