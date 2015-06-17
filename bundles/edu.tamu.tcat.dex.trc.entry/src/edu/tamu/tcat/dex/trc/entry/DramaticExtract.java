@@ -41,6 +41,12 @@ public interface DramaticExtract
    Set<SpeakerRef> getSpeakerRefs();
 
    /**
+    * @return A set of references for the biographical entries corresponding to the authors of the
+    *       source bibliographic entry referenced by this extract.
+    */
+   Set<PlaywrightRef> getPlaywrightRefs();
+
+   /**
     * @return The TEI encoded transcription of this extract as defined by the project
     *       guidelines.
     */

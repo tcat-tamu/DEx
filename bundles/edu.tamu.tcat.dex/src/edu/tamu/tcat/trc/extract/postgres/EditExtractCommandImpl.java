@@ -60,6 +60,8 @@ public class EditExtractCommandImpl implements EditExtractCommand
 
       // speedup by not using converting to API types just to convert back
       this.dto.speakers = Collections.unmodifiableSet(new HashSet<>(dto.speakers));
+      this.dto.playwrights = Collections.unmodifiableSet(new HashSet<>(dto.playwrights));
+
 //      setSpeakers(dto.speakers.parallelStream()
 //            .map(anchor -> Pair.of(anchor.id, anchor.title))
 //            .collect(Collectors.toSet()));
@@ -105,6 +107,14 @@ public class EditExtractCommandImpl implements EditExtractCommand
    public void setSpeakers(Set<Pair<String, String>> speakers)
    {
       dto.speakers = speakers.parallelStream()
+            .map(pair -> ReferenceDTO.create(pair.first, pair.second))
+            .collect(Collectors.toSet());
+   }
+
+   @Override
+   public void setPlaywrights(Set<Pair<String, String>> playwrights)
+   {
+      dto.playwrights = playwrights.parallelStream()
             .map(pair -> ReferenceDTO.create(pair.first, pair.second))
             .collect(Collectors.toSet());
    }

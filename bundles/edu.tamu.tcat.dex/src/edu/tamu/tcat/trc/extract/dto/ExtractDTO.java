@@ -20,6 +20,7 @@ import org.xml.sax.InputSource;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.ManuscriptRef;
+import edu.tamu.tcat.dex.trc.entry.PlaywrightRef;
 import edu.tamu.tcat.dex.trc.entry.SourceRef;
 import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
 
@@ -33,6 +34,7 @@ public class ExtractDTO
    public ReferenceDTO source = new ReferenceDTO();
    public String sourceRef;
    public Set<ReferenceDTO> speakers = new HashSet<>();
+   public Set<ReferenceDTO> playwrights = new HashSet<>();
    public String teiContent;
 
    /**
@@ -109,6 +111,28 @@ public class ExtractDTO
             })
             .collect(Collectors.toSet());
 
+      extract.playwrights = dto.playwrights.parallelStream()
+            .map(refDTO ->
+            {
+               PlaywrightRef ref = new PlaywrightRef()
+               {
+                  @Override
+                  public String getId()
+                  {
+                     return refDTO.id;
+                  }
+
+                  @Override
+                  public String getDisplayName()
+                  {
+                     return refDTO.title;
+                  }
+               };
+
+               return ref;
+            })
+            .collect(Collectors.toSet());
+
       try
       {
          StringReader reader = new StringReader(dto.teiContent);
@@ -142,6 +166,10 @@ public class ExtractDTO
             .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
             .collect(Collectors.toSet());
 
+      dto.playwrights = extract.getPlaywrightRefs().parallelStream()
+            .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
+            .collect(Collectors.toSet());
+
       try
       {
          Document teiContent = extract.getTEIContent();
@@ -167,6 +195,7 @@ public class ExtractDTO
       private ManuscriptRef manuscript;
       private SourceRef source;
       private Set<SpeakerRef> speakers;
+      private Set<PlaywrightRef> playwrights;
       private Document teiDoc;
 
 
@@ -198,6 +227,12 @@ public class ExtractDTO
       public Set<SpeakerRef> getSpeakerRefs()
       {
          return speakers;
+      }
+
+      @Override
+      public Set<PlaywrightRef> getPlaywrightRefs()
+      {
+         return playwrights;
       }
 
       @Override

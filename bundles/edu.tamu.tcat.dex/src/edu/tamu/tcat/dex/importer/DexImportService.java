@@ -22,6 +22,7 @@ import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
+import edu.tamu.tcat.trc.entries.types.bib.AuthorReference;
 import edu.tamu.tcat.trc.entries.types.bib.Work;
 import edu.tamu.tcat.trc.entries.types.bib.dto.AuthorRefDV;
 import edu.tamu.tcat.trc.entries.types.bib.dto.PublicationInfoDV;
@@ -123,6 +124,14 @@ public class DexImportService
             // resolve extract source and set source display title on extract
             Work source = worksRepo.getWork(extract.sourceId);
             sourceTitle = source.getTitle().getCanonicalTitle().getFullTitle();
+
+            // set playwrights on extract
+            for (AuthorReference aRef : source.getAuthors()) {
+               String firstName = aRef.getFirstName();
+               String lastName = aRef.getLastName();
+               String name = (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
+               extract.playwrights.add(ReferenceDTO.create(aRef.getId(), name.trim()));
+            }
          }
          catch (NoSuchCatalogRecordException e)
          {

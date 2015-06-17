@@ -34,6 +34,7 @@ public class ExtractSearchProxy
    public String normalized;
    public String original;
    public final List<ReferenceDTO> speakers = new ArrayList<>();
+   public final List<ReferenceDTO> playwrights = new ArrayList<>();
 
    public static ExtractSearchProxy create(DramaticExtract extract, ExtractManipulationUtil extractManipulationUtil) throws SearchException
    {
@@ -64,7 +65,9 @@ public class ExtractSearchProxy
          .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
          .forEach(proxy.speakers::add);
 
-      // TODO: set playwrights
+      extract.getPlaywrightRefs().parallelStream()
+         .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
+         .forEach(proxy.playwrights::add);
 
       return proxy;
    }

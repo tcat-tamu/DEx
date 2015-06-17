@@ -52,6 +52,12 @@ public interface EditExtractCommand
    void setSpeakers(Set<Pair<String, String>> speakers);
 
    /**
+    * @param playwrights A set of ID/name pairs corresponding to the authors of the source bibliographic
+    *       entry referenced by this extract
+    */
+   void setPlaywrights(Set<Pair<String, String>> playwrights);
+
+   /**
     * @param teiContent An XML Document representing the original TEI source of this extract
     */
    void setTEIContent(Document teiContent);
@@ -64,5 +70,4 @@ public interface EditExtractCommand
     * @throws DramaticExtractException
     */
    Future<String> execute() throws DramaticExtractException;
-
 }

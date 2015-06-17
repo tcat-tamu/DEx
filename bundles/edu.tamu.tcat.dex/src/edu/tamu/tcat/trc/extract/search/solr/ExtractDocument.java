@@ -3,6 +3,7 @@ package edu.tamu.tcat.trc.extract.search.solr;
 import org.apache.solr.common.SolrInputDocument;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.dex.trc.entry.PlaywrightRef;
 import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
@@ -38,11 +39,11 @@ public class ExtractDocument
          throw new IllegalStateException("Unable to get normalized or original text for Solr proxy", e);
       }
 
-//      for (AuthorReference authorRef : extract.getSource().getAuthors())
-//      {
-//         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_ID, authorRef.getId());
-//         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_NAME, authorRef.getFirstName() + " " + authorRef.getLastName());
-//      }
+      for (PlaywrightRef ref : extract.getPlaywrightRefs())
+      {
+         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_ID, ref.getId());
+         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_NAME, ref.getDisplayName());
+      }
 
       for (SpeakerRef ref : extract.getSpeakerRefs())
       {
