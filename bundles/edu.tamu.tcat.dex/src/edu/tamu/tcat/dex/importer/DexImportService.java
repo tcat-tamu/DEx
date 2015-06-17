@@ -32,8 +32,8 @@ import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.dto.PersonNameDTO;
 import edu.tamu.tcat.trc.entries.types.bio.repo.EditPersonCommand;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
-import edu.tamu.tcat.trc.extract.dto.AnchorDTO;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
+import edu.tamu.tcat.trc.extract.dto.ReferenceDTO;
 
 public class DexImportService
 {
@@ -87,6 +87,7 @@ public class DexImportService
       // save manuscript biblio entry
       // TODO: use an "edit or create" method to edit an existing work by ID or create a work with
       //       the given ID if it does not exist
+
       EditWorkCommand editManuscriptCommand = worksRepo.create(manuscript.id);
       Work manuscriptWork = ManuscriptImportDTO.instantiate(manuscript);
       editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
@@ -95,7 +96,7 @@ public class DexImportService
       // save extracts
       for (ExtractImportDTO extract : manuscript.extracts)
       {
-         extract.manuscript = AnchorDTO.create(manuscript.id, manuscript.title);
+         extract.manuscript = ReferenceDTO.create(manuscript.id, manuscript.title);
 
          extract.speakers = extract.speakerIds.parallelStream()
                .map(id ->
@@ -110,10 +111,23 @@ public class DexImportService
                      logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "].", e);
                   }
 
-                  return AnchorDTO.create(id, name);
+                  return ReferenceDTO.create(id, name);
                })
                .filter(Objects::nonNull)
                .collect(Collectors.toSet());
+
+         String sourceTitle = null;
+         try
+         {
+            // resolve extract source and set source display title on extract
+            Work source = worksRepo.getWork(extract.sourceId);
+            sourceTitle = source.getTitle().getCanonicalTitle().getFullTitle();
+         }
+         catch (NoSuchCatalogRecordException e)
+         {
+            logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "]", e);
+         }
+         extract.source = ReferenceDTO.create(extract.sourceId, sourceTitle);
 
          try
          {

@@ -9,6 +9,11 @@ public interface SourceRef
    String getId();
 
    /**
+    * @return The display title of the referenced bibliographic entry
+    */
+   String getDisplayTitle();
+
+   /**
     * @return A string representing the exact location within the source bibliographic entry where
     *       the corresponding extract may be found.
     */

@@ -1,13 +1,13 @@
 package edu.tamu.tcat.trc.extract.dto;
 
-public class AnchorDTO
+public class ReferenceDTO
 {
    public String id;
    public String title;
 
-   public static AnchorDTO create(String id, String title)
+   public static ReferenceDTO create(String id, String title)
    {
-      AnchorDTO dto = new AnchorDTO();
+      ReferenceDTO dto = new ReferenceDTO();
       dto.id = id;
       dto.title = title;
 

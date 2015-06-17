@@ -35,6 +35,11 @@ public interface EditExtractCommand
    void setSourceId(String sourceId);
 
    /**
+    * @param sourceTitle Title of the bibliographic entry (e.g. play) from which this extract was taken
+    */
+   void setSourceTitle(String sourceTitle);
+
+   /**
     * @param sourceRef String representing the exact location within the bibliographic
     *       source from which this extract was taken
     */

@@ -12,14 +12,14 @@ import edu.tamu.tcat.trc.entries.search.SearchException;
 
 public class ExtractSearchProxy
 {
-   public static class Anchor
+   public static class ReferenceDTO
    {
       public String id;
       public String display;
 
-      public static Anchor create(String id, String display)
+      public static ReferenceDTO create(String id, String display)
       {
-         Anchor a = new Anchor();
+         ReferenceDTO a = new ReferenceDTO();
          a.id = id;
          a.display = display;
          return a;
@@ -27,13 +27,13 @@ public class ExtractSearchProxy
    }
 
    public String id;
-   public Anchor manuscript;
-   public String sourceId;
+   public ReferenceDTO manuscript;
+   public String author;
+   public ReferenceDTO source;
    public String sourceLineRef;
    public String normalized;
    public String original;
-   public final List<Anchor> playwrights = new ArrayList<>();
-   public final List<Anchor> speakers = new ArrayList<>();
+   public final List<ReferenceDTO> speakers = new ArrayList<>();
 
    public static ExtractSearchProxy create(DramaticExtract extract, ExtractManipulationUtil extractManipulationUtil) throws SearchException
    {
@@ -42,10 +42,12 @@ public class ExtractSearchProxy
       proxy.id = extract.getId();
 
       ManuscriptRef mRef = extract.getManuscriptRef();
-      proxy.manuscript = Anchor.create(mRef.getId(), mRef.getDisplayTitle());
+      proxy.manuscript = ReferenceDTO.create(mRef.getId(), mRef.getDisplayTitle());
+
+      proxy.author = extract.getAuthor();
 
       SourceRef srcRef = extract.getSource();
-      proxy.sourceId = srcRef.getId();
+      proxy.source = ReferenceDTO.create(srcRef.getId(), srcRef.getDisplayTitle());
       proxy.sourceLineRef = srcRef.getLineReference();
 
       try
@@ -59,7 +61,7 @@ public class ExtractSearchProxy
       }
 
       extract.getSpeakerRefs().parallelStream()
-         .map(ref -> Anchor.create(ref.getId(), ref.getDisplayName()))
+         .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
          .forEach(proxy.speakers::add);
 
       // TODO: set playwrights

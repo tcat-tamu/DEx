@@ -29,10 +29,10 @@ public class ExtractDTO
 
    public String id;
    public String author;
-   public AnchorDTO manuscript = new AnchorDTO();
-   public String source;
+   public ReferenceDTO manuscript = new ReferenceDTO();
+   public ReferenceDTO source = new ReferenceDTO();
    public String sourceRef;
-   public Set<AnchorDTO> speakers = new HashSet<>();
+   public Set<ReferenceDTO> speakers = new HashSet<>();
    public String teiContent;
 
    /**
@@ -70,7 +70,13 @@ public class ExtractDTO
          @Override
          public String getId()
          {
-            return dto.source;
+            return dto.source.id;
+         }
+
+         @Override
+         public String getDisplayTitle()
+         {
+            return dto.source.title;
          }
 
          @Override
@@ -81,7 +87,7 @@ public class ExtractDTO
       };
 
       extract.speakers = dto.speakers.parallelStream()
-            .map(anchor ->
+            .map(refDTO ->
             {
                SpeakerRef ref = new SpeakerRef()
                {
@@ -89,13 +95,13 @@ public class ExtractDTO
                   @Override
                   public String getId()
                   {
-                     return anchor.id;
+                     return refDTO.id;
                   }
 
                   @Override
                   public String getDisplayName()
                   {
-                     return anchor.title;
+                     return refDTO.title;
                   }
                };
 
@@ -126,14 +132,14 @@ public class ExtractDTO
       dto.author = extract.getAuthor();
 
       ManuscriptRef mRef = extract.getManuscriptRef();
-      dto.manuscript = AnchorDTO.create(mRef.getId(), mRef.getDisplayTitle());
+      dto.manuscript = ReferenceDTO.create(mRef.getId(), mRef.getDisplayTitle());
 
       SourceRef sourceRef = extract.getSource();
-      dto.source = sourceRef == null ? null : sourceRef.getId();
+      dto.source = sourceRef == null ? null : ReferenceDTO.create(sourceRef.getId(), sourceRef.getDisplayTitle());
       dto.sourceRef = sourceRef == null ? null : sourceRef.getLineReference();
 
       dto.speakers = extract.getSpeakerRefs().parallelStream()
-            .map(ref -> AnchorDTO.create(ref.getId(), ref.getDisplayName()))
+            .map(ref -> ReferenceDTO.create(ref.getId(), ref.getDisplayName()))
             .collect(Collectors.toSet());
 
       try

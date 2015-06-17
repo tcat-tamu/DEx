@@ -22,8 +22,8 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.Pair;
-import edu.tamu.tcat.trc.extract.dto.AnchorDTO;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
+import edu.tamu.tcat.trc.extract.dto.ReferenceDTO;
 
 public class EditExtractCommandImpl implements EditExtractCommand
 {
@@ -53,7 +53,8 @@ public class EditExtractCommandImpl implements EditExtractCommand
       setAuthor(dto.author);
       setManuscriptId(dto.manuscript == null ? null : dto.manuscript.id);
       setManuscriptTitle(dto.manuscript == null ? null : dto.manuscript.title);
-      setSourceId(dto.source);
+      setSourceId(dto.source == null ? null : dto.source.id);
+      setSourceTitle(dto.source == null ? null : dto.source.title);
       setSourceRef(dto.sourceRef);
       setTEIContent(dto.teiContent);
 
@@ -85,7 +86,13 @@ public class EditExtractCommandImpl implements EditExtractCommand
    @Override
    public void setSourceId(String sourceId)
    {
-      dto.source = sourceId;
+      dto.source.id = sourceId;
+   }
+
+   @Override
+   public void setSourceTitle(String sourceTitle)
+   {
+      dto.source.title = sourceTitle;
    }
 
    @Override
@@ -98,7 +105,7 @@ public class EditExtractCommandImpl implements EditExtractCommand
    public void setSpeakers(Set<Pair<String, String>> speakers)
    {
       dto.speakers = speakers.parallelStream()
-            .map(pair -> AnchorDTO.create(pair.first, pair.second))
+            .map(pair -> ReferenceDTO.create(pair.first, pair.second))
             .collect(Collectors.toSet());
    }
 

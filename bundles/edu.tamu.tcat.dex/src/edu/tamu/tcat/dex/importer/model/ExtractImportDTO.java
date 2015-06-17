@@ -11,4 +11,9 @@ public class ExtractImportDTO extends ExtractDTO
     * Speaker IDs must be resolved prior to saving
     */
    public Set<String> speakerIds = new HashSet<>();
+
+   /**
+    * Source ID must be resolved prior to saving
+    */
+   public String sourceId;
 }

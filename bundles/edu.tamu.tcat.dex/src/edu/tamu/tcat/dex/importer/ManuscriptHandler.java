@@ -131,7 +131,7 @@ class ManuscriptHandler extends DefaultHandler
          String corresp = attributes.getValue("corresp");
          if (corresp != null)
          {
-            extract.source = corresp.substring(corresp.indexOf('#') + 1);
+            extract.sourceId = corresp.substring(corresp.indexOf('#') + 1);
          }
 
          objectStack.push(extract);
