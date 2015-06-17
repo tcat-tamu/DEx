@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -46,6 +47,9 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final int SQL_UPDATE_PARAM_ID = 2;
    private static final int SQL_DELETE_PARAM_ID = 1;
 
+   // HACK: hard-coded actor UUID for Extract Repository
+   private static final UUID EXTRACT_REPO_ACTOR_ID = UUID.fromString("deadbeef-cafe-f00d-c0de-decaffc0ffee");
+
    private SqlExecutor executor;
    private EntryUpdateHelper<UpdateEvent> listeners;
    private ObjectMapper mapper;
@@ -66,7 +70,7 @@ public class PsqlExtractRepo implements ExtractRepository
    public void activate()
    {
       Objects.requireNonNull(executor, "No SQL Executor provided");
-      eventFactory = new BaseUpdateEventFactory();
+      eventFactory = new BaseUpdateEventFactory(EXTRACT_REPO_ACTOR_ID);
       listeners = new EntryUpdateHelper<>();
       mapper = new ObjectMapper();
    }
@@ -112,8 +116,7 @@ public class PsqlExtractRepo implements ExtractRepository
       EditExtractCommandImpl command = new EditExtractCommandImpl(extractDTO);
       command.setCommitHook(dto ->
       {
-         // TODO: supply actor UUID to makeCreateEvent
-         UpdateEvent evt = eventFactory.makeCreateEvent(id, null);
+         UpdateEvent evt = eventFactory.makeCreateEvent(id);
          ExecutorTask<String> task = makeUpdateTask(dto, CREATE_EXTRACT_SQL);
          DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
          {
@@ -139,8 +142,7 @@ public class PsqlExtractRepo implements ExtractRepository
       EditExtractCommandImpl command = new EditExtractCommandImpl(originalDTO);
       command.setCommitHook(updatedDTO ->
       {
-         // TODO: supply actor UUID to makeUpdateEvent
-         UpdateEvent evt = eventFactory.makeUpdateEvent(id, null);
+         UpdateEvent evt = eventFactory.makeUpdateEvent(id);
          ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL);
          DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
          {
@@ -162,8 +164,7 @@ public class PsqlExtractRepo implements ExtractRepository
    @Override
    public void remove(String id) throws DramaticExtractException
    {
-      // TODO: supply actor UUID to makeDeleteEvent
-      UpdateEvent evt = eventFactory.makeDeleteEvent(id, null);
+      UpdateEvent evt = eventFactory.makeDeleteEvent(id);
       ExecutorTask<Boolean> task = makeDeleteTask(id);
       DataUpdateObserver<Boolean> observer = new DataUpdateObserverAdapter<Boolean>()
       {

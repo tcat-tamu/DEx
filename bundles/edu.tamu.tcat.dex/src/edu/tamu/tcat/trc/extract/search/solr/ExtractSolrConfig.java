@@ -35,7 +35,7 @@ public class ExtractSolrConfig implements SolrIndexConfig
    @Override
    public void configureBasic(String q, SolrQuery params) throws SearchException
    {
-      // HACK: default query all if no query is specified
+      // HACK: if no query is specified, the default will be to return all documents
       if (q == null || q.trim().isEmpty())
       {
          q = "*:*";

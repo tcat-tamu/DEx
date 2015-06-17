@@ -57,7 +57,7 @@ public class TestDexImportService
       }
       catch (IOException e)
       {
-         fail("Unable to locate people and plays TEI XML file.");
+         fail("Unable to locate manuscript TEI XML file.");
          return false;
       }
 

@@ -21,6 +21,7 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
+import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.bib.Work;
 import edu.tamu.tcat.trc.entries.types.bib.dto.AuthorRefDV;
 import edu.tamu.tcat.trc.entries.types.bib.dto.PublicationInfoDV;
@@ -191,6 +192,7 @@ public class DexImportService
                .map(t -> {
                   TitleDV dto = new TitleDV();
                   dto.title = t;
+                  dto.type = "Canonical";
 
                   return dto;
                })
@@ -201,7 +203,7 @@ public class DexImportService
                   AuthorRefDV dto = new AuthorRefDV();
                   dto.role = "Playwright";
                   dto.authorId = ref.playwrightId;
-                  // HACK: store full name in last name
+                  // HACK: storing author reference's full name in lastName field.
                   dto.lastName = ref.displayName;
 
                   return dto;
@@ -232,7 +234,7 @@ public class DexImportService
             pubInfoDTO.date.description = edition.date;
             editionMutator.setPublicationInfo(pubInfoDTO);
 
-            // HACK: store link as summary
+            // HACK: link to online play edition is currently being stored in the summary field.
             if (edition.link != null) {
                editionMutator.setSummary(edition.link.toString());
             }
@@ -264,7 +266,7 @@ public class DexImportService
          editCommand.setName(personNameDTOs.get(0));
          editCommand.setNames(new HashSet<>(personNameDTOs.subList(1, personNameDTOs.size())));
 
-         // TODO: save references to plays
+         // TODO: save character-to-play relationships
          editCommand.execute();
       }
    }

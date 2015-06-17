@@ -16,13 +16,20 @@ import edu.tamu.tcat.trc.entries.notification.UpdateEvent.UpdateAction;
  */
 public class BaseUpdateEventFactory
 {
+   private final UUID actor;
+
+   public BaseUpdateEventFactory(UUID actor)
+   {
+      this.actor = actor;
+   }
+
    /**
     * Creates an update event to notify listeners of an object's creation.
     *
     * @param id
     * @return
     */
-   public UpdateEvent makeCreateEvent(String id, UUID actor)
+   public UpdateEvent makeCreateEvent(String id)
    {
       return new BaseUpdateEvent(id, UpdateAction.CREATE, actor, Instant.now());
    }
@@ -33,7 +40,7 @@ public class BaseUpdateEventFactory
     * @param id
     * @return
     */
-   public UpdateEvent makeUpdateEvent(String id, UUID actor)
+   public UpdateEvent makeUpdateEvent(String id)
    {
       return new BaseUpdateEvent(id, UpdateAction.UPDATE, actor, Instant.now());
    }
@@ -44,7 +51,7 @@ public class BaseUpdateEventFactory
     * @param id
     * @return
     */
-   public UpdateEvent makeDeleteEvent(String id, UUID actor)
+   public UpdateEvent makeDeleteEvent(String id)
    {
       return new BaseUpdateEvent(id, UpdateAction.DELETE, actor, Instant.now());
    }
