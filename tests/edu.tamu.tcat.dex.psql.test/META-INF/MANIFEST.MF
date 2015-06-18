@@ -24,4 +24,5 @@ Import-Package: com.fasterxml.jackson.core;version="2.3.1",
  edu.tamu.tcat.trc.extract.postgres,
  edu.tamu.tcat.trc.extract.search,
  edu.tamu.tcat.trc.extract.search.solr,
+ org.apache.commons.io;version="2.2.0",
  org.junit;version="4.11.0"
