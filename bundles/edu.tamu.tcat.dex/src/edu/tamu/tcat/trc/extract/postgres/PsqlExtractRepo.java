@@ -56,7 +56,6 @@ public class PsqlExtractRepo implements ExtractRepository
    private BaseUpdateEventFactory eventFactory;
 
 
-
    /**
     * DI method called by owning object -- most likely OSGi declarative service layer
     *
@@ -93,6 +92,32 @@ public class PsqlExtractRepo implements ExtractRepository
    {
       ExtractDTO dto = getDTO(id);
       return ExtractDTO.instantiate(dto);
+   }
+
+   @Override
+   public boolean exists(String id) throws DramaticExtractException
+   {
+      ExecutorTask<Boolean> task = (conn) ->
+      {
+         try (PreparedStatement ps = conn.prepareStatement(SELECT_EXTRACT_SQL))
+         {
+            ps.setString(SQL_SELECT_PARAM_ID, id);
+
+            try (ResultSet rs = ps.executeQuery())
+            {
+               return Boolean.valueOf(rs.next());
+            }
+         }
+      };
+
+      Future<Boolean> existsFuture = executor.submit(task);
+
+      try {
+         return existsFuture.get().booleanValue();
+      }
+      catch (InterruptedException | ExecutionException e) {
+         throw new DramaticExtractException("Encountered error while fetching boolean existence value", e);
+      }
    }
 
    private ExtractDTO getDTO(String id) throws DramaticExtractException
@@ -159,6 +184,41 @@ public class PsqlExtractRepo implements ExtractRepository
          return executor.submit(observableTask);
       });
       return command;
+   }
+
+   @Override
+   public EditExtractCommand createOrEdit(String id) throws DramaticExtractException
+   {
+      // HACK: not stable since an extract with a duplicate ID could be created and saved between the exists() check and when execute() is called on the command returned by create()
+      //
+      // This should be addressed at SQL execution with an UPSERT, which also eliminates the need for separate create() and edit() methods.
+      //
+      // In PostgreSQL 9.4, an UPSERT looks like:
+      //
+      //    WITH upsert AS (
+      //       UPDATE table SET field1=val1, field2=val2, ... WHERE id='dupIdent'               -- UPDATE command
+      //       RETURNING *
+      //    )
+      //    INSERT INTO table (id, field1, field2, ...) SELECT 'dupIdent', val1, val2, ...      -- INSERT command with "VALUES (...)" replaced by "SELECT ..."
+      //    WHERE NOT EXISTS (SELECT * FROM upsert);
+      //
+      //    ref: http://www.the-art-of-web.com/sql/upsert/
+      //
+      // Native support for INSERT statement will be available in PostgreSQL 9.5:
+      //
+      //    INSERT INTO table (id, field1, field2, ...) VALUES ('dupIdent', val1, val2, ...)
+      //    ON CONFLICT (id) DO UPDATE SET field1=EXCLUDED.val1, field2=EXCLUDED.val2, ...;
+      //
+      //    ref: http://www.postgresql.org/docs/devel/static/sql-insert.html
+
+      try
+      {
+         return exists(id) ? edit(id) : create(id);
+      }
+      catch (ExtractNotAvailableException e)
+      {
+         throw new IllegalStateException("I was told extract [" + id + "] existed, but was unable to edit it", e);
+      }
    }
 
    @Override

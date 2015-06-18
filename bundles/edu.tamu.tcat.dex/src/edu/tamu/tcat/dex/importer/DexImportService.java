@@ -141,7 +141,7 @@ public class DexImportService
 
          try
          {
-            EditExtractCommand editExtractCommand = extractRepo.create(extract.id);
+            EditExtractCommand editExtractCommand = extractRepo.createOrEdit(extract.id);
             editExtractCommand.setAll(ExtractDTO.instantiate(extract));
 
             editExtractCommand.execute();
