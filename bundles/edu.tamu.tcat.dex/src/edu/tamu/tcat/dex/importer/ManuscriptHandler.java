@@ -195,13 +195,13 @@ class ManuscriptHandler extends DefaultHandler
          return;
       }
 
-      if (isCurrentElement("title"))
+      if (isCurrentElement("title") && isParentElement("titleStmt"))
       {
-         manuscript.title = value;
+         manuscript.title = value.trim();
       }
       else if (isCurrentElement("persName") && isParentElement("author"))
       {
-         manuscript.author = value;
+         manuscript.author = value.trim();
       }
    }
 
@@ -215,23 +215,4 @@ class ManuscriptHandler extends DefaultHandler
    {
       return elementStack.size() > 2 && elementStack.get(elementStack.size() - 2).equals(qName);
    }
-
-   private boolean isAncestorElement(String qName)
-   {
-      if (elementStack.empty())
-      {
-         return false;
-      }
-
-      for (int i = 0; i < elementStack.size(); i++)
-      {
-         if (elementStack.get(i).equals(qName))
-         {
-            return true;
-         }
-      }
-
-      return false;
-   }
-
 }
