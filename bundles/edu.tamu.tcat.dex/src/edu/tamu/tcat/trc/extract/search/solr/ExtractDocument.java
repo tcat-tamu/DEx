@@ -4,6 +4,7 @@ import org.apache.solr.common.SolrInputDocument;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.PlaywrightRef;
+import edu.tamu.tcat.dex.trc.entry.SourceRef;
 import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
@@ -44,6 +45,10 @@ public class ExtractDocument
          doc.document.set(ExtractSolrConfig.PLAYWRIGHT_ID, ref.getId());
          doc.document.set(ExtractSolrConfig.PLAYWRIGHT_NAME, ref.getDisplayName());
       }
+
+      SourceRef playSource = extract.getSource();
+      doc.document.set(ExtractSolrConfig.PLAY_ID, playSource.getId());
+      doc.document.set(ExtractSolrConfig.PLAY_TITLE, playSource.getDisplayTitle());
 
       for (SpeakerRef ref : extract.getSpeakerRefs())
       {
