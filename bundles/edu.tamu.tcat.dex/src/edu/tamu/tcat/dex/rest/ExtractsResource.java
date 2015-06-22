@@ -97,7 +97,11 @@ public class ExtractsResource
       ExtractQueryCommand queryCommand;
       try {
          queryCommand = searchService.createQueryCommand();
-         queryCommand.query(query);
+
+         if (!query.isEmpty())
+         {
+            queryCommand.query(query);
+         }
 
          if (!shelfmarkQuery.isEmpty())
          {
