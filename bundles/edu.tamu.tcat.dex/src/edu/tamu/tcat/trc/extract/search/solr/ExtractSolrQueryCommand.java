@@ -60,7 +60,29 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       queryBuilder.basic("*:*");
    }
 
-   // TODO: add methods to tweak parameters on the query builder
+   @Override
+   public void queryShelfmark(String shelfmarkQuery) throws SearchException
+   {
+      queryBuilder.query(ExtractSolrConfig.MS_TITLE, shelfmarkQuery);
+   }
+
+   @Override
+   public void queryPlaywright(String playwrightQuery) throws SearchException
+   {
+      queryBuilder.query(ExtractSolrConfig.PLAYWRIGHT_NAME, playwrightQuery);
+   }
+
+   @Override
+   public void queryPlay(String playQuery) throws SearchException
+   {
+      queryBuilder.query(ExtractSolrConfig.PLAY_TITLE, playQuery);
+   }
+
+   @Override
+   public void querySpeaker(String speakerQuery) throws SearchException
+   {
+      queryBuilder.query(ExtractSolrConfig.SPEAKER_NAME, speakerQuery);
+   }
 
    @Override
    public void setOffset(int offset)

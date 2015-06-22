@@ -87,24 +87,58 @@ public class ExtractsResource
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
    public ResultListDTO search(@QueryParam("q") String query,
-                      @DefaultValue("1") @QueryParam("page") int page,
-                      @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
+                               @DefaultValue("") @QueryParam("shelfmark") String shelfmarkQuery,
+                               @DefaultValue("") @QueryParam("playwright") String playwrightQuery,
+                               @DefaultValue("") @QueryParam("play") String playQuery,
+                               @DefaultValue("") @QueryParam("speaker") String speakerQuery,
+                               @DefaultValue("1") @QueryParam("page") int page,
+                               @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
    {
       ExtractQueryCommand queryCommand;
       try {
          queryCommand = searchService.createQueryCommand();
          queryCommand.query(query);
+
+         if (!shelfmarkQuery.isEmpty())
+         {
+            queryCommand.queryShelfmark(shelfmarkQuery);
+         }
+
+         if (!playwrightQuery.isEmpty())
+         {
+            queryCommand.queryPlaywright(playwrightQuery);
+         }
+
+         if (!playQuery.isEmpty())
+         {
+            queryCommand.queryPlay(playQuery);
+         }
+
+         if (!speakerQuery.isEmpty())
+         {
+            queryCommand.querySpeaker(speakerQuery);
+         }
+
          queryCommand.setOffset(numResultsPerPage * (page-1));
          queryCommand.setMaxResults(numResultsPerPage);
-         SearchExtractResult results = queryCommand.execute();
+         try
+         {
+            SearchExtractResult results = queryCommand.execute();
 
-         ResultListDTO dto = new ResultListDTO();
-         dto.page = page;
-         dto.numResultsPerPage = numResultsPerPage;
-         dto.numFound = results.getNumFound();
-         dto.results = results.get();
+            ResultListDTO dto = new ResultListDTO();
+            dto.page = page;
+            dto.numResultsPerPage = numResultsPerPage;
 
-         return dto;
+            dto.numFound = results.getNumFound();
+            dto.results = results.get();
+
+            return dto;
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+            return null;
+         }
       }
       catch (SearchException e) {
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);

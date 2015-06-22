@@ -44,7 +44,13 @@ public interface ExtractQueryCommand
     */
    void queryAll() throws SearchException;
 
-   // TODO: add "query" and "filter" methods
+   void queryShelfmark(String shelfmarkQuery) throws SearchException;
+
+   void queryPlaywright(String playwrightQuery) throws SearchException;
+
+   void queryPlay(String playQuery) throws SearchException;
+
+   void querySpeaker(String speakerQuery) throws SearchException;
 
    /**
     * Sets the index offset of the first result to be returned.

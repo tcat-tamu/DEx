@@ -38,6 +38,9 @@ public class ManuscriptsResource
                          @DefaultValue("-1") @QueryParam("numResultsPerPage") int numResultsPerPage)
    {
       throw new UnsupportedOperationException("not yet implemented");
+      // use faceting to get all manuscripts from the Solr Server:
+      //    resp = GET {solr-endpoint}/select?rows=0&wt=json&facet=true&facet.field=mss_title
+      //    return resp.facet_counts.facet_fields.mss_title[::2]
    }
 
    // TODO: faceting
