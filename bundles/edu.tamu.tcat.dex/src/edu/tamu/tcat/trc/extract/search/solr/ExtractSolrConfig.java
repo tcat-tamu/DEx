@@ -16,14 +16,18 @@ public class ExtractSolrConfig implements SolrIndexConfig
    public static final BasicFields.SearchProxyField<ExtractSearchProxy> SEARCH_PROXY = new BasicFields.SearchProxyField<ExtractSearchProxy>("extract_proxy", ExtractSearchProxy.class);
    public static final SolrIndexField<String> MS_SHELFMARK = new BasicFields.BasicString("mss_shelfmark");
    public static final SolrIndexField<String> MS_TITLE = new BasicFields.BasicString("mss_title");
+   public static final SolrIndexField<String> MS_TITLE_SEARCHABLE = new BasicFields.BasicString("mss_title_searchable");
    public static final SolrIndexField<String> NORMALIZED = new BasicFields.BasicString("normalized");
    public static final SolrIndexField<String> ORIGINAL = new BasicFields.BasicString("original");
    public static final SolrIndexField<String> PLAYWRIGHT_ID = new BasicFields.BasicString("playwright_id");
    public static final SolrIndexField<String> PLAYWRIGHT_NAME = new BasicFields.BasicString("playwright_name");
+   public static final SolrIndexField<String> PLAYWRIGHT_NAME_SEARCHABLE = new BasicFields.BasicString("playwright_name_searchable");
    public static final SolrIndexField<String> PLAY_ID = new BasicFields.BasicString("play_id");
    public static final SolrIndexField<String> PLAY_TITLE = new BasicFields.BasicString("play_title");
+   public static final SolrIndexField<String> PLAY_TITLE_SEARCHABLE = new BasicFields.BasicString("play_title_searchable");
    public static final SolrIndexField<String> SPEAKER_ID = new BasicFields.BasicString("speaker_id");
    public static final SolrIndexField<String> SPEAKER_NAME = new BasicFields.BasicString("speaker_name");
+   public static final SolrIndexField<String> SPEAKER_NAME_SEARCHABLE = new BasicFields.BasicString("speaker_name_searchable");
 
    @Override
    public void initialConfiguration(SolrQuery params) throws SearchException

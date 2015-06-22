@@ -63,25 +63,25 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void queryShelfmark(String shelfmarkQuery) throws SearchException
    {
-      queryBuilder.query(ExtractSolrConfig.MS_TITLE, shelfmarkQuery);
+      queryBuilder.query(ExtractSolrConfig.MS_TITLE_SEARCHABLE, shelfmarkQuery);
    }
 
    @Override
    public void queryPlaywright(String playwrightQuery) throws SearchException
    {
-      queryBuilder.query(ExtractSolrConfig.PLAYWRIGHT_NAME, playwrightQuery);
+      queryBuilder.query(ExtractSolrConfig.PLAYWRIGHT_NAME_SEARCHABLE, playwrightQuery);
    }
 
    @Override
    public void queryPlay(String playQuery) throws SearchException
    {
-      queryBuilder.query(ExtractSolrConfig.PLAY_TITLE, playQuery);
+      queryBuilder.query(ExtractSolrConfig.PLAY_TITLE_SEARCHABLE, playQuery);
    }
 
    @Override
    public void querySpeaker(String speakerQuery) throws SearchException
    {
-      queryBuilder.query(ExtractSolrConfig.SPEAKER_NAME, speakerQuery);
+      queryBuilder.query(ExtractSolrConfig.SPEAKER_NAME_SEARCHABLE, speakerQuery);
    }
 
    @Override
