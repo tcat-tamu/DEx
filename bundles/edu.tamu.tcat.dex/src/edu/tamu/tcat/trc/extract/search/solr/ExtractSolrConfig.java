@@ -32,8 +32,11 @@ public class ExtractSolrConfig implements SolrIndexConfig
    @Override
    public void initialConfiguration(SolrQuery params) throws SearchException
    {
-      // TODO Auto-generated method stub
-
+      /*
+       * Using eDisMax seemed like a more adventagous way of doing the query. This will allow
+       * additional solr Paramaters to be set in order to 'fine tune' the query.
+       */
+      params.set("defType", "edismax");
    }
 
    @Override
@@ -47,9 +50,10 @@ public class ExtractSolrConfig implements SolrIndexConfig
 
       StringBuilder qBuilder = new StringBuilder(q);
 
-      // TODO: augment query and set other params.
-
       params.set("q", qBuilder.toString());
+
+      // TODO give precedence to normalized and original text
+      params.set("qf", "normalized original mss_title_searchable playwright_name_searchable play_title_searchable speaker_name_searchable");
    }
 
    @Override
