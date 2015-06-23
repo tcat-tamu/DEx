@@ -1,6 +1,5 @@
 package edu.tamu.tcat.dex.rest;
 
-import java.util.List;
 import java.util.Objects;
 
 import javax.ws.rs.DefaultValue;
@@ -14,6 +13,7 @@ import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import edu.tamu.tcat.dex.rest.v1.RestApiV1.ResultListDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
@@ -23,20 +23,11 @@ import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
-import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
 
 @Path("/extracts")
 @Produces(MediaType.APPLICATION_JSON)
 public class ExtractsResource
 {
-   public static class ResultListDTO
-   {
-      public int numResultsPerPage;
-      public int page;
-      public long numFound;
-      public List<ExtractSearchProxy> results;
-   }
-
    private ExtractRepository repo;
    private ExtractSearchService searchService;
 
@@ -87,12 +78,12 @@ public class ExtractsResource
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
    public ResultListDTO search(@QueryParam("q") String query,
-                               @DefaultValue("") @QueryParam("shelfmark") String manuscriptQuery,
-                               @DefaultValue("") @QueryParam("playwright") String playwrightQuery,
-                               @DefaultValue("") @QueryParam("play") String playQuery,
-                               @DefaultValue("") @QueryParam("speaker") String speakerQuery,
-                               @DefaultValue("1") @QueryParam("page") int page,
-                               @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
+                               @DefaultValue("") @QueryParam("ms") String manuscriptQuery,
+                               @DefaultValue("") @QueryParam("pw") String playwrightQuery,
+                               @DefaultValue("") @QueryParam("pl") String playQuery,
+                               @DefaultValue("") @QueryParam("sp") String speakerQuery,
+                               @DefaultValue("1") @QueryParam("p") int page,
+                               @DefaultValue("-1") @QueryParam("n") int numResultsPerPage)
    {
       try {
          ExtractQueryCommand queryCommand = searchService.createQueryCommand();
@@ -106,37 +97,38 @@ public class ExtractsResource
             if (!manuscriptQuery.isEmpty())
             {
                queryCommand.queryManuscript(manuscriptQuery);
+            }
+
+            if (!playwrightQuery.isEmpty())
+            {
+               queryCommand.queryPlaywright(playwrightQuery);
+            }
+
+            if (!playQuery.isEmpty())
+            {
+               queryCommand.queryPlay(playQuery);
+            }
+
+            if (!speakerQuery.isEmpty())
+            {
+               queryCommand.querySpeaker(speakerQuery);
+            }
          }
 
-         if (!playwrightQuery.isEmpty())
-         {
-            queryCommand.queryPlaywright(playwrightQuery);
-         }
-
-         if (!playQuery.isEmpty())
-         {
-            queryCommand.queryPlay(playQuery);
-         }
-
-         if (!speakerQuery.isEmpty())
-         {
-            queryCommand.querySpeaker(speakerQuery);
-         }
-         }
 
          queryCommand.setOffset(numResultsPerPage * (page-1));
          queryCommand.setMaxResults(numResultsPerPage);
-            SearchExtractResult results = queryCommand.execute();
+         SearchExtractResult results = queryCommand.execute();
 
-            ResultListDTO dto = new ResultListDTO();
-            dto.page = page;
-            dto.numResultsPerPage = numResultsPerPage;
+         ResultListDTO dto = new ResultListDTO();
+         dto.page = page;
+         dto.numResultsPerPage = numResultsPerPage;
 
-            dto.numFound = results.getNumFound();
-            dto.results = results.get();
+         dto.numFound = results.getNumFound();
+         dto.results = results.get();
 
-            return dto;
-         }
+         return dto;
+      }
       catch (SearchException e) {
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
       }
