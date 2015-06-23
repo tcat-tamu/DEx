@@ -43,10 +43,10 @@ public interface ExtractQueryCommand
     * Include results whose manuscript title matches the supplied query.
     * This is used for advanced search.
     *
-    * @param shelfmarkQuery
+    * @param manuscriptQuery
     * @throws SearchException
     */
-   void queryShelfmark(String shelfmarkQuery) throws SearchException;
+   void queryManuscript(String manuscriptQuery) throws SearchException;
 
    /**
     * Limit results to only those associated with one or more of the supplied manuscripts.
@@ -55,13 +55,13 @@ public interface ExtractQueryCommand
     * @param manuscriptIds
     * @throws SearchException
     */
-   void filterShelfmark(Collection<String> manuscriptIds) throws SearchException;
+   void filterManuscript(Collection<String> manuscriptIds) throws SearchException;
 
    /**
     * Include results whose playwright name matches the supplied query.
     * This is used for advanced search.
     *
-    * @param shelfmarkQuery
+    * @param playwrightQuery
     * @throws SearchException
     */
    void queryPlaywright(String playwrightQuery) throws SearchException;

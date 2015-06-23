@@ -14,9 +14,9 @@ public class ExtractSolrConfig implements SolrIndexConfig
 {
    public static final SolrIndexField<String> ID = new BasicFields.BasicString("id");
    public static final BasicFields.SearchProxyField<ExtractSearchProxy> SEARCH_PROXY = new BasicFields.SearchProxyField<ExtractSearchProxy>("extract_proxy", ExtractSearchProxy.class);
-   public static final SolrIndexField<String> MS_SHELFMARK = new BasicFields.BasicString("mss_shelfmark");
-   public static final SolrIndexField<String> MS_TITLE = new BasicFields.BasicString("mss_title");
-   public static final SolrIndexField<String> MS_TITLE_SEARCHABLE = new BasicFields.BasicString("mss_title_searchable");
+   public static final SolrIndexField<String> MANUSCRIPT_ID = new BasicFields.BasicString("mss_shelfmark");
+   public static final SolrIndexField<String> MANUSCRIPT_TITLE = new BasicFields.BasicString("mss_title");
+   public static final SolrIndexField<String> MANUSCRIPT_TITLE_SEARCHABLE = new BasicFields.BasicString("mss_title_searchable");
    public static final SolrIndexField<String> NORMALIZED = new BasicFields.BasicString("normalized");
    public static final SolrIndexField<String> ORIGINAL = new BasicFields.BasicString("original");
    public static final SolrIndexField<String> PLAYWRIGHT_ID = new BasicFields.BasicString("playwright_id");
@@ -72,8 +72,8 @@ public class ExtractSolrConfig implements SolrIndexConfig
    public Collection<? extends SolrIndexField<?>> getIndexedFields()
    {
       return Arrays.asList(ID,
-            MS_SHELFMARK,
-            MS_TITLE,
+            MANUSCRIPT_ID,
+            MANUSCRIPT_TITLE,
             NORMALIZED,
             ORIGINAL,
             PLAYWRIGHT_ID,

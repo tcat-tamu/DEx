@@ -43,7 +43,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       {
          if (!manuscriptIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.MS_SHELFMARK, manuscriptIds);
+            queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_ID, manuscriptIds);
          }
 
          if (!playwrightIds.isEmpty())
@@ -87,13 +87,13 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    }
 
    @Override
-   public void queryShelfmark(String shelfmarkQuery) throws SearchException
+   public void queryManuscript(String manuscriptQuery) throws SearchException
    {
-      queryBuilder.query(ExtractSolrConfig.MS_TITLE_SEARCHABLE, shelfmarkQuery);
+      queryBuilder.query(ExtractSolrConfig.MANUSCRIPT_TITLE_SEARCHABLE, manuscriptQuery);
    }
 
    @Override
-   public void filterShelfmark(Collection<String> manuscriptIds) throws SearchException
+   public void filterManuscript(Collection<String> manuscriptIds) throws SearchException
    {
       this.manuscriptIds.addAll(manuscriptIds);
    }

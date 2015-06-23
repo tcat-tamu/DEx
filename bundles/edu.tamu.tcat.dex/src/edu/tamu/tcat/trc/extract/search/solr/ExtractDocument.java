@@ -27,8 +27,8 @@ public class ExtractDocument
 
       doc.document.set(ExtractSolrConfig.ID, extract.getId());
 
-      doc.document.set(ExtractSolrConfig.MS_SHELFMARK, extract.getManuscriptRef().getId());
-      doc.document.set(ExtractSolrConfig.MS_TITLE, extract.getManuscriptRef().getDisplayTitle());
+      doc.document.set(ExtractSolrConfig.MANUSCRIPT_ID, extract.getManuscriptRef().getId());
+      doc.document.set(ExtractSolrConfig.MANUSCRIPT_TITLE, extract.getManuscriptRef().getDisplayTitle());
 
       try
       {

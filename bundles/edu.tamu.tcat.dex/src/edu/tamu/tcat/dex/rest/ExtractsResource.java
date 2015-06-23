@@ -56,56 +56,56 @@ public class ExtractsResource
       Objects.requireNonNull(searchService, "No search service specified");
    }
 
-   @GET
-   @Path("/")
-   @Produces(MediaType.APPLICATION_JSON)
-   public ResultListDTO browseAll(@DefaultValue("1") @QueryParam("page") int page,
-                         @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
-   {
-      try {
-         ExtractQueryCommand queryCommand = searchService.createQueryCommand();
-         queryCommand.queryAll();
-         queryCommand.setOffset(numResultsPerPage * (page-1));
-         queryCommand.setMaxResults(numResultsPerPage);
-         SearchExtractResult results = queryCommand.execute();
-
-         ResultListDTO dto = new ResultListDTO();
-         dto.page = page;
-         dto.numResultsPerPage = numResultsPerPage;
-         dto.numFound = results.getNumFound();
-         dto.results = results.get();
-
-         return dto;
-      }
-      catch (SearchException e) {
-         throw new ServerErrorException("Unable to execute fetch-all", Status.INTERNAL_SERVER_ERROR, e);
-      }
-   }
+//   @GET
+//   @Path("/")
+//   @Produces(MediaType.APPLICATION_JSON)
+//   public ResultListDTO browseAll(@DefaultValue("1") @QueryParam("page") int page,
+//                         @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
+//   {
+//      try {
+//         ExtractQueryCommand queryCommand = searchService.createQueryCommand();
+//         queryCommand.queryAll();
+//         queryCommand.setOffset(numResultsPerPage * (page-1));
+//         queryCommand.setMaxResults(numResultsPerPage);
+//         SearchExtractResult results = queryCommand.execute();
+//
+//         ResultListDTO dto = new ResultListDTO();
+//         dto.page = page;
+//         dto.numResultsPerPage = numResultsPerPage;
+//         dto.numFound = results.getNumFound();
+//         dto.results = results.get();
+//
+//         return dto;
+//      }
+//      catch (SearchException e) {
+//         throw new ServerErrorException("Unable to execute fetch-all", Status.INTERNAL_SERVER_ERROR, e);
+//      }
+//   }
 
    // TODO: faceting
    @GET
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
    public ResultListDTO search(@QueryParam("q") String query,
-                               @DefaultValue("") @QueryParam("shelfmark") String shelfmarkQuery,
+                               @DefaultValue("") @QueryParam("shelfmark") String manuscriptQuery,
                                @DefaultValue("") @QueryParam("playwright") String playwrightQuery,
                                @DefaultValue("") @QueryParam("play") String playQuery,
                                @DefaultValue("") @QueryParam("speaker") String speakerQuery,
                                @DefaultValue("1") @QueryParam("page") int page,
                                @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
    {
-      ExtractQueryCommand queryCommand;
       try {
-         queryCommand = searchService.createQueryCommand();
+         ExtractQueryCommand queryCommand = searchService.createQueryCommand();
 
-         if (!query.isEmpty())
+         if (query != null)
          {
             queryCommand.query(query);
          }
-
-         if (!shelfmarkQuery.isEmpty())
+         else
          {
-            queryCommand.queryShelfmark(shelfmarkQuery);
+            if (!manuscriptQuery.isEmpty())
+            {
+               queryCommand.queryManuscript(manuscriptQuery);
          }
 
          if (!playwrightQuery.isEmpty())
@@ -122,11 +122,10 @@ public class ExtractsResource
          {
             queryCommand.querySpeaker(speakerQuery);
          }
+         }
 
          queryCommand.setOffset(numResultsPerPage * (page-1));
          queryCommand.setMaxResults(numResultsPerPage);
-         try
-         {
             SearchExtractResult results = queryCommand.execute();
 
             ResultListDTO dto = new ResultListDTO();
@@ -138,12 +137,6 @@ public class ExtractsResource
 
             return dto;
          }
-         catch (Exception e)
-         {
-            e.printStackTrace();
-            return null;
-         }
-      }
       catch (SearchException e) {
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
       }
