@@ -1,6 +1,9 @@
 package edu.tamu.tcat.trc.extract.search.solr;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -19,6 +22,11 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    private final SolrServer solrServer;
    private final TrcQueryBuilder queryBuilder;
 
+   private Collection<String> manuscriptIds = new ArrayList<>();
+   private Collection<String> playwrightIds = new ArrayList<>();
+   private Collection<String> playIds = new ArrayList<>();
+   private Collection<String> speakerIds = new ArrayList<>();
+
 
    public ExtractSolrQueryCommand(SolrServer solrServer, TrcQueryBuilder queryBuilder)
    {
@@ -33,7 +41,25 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    {
       try
       {
-         // TODO: add lazy-evaluated parameters to query builder
+         if (!manuscriptIds.isEmpty())
+         {
+            queryBuilder.filterMulti(ExtractSolrConfig.MS_SHELFMARK, manuscriptIds);
+         }
+
+         if (!playwrightIds.isEmpty())
+         {
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAYWRIGHT_ID, playwrightIds);
+         }
+
+         if (!playIds.isEmpty())
+         {
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAY_ID, playIds);
+         }
+
+         if (!speakerIds.isEmpty())
+         {
+            queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_ID, speakerIds);
+         }
 
          QueryResponse response = solrServer.query(queryBuilder.get());
          SolrDocumentList results = response.getResults();
@@ -51,13 +77,13 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void query(String basicQueryString) throws SearchException
    {
-      queryBuilder.basic(basicQueryString);
-   }
+      Objects.requireNonNull(basicQueryString, "Null query string provided");
+      if (basicQueryString.isEmpty())
+      {
+         basicQueryString = "*:*";
+      }
 
-   @Override
-   public void queryAll() throws SearchException
-   {
-      queryBuilder.basic("*:*");
+      queryBuilder.basic(basicQueryString);
    }
 
    @Override
@@ -67,9 +93,21 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    }
 
    @Override
+   public void filterShelfmark(Collection<String> manuscriptIds) throws SearchException
+   {
+      this.manuscriptIds.addAll(manuscriptIds);
+   }
+
+   @Override
    public void queryPlaywright(String playwrightQuery) throws SearchException
    {
       queryBuilder.query(ExtractSolrConfig.PLAYWRIGHT_NAME_SEARCHABLE, playwrightQuery);
+   }
+
+   @Override
+   public void filterPlaywright(Collection<String> playwrightIds) throws SearchException
+   {
+      this.playwrightIds.addAll(playwrightIds);
    }
 
    @Override
@@ -79,9 +117,21 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    }
 
    @Override
+   public void filterPlay(Collection<String> playIds) throws SearchException
+   {
+      this.playIds.addAll(playIds);
+   }
+
+   @Override
    public void querySpeaker(String speakerQuery) throws SearchException
    {
       queryBuilder.query(ExtractSolrConfig.SPEAKER_NAME_SEARCHABLE, speakerQuery);
+   }
+
+   @Override
+   public void filterSpeaker(Collection<String> speakerIds) throws SearchException
+   {
+      this.speakerIds.addAll(speakerIds);
    }
 
    @Override

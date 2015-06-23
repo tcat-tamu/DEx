@@ -1,5 +1,7 @@
 package edu.tamu.tcat.trc.extract.search;
 
+import java.util.Collection;
+
 import edu.tamu.tcat.trc.entries.search.SearchException;
 
 /**
@@ -32,25 +34,82 @@ public interface ExtractQueryCommand
     * levels of boosting (per-field weights). The specific fields to be searched and the relative
     * weights associated with different fields is implementation-dependent.
     *
-    * @param basicQueryString The "basic" query string. May be {@code null} or empty.
+    * @param basicQueryString The "basic" query string. If empty, a catch-all query will be used.
     * @throws SearchException
     */
    void query(String basicQueryString) throws SearchException;
 
    /**
-    * A shorthand method to query all extracts from the search index.
+    * Include results whose manuscript title matches the supplied query.
+    * This is used for advanced search.
     *
+    * @param shelfmarkQuery
     * @throws SearchException
     */
-   void queryAll() throws SearchException;
-
    void queryShelfmark(String shelfmarkQuery) throws SearchException;
 
+   /**
+    * Limit results to only those associated with one or more of the supplied manuscripts.
+    * This is used for faceting.
+    *
+    * @param manuscriptIds
+    * @throws SearchException
+    */
+   void filterShelfmark(Collection<String> manuscriptIds) throws SearchException;
+
+   /**
+    * Include results whose playwright name matches the supplied query.
+    * This is used for advanced search.
+    *
+    * @param shelfmarkQuery
+    * @throws SearchException
+    */
    void queryPlaywright(String playwrightQuery) throws SearchException;
 
+   /**
+    * Limit results to only those associated with one or more of the supplied playwrights.
+    * This is used for faceting.
+    *
+    * @param playwrightIds
+    * @throws SearchException
+    */
+   void filterPlaywright(Collection<String> playwrightIds) throws SearchException;
+
+   /**
+    * Include results whose play title matches the supplied query.
+    * This is used for advanced search.
+    *
+    * @param playQuery
+    * @throws SearchException
+    */
    void queryPlay(String playQuery) throws SearchException;
 
+   /**
+    * Limit results to only those associated with one or more of the supplied plays.
+    * This is used for faceting.
+    *
+    * @param playIds
+    * @throws SearchException
+    */
+   void filterPlay(Collection<String> playIds) throws SearchException;
+
+   /**
+    * Include results whose speaker name matches the supplied query.
+    * This is used for advanced search.
+    *
+    * @param speakerQuery
+    * @throws SearchException
+    */
    void querySpeaker(String speakerQuery) throws SearchException;
+
+   /**
+    * Limit results to only those associated with one or more of the supplied speakers.
+    * This is used for faceting.
+    *
+    * @param speakerIds
+    * @throws SearchException
+    */
+   void filterSpeaker(Collection<String> speakerIds) throws SearchException;
 
    /**
     * Sets the index offset of the first result to be returned.
