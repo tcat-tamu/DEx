@@ -26,7 +26,8 @@ public class SearchAdapter
       REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_PLAYWRIGHT, ExtractSolrConfig.PLAYWRIGHT_NAME);
       REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_SPEAKER, ExtractSolrConfig.SPEAKER_NAME);
 
-      REST_SOLR_FIELD_NAME_MAP.entrySet().parallelStream()
+      // NOTE THIS IS NOT THREAD-SAFE!!!!
+      REST_SOLR_FIELD_NAME_MAP.entrySet().stream()
          .forEach(e -> SOLR_REST_FIELD_NAME_MAP.put(e.getValue().getName(), e.getKey()));
    }
 
