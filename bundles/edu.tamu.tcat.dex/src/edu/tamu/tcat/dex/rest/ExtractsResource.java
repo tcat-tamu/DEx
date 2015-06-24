@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
-import edu.tamu.tcat.dex.rest.v1.RestApiV1.ResultListDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
@@ -69,7 +68,7 @@ public class ExtractsResource
 //   @GET
 //   @Path("/")
 //   @Produces(MediaType.APPLICATION_JSON)
-//   public ResultListDTO browseAll(@DefaultValue("1") @QueryParam("page") int page,
+//   public RestApiV1.ResultList browseAll(@DefaultValue("1") @QueryParam("page") int page,
 //                         @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
 //   {
 //      try {
@@ -79,7 +78,7 @@ public class ExtractsResource
 //         queryCommand.setMaxResults(numResultsPerPage);
 //         SearchExtractResult results = queryCommand.execute();
 //
-//         ResultListDTO dto = new ResultListDTO();
+//         RestApiV1.ResultList dto = new RestApiV1.ResultList();
 //         dto.page = page;
 //         dto.numResultsPerPage = numResultsPerPage;
 //         dto.numFound = results.getNumFound();
@@ -96,7 +95,7 @@ public class ExtractsResource
    @GET
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
-   public ResultListDTO search(@QueryParam("q") String query,
+   public RestApiV1.ResultList search(@QueryParam("q") String query,
                                @DefaultValue("") @QueryParam("a") String advancedQuery,
                                @DefaultValue("") @QueryParam("ms") String manuscriptQuery,
                                @DefaultValue("") @QueryParam("pw") String playwrightQuery,
@@ -145,7 +144,7 @@ public class ExtractsResource
          queryCommand.setMaxResults(numResultsPerPage);
          SearchExtractResult results = queryCommand.execute();
 
-         ResultListDTO dto = new ResultListDTO();
+         RestApiV1.ResultList dto = new RestApiV1.ResultList();
          dto.page = page;
          dto.numResultsPerPage = numResultsPerPage;
 

@@ -7,7 +7,7 @@ import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
 
 public class RestApiV1
 {
-   public static class ResultListDTO
+   public static class ResultList
    {
       public int numResultsPerPage;
       public int page;
