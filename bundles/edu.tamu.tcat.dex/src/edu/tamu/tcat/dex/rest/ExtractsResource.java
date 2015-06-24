@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.rest;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.ws.rs.DefaultValue;
@@ -72,11 +73,15 @@ public class ExtractsResource
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
    public RestApiV1.ResultList search(@QueryParam("q") String query,
-                               @DefaultValue("") @QueryParam("a") String advancedQuery,
-                               @DefaultValue("") @QueryParam("ms") String manuscriptQuery,
-                               @DefaultValue("") @QueryParam("pw") String playwrightQuery,
-                               @DefaultValue("") @QueryParam("pl") String playQuery,
-                               @DefaultValue("") @QueryParam("sp") String speakerQuery,
+                               @QueryParam("a") String advancedQuery,
+                               @QueryParam("ms") String manuscriptQuery,
+                               @QueryParam("f.ms") List<String> manuscriptFilters,
+                               @QueryParam("pw") String playwrightQuery,
+                               @QueryParam("f.pw") List<String> playwrightFilters,
+                               @QueryParam("pl") String playQuery,
+                               @QueryParam("f.pl") List<String> playFilters,
+                               @QueryParam("sp") String speakerQuery,
+                               @QueryParam("f.sp") List<String> speakerFilters,
                                @DefaultValue("1") @QueryParam("p") int page,
                                @DefaultValue("-1") @QueryParam("n") int numResultsPerPage)
    {
@@ -85,34 +90,57 @@ public class ExtractsResource
 
          if (query != null)
          {
+            // basic query
             queryCommand.query(query);
          }
          else
          {
-            if (!advancedQuery.isEmpty())
+            // advanced query
+            if (advancedQuery != null && !advancedQuery.isEmpty())
             {
                queryCommand.advancedQuery(advancedQuery);
             }
 
-            if (!manuscriptQuery.isEmpty())
+            if (manuscriptQuery != null && !manuscriptQuery.isEmpty())
             {
                queryCommand.queryManuscript(manuscriptQuery);
             }
 
-            if (!playwrightQuery.isEmpty())
+            if (playwrightQuery != null && !playwrightQuery.isEmpty())
             {
                queryCommand.queryPlaywright(playwrightQuery);
             }
 
-            if (!playQuery.isEmpty())
+            if (playQuery != null && !playQuery.isEmpty())
             {
                queryCommand.queryPlay(playQuery);
             }
 
-            if (!speakerQuery.isEmpty())
+            if (speakerQuery != null && !speakerQuery.isEmpty())
             {
                queryCommand.querySpeaker(speakerQuery);
             }
+         }
+
+         // search refinement applies to both the basic and advanced query variants
+         if (manuscriptFilters != null && !manuscriptFilters.isEmpty())
+         {
+            queryCommand.filterManuscript(manuscriptFilters);
+         }
+
+         if (playwrightFilters != null && !playwrightFilters.isEmpty())
+         {
+            queryCommand.filterPlaywright(playwrightFilters);
+         }
+
+         if (playFilters != null && !playFilters.isEmpty())
+         {
+            queryCommand.filterPlay(playFilters);
+         }
+
+         if (speakerFilters != null && !speakerFilters.isEmpty())
+         {
+            queryCommand.filterSpeaker(speakerFilters);
          }
 
          queryCommand.setOffset(numResultsPerPage * (page-1));
