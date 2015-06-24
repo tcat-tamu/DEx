@@ -1,9 +1,6 @@
 package edu.tamu.tcat.dex.rest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -17,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
+import edu.tamu.tcat.dex.rest.v1.SearchAdapter;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
@@ -26,7 +24,6 @@ import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
-import edu.tamu.tcat.trc.extract.search.solr.ExtractSolrConfig;
 
 @Path("/extracts")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,20 +31,6 @@ public class ExtractsResource
 {
    private ExtractRepository repo;
    private ExtractSearchService searchService;
-
-   private static final Map<String, String> SOLR_FACET_FIELD_NAME_MAP = new HashMap<>();
-   private static final Map<String, String> SOLR_FACET_FIELD_NAME_REVERSE_MAP = new HashMap<>();
-
-   static
-   {
-      SOLR_FACET_FIELD_NAME_MAP.put(ExtractSolrConfig.MANUSCRIPT_TITLE.getName(), "ms");
-      SOLR_FACET_FIELD_NAME_MAP.put(ExtractSolrConfig.PLAY_TITLE.getName(), "pl");
-      SOLR_FACET_FIELD_NAME_MAP.put(ExtractSolrConfig.PLAYWRIGHT_NAME.getName(), "pw");
-      SOLR_FACET_FIELD_NAME_MAP.put(ExtractSolrConfig.SPEAKER_NAME.getName(), "sp");
-
-      SOLR_FACET_FIELD_NAME_MAP.entrySet().parallelStream()
-         .forEach(e -> SOLR_FACET_FIELD_NAME_REVERSE_MAP.put(e.getValue(), e.getKey()));
-   }
 
    public void setRepo(ExtractRepository repo)
    {
@@ -77,14 +60,7 @@ public class ExtractsResource
 //         queryCommand.setOffset(numResultsPerPage * (page-1));
 //         queryCommand.setMaxResults(numResultsPerPage);
 //         SearchExtractResult results = queryCommand.execute();
-//
-//         RestApiV1.ResultList dto = new RestApiV1.ResultList();
-//         dto.page = page;
-//         dto.numResultsPerPage = numResultsPerPage;
-//         dto.numFound = results.getNumFound();
-//         dto.results = results.get();
-//
-//         return dto;
+//         return SearchAdapter.toDto(results, page, numResultsPerPage);
 //      }
 //      catch (SearchException e) {
 //         throw new ServerErrorException("Unable to execute fetch-all", Status.INTERNAL_SERVER_ERROR, e);
@@ -139,30 +115,10 @@ public class ExtractsResource
             }
          }
 
-
          queryCommand.setOffset(numResultsPerPage * (page-1));
          queryCommand.setMaxResults(numResultsPerPage);
          SearchExtractResult results = queryCommand.execute();
-
-         RestApiV1.ResultList dto = new RestApiV1.ResultList();
-         dto.page = page;
-         dto.numResultsPerPage = numResultsPerPage;
-
-         dto.numFound = results.getNumFound();
-         dto.results = results.get();
-         dto.facets = results.getFacets().parallelStream()
-               .collect(Collectors.toMap(f -> SOLR_FACET_FIELD_NAME_MAP.get(f.getFieldName()), f -> f.getValues().stream()
-                     .map(item ->
-                     {
-                        RestApiV1.FacetItem facetItem = new RestApiV1.FacetItem();
-                        facetItem.label = item.getLabel();
-                        facetItem.count = item.getCount();
-                        return facetItem;
-                     })
-                     .collect(Collectors.toList())
-               ));
-
-         return dto;
+         return SearchAdapter.toDTO(results, page, numResultsPerPage);
       }
       catch (SearchException e) {
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
