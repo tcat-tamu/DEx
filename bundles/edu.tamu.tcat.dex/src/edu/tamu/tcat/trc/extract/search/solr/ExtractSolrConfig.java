@@ -43,6 +43,7 @@ public class ExtractSolrConfig implements SolrIndexConfig
       //      IDs should be resolved server-side by an in-memory cache.
       params.setFacet(true);
       params.setFacetLimit(10);
+      params.setFacetMinCount(1);
       params.addFacetField(MANUSCRIPT_TITLE.getName());
       params.addFacetField(PLAYWRIGHT_NAME.getName());
       params.addFacetField(PLAY_TITLE.getName());
