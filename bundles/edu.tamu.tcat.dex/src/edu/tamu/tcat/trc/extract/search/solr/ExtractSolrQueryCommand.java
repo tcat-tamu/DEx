@@ -4,15 +4,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
 import edu.tamu.tcat.trc.entries.search.SearchException;
 import edu.tamu.tcat.trc.entries.search.solr.impl.TrcQueryBuilder;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
+import edu.tamu.tcat.trc.extract.search.FacetItemList;
+import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
 
 public class ExtractSolrQueryCommand implements ExtractQueryCommand
@@ -64,9 +70,13 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
          QueryResponse response = solrServer.query(queryBuilder.get());
          SolrDocumentList results = response.getResults();
 
+         Collection<FacetItemList> facets = response.getFacetFields().parallelStream()
+               .map(FacetItemListImpl::fromSolr)
+               .collect(Collectors.toList());
+
          long totalFound = results.getNumFound();
          List<ExtractSearchProxy> extracts = queryBuilder.unpack(results, ExtractSolrConfig.SEARCH_PROXY);
-         return new SolrExtractsResults(this, extracts, totalFound);
+         return new SolrExtractsResults(this, extracts, totalFound, facets);
       }
       catch (SolrServerException e)
       {
@@ -156,4 +166,66 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       queryBuilder.max(count);
    }
 
+
+   private static class FacetItemListImpl implements FacetItemList
+   {
+      private final String fieldName;
+      private final Supplier<List<FacetItem>> values;
+
+      public static FacetItemListImpl fromSolr(FacetField solrField)
+      {
+         Supplier<List<FacetItem>> valuesSupplier = () -> solrField.getValues().stream()
+               .map(FacetItemImpl::fromSolr)
+               .collect(Collectors.toList());
+
+         return new FacetItemListImpl(solrField.getName(), valuesSupplier);
+      }
+
+      private FacetItemListImpl(String fieldName, Supplier<List<FacetItem>> values)
+      {
+         this.fieldName = fieldName;
+         this.values = values;
+      }
+
+      @Override
+      public String getFieldName()
+      {
+         return fieldName;
+      }
+
+      @Override
+      public List<FacetItem> getValues()
+      {
+         return values.get();
+      }
+   }
+
+   private static class FacetItemImpl implements FacetItem
+   {
+      private final String label;
+      private final long count;
+
+      public static FacetItemImpl fromSolr(Count solrCount)
+      {
+         return new FacetItemImpl(solrCount.getName(), solrCount.getCount());
+      }
+
+      private FacetItemImpl(String label, long count)
+      {
+         this.label = label;
+         this.count = count;
+      }
+
+      @Override
+      public String getLabel()
+      {
+         return label;
+      }
+
+      @Override
+      public long getCount()
+      {
+         return count;
+      }
+   }
 }

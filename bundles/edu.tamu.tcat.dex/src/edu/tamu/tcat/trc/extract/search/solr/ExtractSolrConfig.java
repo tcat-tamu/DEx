@@ -37,6 +37,16 @@ public class ExtractSolrConfig implements SolrIndexConfig
        * additional solr Paramaters to be set in order to 'fine tune' the query.
        */
       params.set("defType", "edismax");
+
+      // enable faceting
+      // HACK Faceting should be done by ID rather than by their display values.
+      //      IDs should be resolved server-side by an in-memory cache.
+      params.setFacet(true);
+      params.setFacetLimit(10);
+      params.addFacetField(MANUSCRIPT_TITLE.getName());
+      params.addFacetField(PLAYWRIGHT_NAME.getName());
+      params.addFacetField(PLAY_TITLE.getName());
+      params.addFacetField(SPEAKER_NAME.getName());
    }
 
    @Override

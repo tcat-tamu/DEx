@@ -1,5 +1,6 @@
 package edu.tamu.tcat.trc.extract.search;
 
+import java.util.Collection;
 import java.util.List;
 
 import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
@@ -33,5 +34,12 @@ public interface SearchExtractResult
     */
    long getNumFound();
 
-   // TODO: add support for retrieving facet information
+   /**
+    * Facets allow the user to refine search results by filtering according to the extracted values
+    * of certain fields. Each {@link FacetItemList} corresponds to a single field, and the items
+    * therein to the values.
+    *
+    * @return Facet definitions for each defined facet field.
+    */
+   Collection<FacetItemList> getFacets();
 }
