@@ -97,6 +97,13 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    }
 
    @Override
+   public void advancedQuery(String advancedQueryString) throws SearchException
+   {
+      queryBuilder.query(ExtractSolrConfig.ORIGINAL, advancedQueryString);
+      queryBuilder.query(ExtractSolrConfig.NORMALIZED, advancedQueryString);
+   }
+
+   @Override
    public void queryManuscript(String manuscriptQuery) throws SearchException
    {
       queryBuilder.query(ExtractSolrConfig.MANUSCRIPT_TITLE_SEARCHABLE, manuscriptQuery);

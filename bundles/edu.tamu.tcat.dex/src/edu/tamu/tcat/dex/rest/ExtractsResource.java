@@ -78,6 +78,7 @@ public class ExtractsResource
    @Path("/search")
    @Produces(MediaType.APPLICATION_JSON)
    public ResultListDTO search(@QueryParam("q") String query,
+                               @DefaultValue("") @QueryParam("a") String advancedQuery,
                                @DefaultValue("") @QueryParam("ms") String manuscriptQuery,
                                @DefaultValue("") @QueryParam("pw") String playwrightQuery,
                                @DefaultValue("") @QueryParam("pl") String playQuery,
@@ -94,6 +95,11 @@ public class ExtractsResource
          }
          else
          {
+            if (!advancedQuery.isEmpty())
+            {
+               queryCommand.advancedQuery(advancedQuery);
+            }
+
             if (!manuscriptQuery.isEmpty())
             {
                queryCommand.queryManuscript(manuscriptQuery);

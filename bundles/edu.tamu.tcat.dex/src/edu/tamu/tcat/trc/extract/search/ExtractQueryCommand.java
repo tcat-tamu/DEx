@@ -40,6 +40,16 @@ public interface ExtractQueryCommand
    void query(String basicQueryString) throws SearchException;
 
    /**
+    * Supply an "advanced" keyword query to be executed. This is to be used in conjunction with
+    * {@code queryManuscript}, {@code queryPlaywright}, {@code queryPlay}, etc. and should therefore
+    * exclude those fields from the query fields.
+    *
+    * @param advancedQuery
+    * @throws SearchException
+    */
+   void advancedQuery(String advancedQueryString) throws SearchException;
+
+   /**
     * Include results whose manuscript title matches the supplied query.
     * This is used for advanced search.
     *
@@ -135,4 +145,5 @@ public interface ExtractQueryCommand
     * @param count
     */
    void setMaxResults(int count);
+
 }
