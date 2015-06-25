@@ -24,6 +24,7 @@ import edu.tamu.tcat.trc.extract.search.FacetItemList;
 import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
 
+
 public class ExtractSolrQueryCommand implements ExtractQueryCommand
 {
    private static final int DEFAULT_MAX_RESULTS = 25;
@@ -50,24 +51,26 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    {
       try
       {
+         // TODO: facet by ID, not by display text
+
          if (!manuscriptIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_ID, manuscriptIds);
+            queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_TITLE, manuscriptIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_MANUSCRIPT);
          }
 
          if (!playwrightIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.PLAYWRIGHT_ID, playwrightIds);
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAYWRIGHT_NAME, playwrightIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAYWRIGHT);
          }
 
          if (!playIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.PLAY_ID, playIds);
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAY_TITLE, playIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAY);
          }
 
          if (!speakerIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_ID, speakerIds);
+            queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_NAME, speakerIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_SPEAKER);
          }
 
          QueryResponse response = solrServer.query(queryBuilder.get());
