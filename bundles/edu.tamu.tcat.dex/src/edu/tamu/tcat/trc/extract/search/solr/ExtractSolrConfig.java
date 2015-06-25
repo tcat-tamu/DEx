@@ -29,6 +29,11 @@ public class ExtractSolrConfig implements SolrIndexConfig
    public static final SolrIndexField<String> SPEAKER_NAME = new BasicFields.BasicString("speaker_name");
    public static final SolrIndexField<String> SPEAKER_NAME_SEARCHABLE = new BasicFields.BasicString("speaker_name_searchable");
 
+   public static final String FACET_EXCLUDE_TAG_MANUSCRIPT = "exManuscript";
+   public static final String FACET_EXCLUDE_TAG_PLAYWRIGHT = "exPlaywright";
+   public static final String FACET_EXCLUDE_TAG_PLAY = "exPlay";
+   public static final String FACET_EXCLUDE_TAG_SPEAKER = "exSpeaker";
+
    @Override
    public void initialConfiguration(SolrQuery params) throws SearchException
    {
@@ -44,10 +49,15 @@ public class ExtractSolrConfig implements SolrIndexConfig
       params.setFacet(true);
       params.setFacetLimit(10);
       params.setFacetMinCount(1);
-      params.addFacetField(MANUSCRIPT_TITLE.getName());
-      params.addFacetField(PLAYWRIGHT_NAME.getName());
-      params.addFacetField(PLAY_TITLE.getName());
-      params.addFacetField(SPEAKER_NAME.getName());
+      addFacetField(params, MANUSCRIPT_TITLE.getName(), FACET_EXCLUDE_TAG_MANUSCRIPT);
+      addFacetField(params, PLAYWRIGHT_NAME.getName(), FACET_EXCLUDE_TAG_PLAYWRIGHT);
+      addFacetField(params, PLAY_TITLE.getName(), FACET_EXCLUDE_TAG_PLAY);
+      addFacetField(params, SPEAKER_NAME.getName(), FACET_EXCLUDE_TAG_SPEAKER);
+   }
+
+   private static void addFacetField(SolrQuery params, String solrFieldName, String excludeTag)
+   {
+      params.add("facet.field", (excludeTag == null || excludeTag.isEmpty() ? "" : "{!ex=" + excludeTag + "}") + solrFieldName);
    }
 
    @Override
