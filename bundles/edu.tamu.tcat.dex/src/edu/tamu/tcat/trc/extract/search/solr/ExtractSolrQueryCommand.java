@@ -2,7 +2,10 @@ package edu.tamu.tcat.trc.extract.search.solr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -70,8 +73,14 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
          QueryResponse response = solrServer.query(queryBuilder.get());
          SolrDocumentList results = response.getResults();
 
+         Map<String, Collection<String>> selectedFacets = new HashMap<>();
+         selectedFacets.put(ExtractSolrConfig.MANUSCRIPT_TITLE.getName(), manuscriptIds);
+         selectedFacets.put(ExtractSolrConfig.PLAYWRIGHT_NAME.getName(), playwrightIds);
+         selectedFacets.put(ExtractSolrConfig.PLAY_TITLE.getName(), playIds);
+         selectedFacets.put(ExtractSolrConfig.SPEAKER_NAME.getName(), speakerIds);
+
          Collection<FacetItemList> facets = response.getFacetFields().parallelStream()
-               .map(FacetItemListImpl::fromSolr)
+               .map(solrField -> FacetItemListImpl.fromSolr(solrField, selectedFacets.getOrDefault(solrField.getName(), Collections.emptyList())))
                .collect(Collectors.toList());
 
          long totalFound = results.getNumFound();
@@ -179,10 +188,10 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       private final String fieldName;
       private final Supplier<List<FacetItem>> values;
 
-      public static FacetItemListImpl fromSolr(FacetField solrField)
+      public static FacetItemListImpl fromSolr(FacetField solrField, Collection<String> selectedItems)
       {
          Supplier<List<FacetItem>> valuesSupplier = () -> solrField.getValues().stream()
-               .map(FacetItemImpl::fromSolr)
+               .map(solrItem -> FacetItemImpl.fromSolr(solrItem, selectedItems.contains(solrItem.getName())))
                .collect(Collectors.toList());
 
          return new FacetItemListImpl(solrField.getName(), valuesSupplier);
@@ -211,16 +220,18 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    {
       private final String label;
       private final long count;
+      private final boolean selected;
 
-      public static FacetItemImpl fromSolr(Count solrCount)
+      public static FacetItemImpl fromSolr(Count solrCount, boolean selected)
       {
-         return new FacetItemImpl(solrCount.getName(), solrCount.getCount());
+         return new FacetItemImpl(solrCount.getName(), solrCount.getCount(), selected);
       }
 
-      private FacetItemImpl(String label, long count)
+      private FacetItemImpl(String label, long count, boolean selected)
       {
          this.label = label;
          this.count = count;
+         this.selected = selected;
       }
 
       @Override
@@ -233,6 +244,12 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       public long getCount()
       {
          return count;
+      }
+
+      @Override
+      public boolean isSelected()
+      {
+         return selected;
       }
    }
 }

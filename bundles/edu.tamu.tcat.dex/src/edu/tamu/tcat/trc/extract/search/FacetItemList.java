@@ -29,6 +29,11 @@ public interface FacetItemList extends Iterable<FacetItem>
        * @return a count of the number of result documents that contain the label value.
        */
       long getCount();
+
+      /**
+       * @return whether this facet item was selected/activated in the prior query
+       */
+      boolean isSelected();
    }
 
    /**

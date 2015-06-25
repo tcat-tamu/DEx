@@ -58,6 +58,7 @@ public class SearchAdapter
 
       dto.label = item.getLabel();
       dto.count = item.getCount();
+      dto.selected = item.isSelected();
 
       return dto;
    }

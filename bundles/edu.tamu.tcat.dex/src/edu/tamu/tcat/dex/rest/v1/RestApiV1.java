@@ -21,5 +21,6 @@ public class RestApiV1
    {
       public String label;
       public long count;
+      public boolean selected;
    }
 }
