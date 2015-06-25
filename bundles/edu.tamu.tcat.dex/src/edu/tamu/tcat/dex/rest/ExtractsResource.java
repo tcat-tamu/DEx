@@ -75,51 +75,54 @@ public class ExtractsResource
    public RestApiV1.ResultList search(@QueryParam("q") String query,
                                @QueryParam("a") String advancedQuery,
                                @QueryParam("ms") String manuscriptQuery,
-                               @QueryParam("f.ms") List<String> manuscriptFilters,
+                               @QueryParam("f.ms[]") List<String> manuscriptFilters,
                                @QueryParam("pw") String playwrightQuery,
-                               @QueryParam("f.pw") List<String> playwrightFilters,
+                               @QueryParam("f.pw[]") List<String> playwrightFilters,
                                @QueryParam("pl") String playQuery,
-                               @QueryParam("f.pl") List<String> playFilters,
+                               @QueryParam("f.pl[]") List<String> playFilters,
                                @QueryParam("sp") String speakerQuery,
-                               @QueryParam("f.sp") List<String> speakerFilters,
+                               @QueryParam("f.sp[]") List<String> speakerFilters,
                                @DefaultValue("1") @QueryParam("p") int page,
                                @DefaultValue("-1") @QueryParam("n") int numResultsPerPage)
    {
       try {
          ExtractQueryCommand queryCommand = searchService.createQueryCommand();
 
-         if (query != null)
+         boolean basicQuery = true;
+
+         // advanced query
+         if (advancedQuery != null && !advancedQuery.isEmpty())
          {
-            // basic query
-            queryCommand.query(query);
+            queryCommand.advancedQuery(advancedQuery);
+            basicQuery = false;
          }
-         else
+
+         if (manuscriptQuery != null && !manuscriptQuery.isEmpty())
          {
-            // advanced query
-            if (advancedQuery != null && !advancedQuery.isEmpty())
-            {
-               queryCommand.advancedQuery(advancedQuery);
-            }
+            queryCommand.queryManuscript(manuscriptQuery);
+            basicQuery = false;
+         }
 
-            if (manuscriptQuery != null && !manuscriptQuery.isEmpty())
-            {
-               queryCommand.queryManuscript(manuscriptQuery);
-            }
+         if (playwrightQuery != null && !playwrightQuery.isEmpty())
+         {
+            queryCommand.queryPlaywright(playwrightQuery);
+            basicQuery = false;
+         }
 
-            if (playwrightQuery != null && !playwrightQuery.isEmpty())
-            {
-               queryCommand.queryPlaywright(playwrightQuery);
-            }
+         if (playQuery != null && !playQuery.isEmpty())
+         {
+            queryCommand.queryPlay(playQuery);
+            basicQuery = false;
+         }
 
-            if (playQuery != null && !playQuery.isEmpty())
-            {
-               queryCommand.queryPlay(playQuery);
-            }
+         if (speakerQuery != null && !speakerQuery.isEmpty())
+         {
+            queryCommand.querySpeaker(speakerQuery);
+            basicQuery = false;
+         }
 
-            if (speakerQuery != null && !speakerQuery.isEmpty())
-            {
-               queryCommand.querySpeaker(speakerQuery);
-            }
+         if (basicQuery) {
+            queryCommand.query(query == null ? "" : query);
          }
 
          // search refinement applies to both the basic and advanced query variants
