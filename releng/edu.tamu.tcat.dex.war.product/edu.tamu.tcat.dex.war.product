@@ -25,9 +25,6 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.equinox.core.feature"/>
-      <feature id="org.eclipse.equinox.servletbridge.feature"/>
-      <feature id="edu.tamu.tcat.dex.war.deps.feature"/>
       <feature id="edu.tamu.tcat.dex.war.feature"/>
    </features>
 

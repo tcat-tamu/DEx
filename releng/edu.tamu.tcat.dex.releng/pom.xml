@@ -45,40 +45,48 @@ under the License.
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <java.version>1.8</java.version>
 
-      <repo-dex-path>dex.main/bundles</repo-dex-path>
-      <repo-dex-tests-path>dex.main/tests</repo-dex-tests-path>
-      <repo-dex-releng-path>dex.main/releng</repo-dex-releng-path>
+      <repo-dex-path>dex.main</repo-dex-path>
+      <repo-dex-bundles-path>${repo-dex-path}/bundles</repo-dex-bundles-path>
+      <repo-dex-tests-path>${repo-dex-path}/tests</repo-dex-tests-path>
+      <repo-dex-releng-path>${repo-dex-path}/releng</repo-dex-releng-path>
    </properties>
 
    <modules>
-      <!-- TODO: locate on eclipse-hosted p2 repo or move to different local p2 repo -->
-      <module>${repo-dex-releng-path}/org.eclipse.equinox.servletbridge.feature</module>
-   
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.product</module>
-      <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.deps.feature</module>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.feature</module>
-
-      <!-- main project bundle -->
-      <module>${repo-dex-path}/edu.tamu.tcat.dex</module>
+      <module>${repo-dex-bundles-path}/edu.tamu.tcat.dex</module>
+      <module>${repo-dex-bundles-path}/edu.tamu.tcat.dex.trc.entry</module>
    </modules>
 
    <repositories>
       <repository>
          <id>Eclipse Platform Luna 4.4</id>
          <layout>p2</layout>
-         <url>http://download.eclipse.org/eclipse/updates/4.4</url>
+         <url>http://download.eclipse.org/releases/luna/201406250900/</url>
       </repository>
 
       <repository>
          <id>Eclipse Orbit Luna SR2</id>
          <layout>p2</layout>
-         <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</url>
+         <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</url>
       </repository>
       
       <repository>
          <id>OSGi JAX-RS Connector</id>
          <layout>p2</layout>
          <url>http://hstaudacher.github.io/osgi-jax-rs-connector</url>
+      </repository>
+      
+      <repository>
+         <id>SDA SDK</id>
+         <layout>p2</layout>
+         <url>https://sda-dev.citd.tamu.edu/sdk</url>
+      </repository>
+      
+      <repository>
+         <id>Thematic Research Collection (dev)</id>
+         <layout>p2</layout>
+         <url>https://build.citd.tamu.edu/hudson/job/oss.trc-dev/lastSuccessfulBuild/artifact/targetPlatform</url>
       </repository>
    </repositories>
 
