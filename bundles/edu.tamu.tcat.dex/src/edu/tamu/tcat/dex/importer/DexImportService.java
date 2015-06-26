@@ -45,6 +45,10 @@ public class DexImportService
    private PeopleRepository peopleRepo;
    private WorkRepository worksRepo;
 
+   private AutoCloseable workListenerRegistration;
+   private AutoCloseable peopleListenerRegistration;
+   private AutoCloseable extractListenerRegistration;
+
    public void setExtractRepository(ExtractRepository repo)
    {
       this.extractRepo = repo;
@@ -65,10 +69,44 @@ public class DexImportService
       Objects.requireNonNull(extractRepo, "No extract repository provided");
       Objects.requireNonNull(peopleRepo, "No people repository provided");
       Objects.requireNonNull(worksRepo, "No works repository provided");
+
+      extractListenerRegistration = extractRepo.register(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " extract [" + evt.getEntityId() + "]."));
+      workListenerRegistration = worksRepo.addUpdateListener(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " work [" + evt.getEntityId() + "]."));
+      peopleListenerRegistration = peopleRepo.addUpdateListener(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " person [" + evt.getEntityId() + "]."));
    }
 
    public void dispose()
    {
+      try
+      {
+         extractListenerRegistration.close();
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.WARNING, "Failed to close update listener on extract repository.", e);
+      }
+
+      try
+      {
+         workListenerRegistration.close();
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.WARNING, "Failed to close update listener on work repository.", e);
+      }
+
+      try
+      {
+         peopleListenerRegistration.close();
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.WARNING, "Failed to close update listener on people repository.", e);
+      }
+
+      this.extractRepo = null;
+      this.peopleRepo = null;
+      this.worksRepo = null;
    }
 
 
@@ -110,7 +148,8 @@ public class DexImportService
                   }
                   catch (Exception e)
                   {
-                     logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "].", e);
+                     // logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "] in [" + manuscriptId + "].", e);
+                     logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "] in [" + manuscriptId + "].");
                   }
 
                   return ReferenceDTO.create(id, name);
@@ -135,7 +174,8 @@ public class DexImportService
          }
          catch (NoSuchCatalogRecordException e)
          {
-            logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "]", e);
+            // logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + manuscriptId + "].", e);
+            logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + manuscriptId + "].");
          }
          extract.source = ReferenceDTO.create(extract.sourceId, sourceTitle);
 
@@ -149,7 +189,8 @@ public class DexImportService
          catch (DramaticExtractException e)
          {
             // TODO: accumulate and report at end.
-            logger.log(Level.WARNING, "unable to import extract [" + extract.id + "]", e);
+            // logger.log(Level.WARNING, "unable to import extract [" + extract.id + "] in [" + manuscriptId + "].", e);
+            logger.log(Level.WARNING, "unable to import extract [" + extract.id + "] in [" + manuscriptId + "].");
          }
       }
    }
