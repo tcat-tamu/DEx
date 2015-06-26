@@ -13,16 +13,18 @@ import edu.tamu.tcat.dex.importer.DexImportService;
 
 public class TestDexImportService
 {
-   private static final String PEOPLE_PLAYS_TEI_PATH = "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml";
+   private static final String TEI_BASE_PATH = "/home/CITD/matt.barry/Dropbox/Shared/DEx MSS for Matthew";
+
+   private static final String PEOPLE_PLAYS_TEI_PATH = TEI_BASE_PATH + "/peopleandplays_13April.xml";
+
    private static final String[] MANUSCRIPT_TEI_PATHS = {
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/BLMSAdd10309.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/DEx_Sample_BLAddMS22608.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/BLMSAdd64078.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/BLMSLansdowne1185.new.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/BodleianMSSancroft29.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/FolgerMSVa87_22Apr.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/Harvard MS Fr. 487.xml",
-      "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/UChicago_MS824.xml"
+      TEI_BASE_PATH + "/BLMSAdd10309.xml",
+      TEI_BASE_PATH + "/BLMSAdd64078.xml",
+      TEI_BASE_PATH + "/BLMSLansdowne1185.xml",
+      TEI_BASE_PATH + "/BodleianMSSancroft29.xml",
+      TEI_BASE_PATH + "/FolgerMSVa87_22Apr.xml",
+      TEI_BASE_PATH + "/Harvard MS Fr. 487.xml",
+      TEI_BASE_PATH + "/UChicago_MS824.xml"
    };
 
    @Test

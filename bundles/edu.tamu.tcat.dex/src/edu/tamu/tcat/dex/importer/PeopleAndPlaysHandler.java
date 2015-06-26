@@ -292,7 +292,23 @@ class PeopleAndPlaysHandler extends DefaultHandler
          }
          else if (getCurrentElement().equals("editor"))
          {
-            EditionDTO edition = (EditionDTO)objectStack.peek();
+            EditionDTO edition;
+
+            if (objectStack.peek() instanceof EditionDTO)
+            {
+               // check if we had a preceding edition tag
+               edition = (EditionDTO)objectStack.peek();
+            }
+            else
+            {
+               // add an edition on the fly
+               PlayImportDTO play = (PlayImportDTO)objectStack.peek();
+               edition = new EditionDTO();
+               edition.title = play.titles.iterator().next();
+               play.editions.add(edition);
+               objectStack.push(edition);
+            }
+
             edition.editors.add(value);
          }
          else if (getCurrentElement().equals("date"))
