@@ -45,7 +45,7 @@ public class ServiceHelper
          basicConfig.setProperty("db.postgres.pass", "1Password2");
          basicConfig.setProperty("dex.xslt.tei.original", "/home/CITD/matt.barry/git/git.citd.tamu.edu/dex.deploy/xslt/tei-original.xsl");
          basicConfig.setProperty("dex.xslt.tei.normalized", "/home/CITD/matt.barry/git/git.citd.tamu.edu/dex.deploy/xslt/tei-normalized.xsl");
-         basicConfig.setProperty("solr.api.endpoint", URI.create("http://mbarry.citd.tamu.edu:8983/solr/"));
+         basicConfig.setProperty("solr.api.endpoint", "http://mbarry.citd.tamu.edu:8983/solr/");
          basicConfig.setProperty("dex.solr.core", "extracts");
 
          config = basicConfig;
