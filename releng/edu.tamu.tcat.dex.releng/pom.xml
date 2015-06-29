@@ -59,6 +59,7 @@ under the License.
    </modules>
 
    <repositories>
+      <!-- keep these p2 repos in sync with those defined in the TCAT OSS target platform in the config.targets git repo -->
       <repository>
          <id>Eclipse Platform Luna 4.4</id>
          <layout>p2</layout>
@@ -83,6 +84,7 @@ under the License.
          <url>https://sda-dev.citd.tamu.edu/sdk</url>
       </repository>
       
+      <!-- use development build of TRC library on Hudson until officially released -->
       <repository>
          <id>Thematic Research Collection (dev)</id>
          <layout>p2</layout>
