@@ -1,7 +1,10 @@
 package edu.tamu.tcat.dex.psql.test;
 
-import java.net.URI;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.UUID;
 
 import edu.tamu.tcat.db.exec.sql.SqlExecutor;
@@ -23,6 +26,8 @@ import edu.tamu.tcat.trc.extract.search.solr.DramaticExtractsSearchService;
 
 public class ServiceHelper
 {
+   private static final String PROPERTY_CONFIG_FILE_PATH = "dex.war.config.file";
+
    // cached service instances
    private static ConfigurationProperties config;
    private static DataSourceProvider dataSourceProvider;
@@ -39,14 +44,25 @@ public class ServiceHelper
    {
       if (config == null)
       {
+         String filePath = System.getProperty(PROPERTY_CONFIG_FILE_PATH);
+
+         if (filePath == null)
+         {
+            throw new IllegalArgumentException("config file path property [" + PROPERTY_CONFIG_FILE_PATH + "] is not defined.");
+         }
+
+         Properties properties = new Properties();
+         try (Reader reader = new FileReader(filePath))
+         {
+            properties.load(reader);
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException("Unable to read properties file [" + filePath + "]", e);
+         }
+
          BasicConfigurationProperties basicConfig = new BasicConfigurationProperties();
-         basicConfig.setProperty("db.postgres.url", "jdbc:postgresql://localhost:5432/dex");
-         basicConfig.setProperty("db.postgres.user", "postgres");
-         basicConfig.setProperty("db.postgres.pass", "1Password2");
-         basicConfig.setProperty("dex.xslt.tei.original", "/home/CITD/matt.barry/git/git.citd.tamu.edu/dex.deploy/xslt/tei-original.xsl");
-         basicConfig.setProperty("dex.xslt.tei.normalized", "/home/CITD/matt.barry/git/git.citd.tamu.edu/dex.deploy/xslt/tei-normalized.xsl");
-         basicConfig.setProperty("solr.api.endpoint", "http://mbarry.citd.tamu.edu:8983/solr/");
-         basicConfig.setProperty("dex.solr.core", "extracts");
+         properties.forEach((k,v) -> basicConfig.setProperty(k.toString(), v.toString()));
 
          config = basicConfig;
       }
