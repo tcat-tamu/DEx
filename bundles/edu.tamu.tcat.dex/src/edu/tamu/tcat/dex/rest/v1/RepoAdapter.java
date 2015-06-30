@@ -70,6 +70,18 @@ public class RepoAdapter
       return dto;
    }
 
+   public static RestApiV1.Character toCharacterDTO(Person person)
+   {
+      RestApiV1.Character dto = new RestApiV1.Character();
+
+      dto.id = person.getId();
+      dto.name = getName(person.getCanonicalName());
+
+      // TODO: dto.plays
+
+      return dto;
+   }
+
    private static RestApiV1.PlaywrightReference toDTO(AuthorReference ref)
    {
       RestApiV1.PlaywrightReference dto = new RestApiV1.PlaywrightReference();

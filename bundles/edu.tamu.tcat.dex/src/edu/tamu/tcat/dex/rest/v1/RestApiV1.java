@@ -26,6 +26,19 @@ public class RestApiV1
       public boolean selected;
    }
 
+   public static class Manuscript
+   {
+      public String id;
+      public String title;
+      public String author;
+   }
+
+   public static class PlayReference
+   {
+      public String id;
+      public String title;
+   }
+
    public static class Play
    {
       public String id;
@@ -45,10 +58,10 @@ public class RestApiV1
        public List<String> names = new ArrayList<>();
    }
 
-   public static class Manuscript
+   public static class Character
    {
       public String id;
-      public String title;
-      public String author;
+      public String name;
+      public List<PlayReference> plays = new ArrayList<>();
    }
 }
