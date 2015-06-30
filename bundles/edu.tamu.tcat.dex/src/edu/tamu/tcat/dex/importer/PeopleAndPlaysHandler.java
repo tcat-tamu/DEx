@@ -114,9 +114,9 @@ class PeopleAndPlaysHandler extends DefaultHandler
 
          PlaywrightReferenceDTO playwrightRef = new PlaywrightReferenceDTO();
 
-         // strip leading '#' from reference
+         // strip leading '#' from reference if it exists
          String corresp = attributes.getValue("corresp");
-         playwrightRef.playwrightId = corresp == null ? null : corresp.substring(1);
+         playwrightRef.playwrightId = corresp == null ? null : corresp.substring(corresp.indexOf('#') + 1);
 
          PlayImportDTO play = (PlayImportDTO)objectStack.peek();
          play.playwrightRefs.add(playwrightRef);
