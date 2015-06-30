@@ -1,5 +1,7 @@
 package edu.tamu.tcat.dex.rest.v1;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +14,9 @@ public class RestApiV1
       public int numResultsPerPage;
       public int page;
       public long numFound;
-      public List<ExtractSearchProxy> results;
+      public List<ExtractSearchProxy> results = new ArrayList<>();
 
-      public Map<String, List<FacetItem>> facets;
+      public Map<String, List<FacetItem>> facets = new HashMap<>();
    }
 
    public static class FacetItem

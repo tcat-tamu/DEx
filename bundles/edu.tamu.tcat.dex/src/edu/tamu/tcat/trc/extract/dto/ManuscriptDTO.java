@@ -42,10 +42,13 @@ public class ManuscriptDTO
       dto.title = manuscript.getTitle().getCanonicalTitle().getFullTitle();
 
       AuthorReference authorRef = manuscript.getAuthors().get(0);
-      String firstName = authorRef.getFirstName().trim();
-      String lastName = authorRef.getLastName().trim();
+      String firstName = authorRef.getFirstName();
+      String lastName = authorRef.getLastName();
 
-      dto.author = (firstName.isEmpty() ? "" : firstName + " ") + lastName;
+      firstName = (firstName == null || firstName.isEmpty()) ? "" : firstName.trim();
+      lastName = (lastName == null || lastName.isEmpty()) ? "" : lastName.trim();
+
+      dto.author = (firstName + " " + lastName).trim();
 
       return dto;
    }
