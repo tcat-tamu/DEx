@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import edu.tamu.tcat.dex.TrcBiblioType;
 import edu.tamu.tcat.dex.importer.PeopleAndPlaysParser.ImportResult;
 import edu.tamu.tcat.dex.importer.model.CharacterImportDTO;
 import edu.tamu.tcat.dex.importer.model.ExtractImportDTO;
@@ -237,6 +238,8 @@ public class DexImportService
       {
          // save plays
          EditWorkCommand editCommand = worksRepo.create(play.id);
+
+         editCommand.setType(TrcBiblioType.Play.toString());
 
          editCommand.setTitles(play.titles.stream()
                .map(t -> {

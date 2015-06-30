@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
+import edu.tamu.tcat.dex.TrcBiblioType;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.bib.AuthorList;
 import edu.tamu.tcat.trc.entries.types.bib.AuthorReference;
@@ -131,6 +132,12 @@ public class ManuscriptDTO
       public String getId()
       {
          return id;
+      }
+
+      @Override
+      public String getType()
+      {
+         return TrcBiblioType.Manuscript.toString();
       }
 
       @Override
