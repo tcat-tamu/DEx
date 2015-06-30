@@ -24,3 +24,10 @@ public class RestApiV1
       public boolean selected;
    }
 }
+   public static class Manuscript
+   {
+      public String id;
+      public String title;
+      public String author;
+   }
+}

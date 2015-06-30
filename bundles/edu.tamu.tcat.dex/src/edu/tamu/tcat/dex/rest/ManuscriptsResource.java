@@ -11,10 +11,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import edu.tamu.tcat.dex.rest.v1.RepoAdapter;
+import edu.tamu.tcat.dex.rest.v1.RestApiV1;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.bib.Work;
 import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
-import edu.tamu.tcat.trc.extract.dto.ManuscriptDTO;
 
 @Path("/mss")
 public class ManuscriptsResource
@@ -57,12 +58,12 @@ public class ManuscriptsResource
    @GET
    @Path("/{id}")
    @Produces(MediaType.APPLICATION_JSON)
-   public ManuscriptDTO get(@PathParam("id") String id)
+   public RestApiV1.Manuscript get(@PathParam("id") String id)
    {
          try
          {
             Work work = repo.getWork(id);
-            return ManuscriptDTO.create(work);
+            return RepoAdapter.toDTO(work);
          }
          catch (NoSuchCatalogRecordException e)
          {
