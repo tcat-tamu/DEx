@@ -47,7 +47,7 @@ public class TestExtractRepository
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
 
-      String tei = "<div type=\"extract\" n=\"3.1.64\" corresp=\"#Shakespeare_Hamlet\"><sp who=\"Hamlet\"><l>To be or not to be—<choice><orig>that is the question:</orig><seg type=\"smartalec\">that's not a question</seg></choice></l></sp></div>";
+      String tei = "<div type=\"extract\" n=\"3.1.64\" corresp=\"#Shakes_Hamlet\"><sp who=\"Hamlet\"><l>To be or not to be—<choice><orig>that is the question:</orig><seg type=\"smartalec\">that's not a question</seg></choice></l></sp></div>";
       InputSource is = new InputSource(new StringReader(tei));
       Document document = documentBuilder.parse(is);
 
