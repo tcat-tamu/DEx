@@ -54,6 +54,7 @@ Service-Component: OSGI-INF/config.xml,
  OSGI-INF/rest/extracts.xml,
  OSGI-INF/rest/jaxrs.jackson.xml,
  OSGI-INF/rest/manuscripts.xml,
+ OSGI-INF/rest/plays.xml,
  OSGI-INF/tei.transform.xml,
  OSGI-INF/trc/bib.repo.xml,
  OSGI-INF/trc/bio.repo.xml

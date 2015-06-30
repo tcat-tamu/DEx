@@ -25,7 +25,26 @@ public class RestApiV1
       public long count;
       public boolean selected;
    }
-}
+
+   public static class Play
+   {
+      public String id;
+      public String title;
+      public List<PlaywrightReference> playwrights = new ArrayList<>();
+   }
+
+   public static class PlaywrightReference
+   {
+      public String id;
+      public String name;
+   }
+
+   public static class Playwright
+   {
+       public String id;
+       public List<String> names = new ArrayList<>();
+   }
+
    public static class Manuscript
    {
       public String id;

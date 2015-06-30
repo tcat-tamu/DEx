@@ -26,6 +26,38 @@ public class RepoAdapter
       return dto;
    }
 
+   public static RestApiV1.Play toPlayDTO(Work work)
+   {
+      Objects.requireNonNull(work);
+
+      RestApiV1.Play dto = new RestApiV1.Play();
+
+      dto.id = work.getId();
+      dto.title = getTitle(work);
+
+      for (AuthorReference ref : work.getAuthors())
+      {
+         if (ref == null)
+         {
+            continue;
+         }
+
+         dto.playwrights.add(toDTO(ref));
+      }
+
+      return dto;
+   }
+
+   private static RestApiV1.PlaywrightReference toDTO(AuthorReference ref)
+   {
+      RestApiV1.PlaywrightReference dto = new RestApiV1.PlaywrightReference();
+
+      dto.id = ref.getId();
+      dto.name = getName(ref);
+
+      return dto;
+   }
+
    private static String getTitle(Work work)
    {
       if (work == null)
