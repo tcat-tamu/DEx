@@ -10,27 +10,48 @@ import edu.tamu.tcat.trc.entries.types.bib.Work;
 
 public class RepoAdapter
 {
-   public static RestApiV1.Manuscript toDTO(Work work)
+   public static RestApiV1.Manuscript toManuscriptDTO(Work work)
    {
       Objects.requireNonNull(work);
 
       RestApiV1.Manuscript dto = new RestApiV1.Manuscript();
 
       dto.id = work.getId();
+      dto.title = getTitle(work);
+
+      AuthorList authorList = work.getAuthors();
+      AuthorReference authorReference = authorList == null || authorList.size() == 0 ? null : authorList.get(0);
+      dto.author = getName(authorReference);
+
+      return dto;
+   }
+
+   private static String getTitle(Work work)
+   {
+      if (work == null)
+      {
+         return "";
+      }
 
       TitleDefinition titleDefinition = work.getTitle();
       Title canonicalTitle = titleDefinition == null ? null : titleDefinition.getCanonicalTitle();
       String title = canonicalTitle == null ? null : canonicalTitle.getFullTitle();
-      dto.title = title == null ? "" : title;
+      return title == null ? "" : title;
+   }
 
-      AuthorList authorList = work.getAuthors();
-      AuthorReference authorReference = authorList == null || authorList.size() == 0 ? null : authorList.get(0);
-      String firstName = authorReference == null ? null : authorReference.getFirstName();
+   private static String getName(AuthorReference ref)
+   {
+      if (ref == null)
+      {
+         return "";
+      }
+
+      String firstName = ref.getFirstName();
       String firstNameTrimmed = firstName == null ? "" : firstName.trim();
-      String lastName = authorReference == null ? null : authorReference.getLastName();
-      String lastNameTrimmed = lastName == null ? "" : lastName.trim();
-      dto.author = (firstNameTrimmed + " " + lastNameTrimmed).trim();
 
-      return dto;
+      String lastName = ref.getLastName();
+      String lastNameTrimmed = lastName == null ? "" : lastName.trim();
+
+      return (firstNameTrimmed + " " + lastNameTrimmed).trim();
    }
 }
