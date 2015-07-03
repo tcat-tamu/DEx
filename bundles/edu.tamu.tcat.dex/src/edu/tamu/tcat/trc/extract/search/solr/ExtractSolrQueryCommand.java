@@ -207,6 +207,17 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       queryBuilder.max(count);
    }
 
+   @Override
+   public void setMaxFacets(int count)
+   {
+      if (count < 0)
+      {
+         count = Integer.MAX_VALUE;
+      }
+
+      queryBuilder.facetLimit(count);
+   }
+
 
    private static class FacetItemListImpl implements FacetItemList
    {

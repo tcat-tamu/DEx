@@ -146,4 +146,14 @@ public interface ExtractQueryCommand
     */
    void setMaxResults(int count);
 
+   /**
+    * Specify the maximum number of facet items to be included in the results. Implementations may
+    * return fewer results but must not return more.
+    *
+    * If not specified, the default is 10.
+    *
+    * @param count
+    */
+   void setMaxFacets(int count);
+
 }

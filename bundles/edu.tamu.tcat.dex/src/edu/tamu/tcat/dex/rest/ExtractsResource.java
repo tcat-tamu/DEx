@@ -83,7 +83,8 @@ public class ExtractsResource
                                @QueryParam("sp") String speakerQuery,
                                @QueryParam("f.sp[]") List<String> speakerFilters,
                                @DefaultValue("1") @QueryParam("p") int page,
-                               @DefaultValue("-1") @QueryParam("n") int numResultsPerPage)
+                               @DefaultValue("-1") @QueryParam("n") int numResultsPerPage,
+                               @DefaultValue("10") @QueryParam("f.n") int numFacets)
    {
       try {
          ExtractQueryCommand queryCommand = searchService.createQueryCommand();
@@ -148,6 +149,7 @@ public class ExtractsResource
 
          queryCommand.setOffset(numResultsPerPage * (page-1));
          queryCommand.setMaxResults(numResultsPerPage);
+         queryCommand.setMaxFacets(numFacets);
          SearchExtractResult results = queryCommand.execute();
          return SearchAdapter.toDTO(results, page, numResultsPerPage);
       }
