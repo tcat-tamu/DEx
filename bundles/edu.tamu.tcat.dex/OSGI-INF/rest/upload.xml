@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" name="edu.tamu.tcat.dex.rest.upload">
+   <implementation class="edu.tamu.tcat.dex.rest.UploadResource"/>
+   <service>
+      <provide interface="edu.tamu.tcat.dex.rest.UploadResource"/>
+   </service>
+</scr:component>
