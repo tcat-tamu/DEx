@@ -1,6 +1,7 @@
 package edu.tamu.tcat.dex.importer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.HashSet;
@@ -78,40 +79,50 @@ public class DexImportService
 
    public void dispose()
    {
-      try
-      {
-         extractListenerRegistration.close();
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.WARNING, "Failed to close update listener on extract repository.", e);
-      }
-
-      try
-      {
-         workListenerRegistration.close();
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.WARNING, "Failed to close update listener on work repository.", e);
-      }
-
-      try
-      {
-         peopleListenerRegistration.close();
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.WARNING, "Failed to close update listener on people repository.", e);
-      }
+      releaseRegistration(extractListenerRegistration, "extract repository");
+      releaseRegistration(workListenerRegistration, "work repository");
+      releaseRegistration(peopleListenerRegistration, "people repository");
 
       this.extractRepo = null;
       this.peopleRepo = null;
       this.worksRepo = null;
    }
 
+   private void releaseRegistration(AutoCloseable reg, String repoName)
+   {
+      try
+      {
+         reg.close();
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.WARNING, "Failed to close update listener on " + repoName, e);
+      }
+   }
 
-   public void importManuscriptTEI(String manuscriptId, Reader tei) throws DexImportException
+   public ManuscriptImportDTO parseManuscript(String msId, InputStream tei) throws DexImportException
+   {
+      try
+      {
+         ManuscriptImportDTO ms = ManuscriptParser.load(tei);
+         ms.id = msId;
+
+         return ms;
+      }
+      catch (IOException e)
+      {
+         throw new DexImportException("Unable to load TEI content", e);
+      }
+   }
+
+   /**
+    * Imports all dramatic extracts from the supplied TEI data.
+    *
+    * @param manuscriptId
+    * @param tei
+    * @throws DexImportException
+    */
+   public void importManuscriptTEI(String manuscriptId, InputStream tei) throws DexImportException
    {
       ManuscriptImportDTO manuscript;
       try
@@ -120,7 +131,7 @@ public class DexImportService
       }
       catch (IOException e)
       {
-         throw new IllegalStateException("Unable to load TEI content", e);
+         throw new IllegalArgumentException("Unable to load TEI content", e);
       }
 
       manuscript.id = manuscriptId;

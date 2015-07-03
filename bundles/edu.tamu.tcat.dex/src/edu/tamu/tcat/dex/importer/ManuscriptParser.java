@@ -1,7 +1,7 @@
 package edu.tamu.tcat.dex.importer;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -33,7 +33,7 @@ public class ManuscriptParser
 
    }
 
-   public static ManuscriptImportDTO load(Reader xmlSource) throws DexImportException, IOException
+   public static ManuscriptImportDTO load(InputStream xmlSource) throws DexImportException, IOException
    {
       InputSource inputSource = new InputSource(xmlSource);
 
