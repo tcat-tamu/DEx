@@ -4,6 +4,10 @@ import static org.junit.Assert.fail;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -13,7 +17,7 @@ import edu.tamu.tcat.dex.importer.DexImportService;
 
 public class TestDexImportService
 {
-   private static final String TEI_BASE_PATH = "/home/CITD/matt.barry/Dropbox/Shared/DEx MSS for Matthew";
+   private static final String TEI_BASE_PATH = "\\\\citd.tamu.edu\\citdfs\\projects\\DEX\\data";
 
    private static final String PEOPLE_PLAYS_TEI_PATH = TEI_BASE_PATH + "/peopleandplays_13April.xml";
 
@@ -66,9 +70,12 @@ public class TestDexImportService
          String manuscriptId = FilenameUtils.getBaseName(filePath);
          DexImportService importService = ServiceHelper.getImportService();
 
-         try (FileReader teiReader = new FileReader(filePath))
+         Path p = Paths.get(filePath);
+
+         try (InputStream tei = Files.newInputStream(p))
          {
-            importService.importManuscriptTEI(manuscriptId, teiReader);
+            importService.importManuscriptTEI(manuscriptId, tei);
+
          }
          catch (IOException e)
          {
