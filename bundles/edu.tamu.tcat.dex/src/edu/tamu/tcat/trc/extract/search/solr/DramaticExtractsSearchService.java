@@ -20,6 +20,8 @@ import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.search.SearchException;
 import edu.tamu.tcat.trc.entries.search.solr.impl.TrcQueryBuilder;
+import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
+import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 
@@ -37,8 +39,11 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     */
    private static final String CONFIG_SOLR_CORE = "dex.solr.core";
 
-   private ExtractRepository repo;
+   private ExtractRepository extractRepo;
+   private PeopleRepository peopleRepo;
+   private WorkRepository workRepo;
    private ExtractManipulationUtil extractManipulationUtil;
+   private FacetValueManipulationUtil facetValueManipulationUtil;
    private ConfigurationProperties config;
    private SolrServer solrServer;
    private AutoCloseable repoListenerRegistration;
@@ -46,7 +51,17 @@ public class DramaticExtractsSearchService implements ExtractSearchService
 
    public void setRepo(ExtractRepository repo)
    {
-      this.repo = repo;
+      extractRepo = repo;
+   }
+
+   public void setRepo(PeopleRepository repo)
+   {
+      peopleRepo = repo;
+   }
+
+   public void setRepo(WorkRepository repo)
+   {
+      workRepo = repo;
    }
 
    public void setConfig(ConfigurationProperties config)
@@ -61,12 +76,19 @@ public class DramaticExtractsSearchService implements ExtractSearchService
 
    public void activate()
    {
-      Objects.requireNonNull(repo, "No extracts repository supplied.");
+      Objects.requireNonNull(extractRepo, "No extracts repository supplied.");
+      Objects.requireNonNull(peopleRepo, "No people repository supplied.");
+      Objects.requireNonNull(workRepo, "No works repository supplied.");
       Objects.requireNonNull(config, "No configuration supplied.");
       Objects.requireNonNull(extractManipulationUtil, "No extract manipulation utility provided.");
 
+      facetValueManipulationUtil = new FacetValueManipulationUtil();
+      facetValueManipulationUtil.setRepo(peopleRepo);
+      facetValueManipulationUtil.setRepo(workRepo);
+      facetValueManipulationUtil.activate();
+
       // listen for updates from the repository
-      repoListenerRegistration = repo.register(this::handleUpdateEvent);
+      repoListenerRegistration = extractRepo.register(this::handleUpdateEvent);
 
       // Solr setup
       URI solrBaseUri = config.getPropertyValue(CONFIG_SOLR_API_ENDPOINT, URI.class);
@@ -89,7 +111,12 @@ public class DramaticExtractsSearchService implements ExtractSearchService
          }
       }
 
-      repo = null;
+      facetValueManipulationUtil.dispose();
+      facetValueManipulationUtil = null;
+
+      extractRepo = null;
+      peopleRepo = null;
+      workRepo = null;
       config = null;
       extractManipulationUtil = null;
       repoListenerRegistration = null;
@@ -99,7 +126,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    public ExtractQueryCommand createQueryCommand() throws SearchException
    {
       TrcQueryBuilder qb = new TrcQueryBuilder(solrServer, new ExtractSolrConfig());
-      return new ExtractSolrQueryCommand(solrServer, qb);
+      return new ExtractSolrQueryCommand(solrServer, qb, facetValueManipulationUtil);
    }
 
    /**
@@ -132,8 +159,8 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    {
       String id = evt.getEntityId();
       try {
-         DramaticExtract extract = repo.get(id);
-         ExtractDocument extractDocument = ExtractDocument.create(extract, extractManipulationUtil);
+         DramaticExtract extract = extractRepo.get(id);
+         ExtractDocument extractDocument = ExtractDocument.create(extract, extractManipulationUtil, facetValueManipulationUtil);
          SolrInputDocument solrDocument = extractDocument.getDocument();
          solrServer.add(solrDocument);
          solrServer.commit();
@@ -182,6 +209,5 @@ public class DramaticExtractsSearchService implements ExtractSearchService
          logger.log(Level.SEVERE, "Failed to remove extract [" + id + "] from the Solr server.", e);
       }
    }
-
 
 }

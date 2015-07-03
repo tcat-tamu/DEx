@@ -21,6 +21,7 @@ public class RestApiV1
 
    public static class FacetItem
    {
+      public String id;
       public String label;
       public long count;
       public boolean selected;

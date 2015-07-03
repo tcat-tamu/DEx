@@ -11,24 +11,24 @@ import edu.tamu.tcat.trc.extract.search.solr.ExtractSolrConfig;
 
 public class SearchAdapter
 {
-   public static final String REST_FIELD_MANUSCRIPT = "manuscript";
-   public static final String REST_FIELD_PLAY = "play";
-   public static final String REST_FIELD_PLAYWRIGHT = "playwright";
-   public static final String REST_FIELD_SPEAKER = "speaker";
+   public static final String REST_FACET_FIELD_MANUSCRIPT = "manuscript";
+   public static final String REST_FACET_FIELD_PLAY = "play";
+   public static final String REST_FACET_FIELD_PLAYWRIGHT = "playwright";
+   public static final String REST_FACET_FIELD_SPEAKER = "speaker";
 
-   private static final Map<String, SolrIndexField<?>> REST_SOLR_FIELD_NAME_MAP = new HashMap<>();
-   private static final Map<String, String> SOLR_REST_FIELD_NAME_MAP = new HashMap<>();
+   private static final Map<String, SolrIndexField<?>> REST_SOLR_FACET_FIELD_NAME_MAP = new HashMap<>();
+   private static final Map<String, String> SOLR_REST_FACET_FIELD_NAME_MAP = new HashMap<>();
 
    static
    {
-      REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_MANUSCRIPT, ExtractSolrConfig.MANUSCRIPT_TITLE);
-      REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_PLAY, ExtractSolrConfig.PLAY_TITLE);
-      REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_PLAYWRIGHT, ExtractSolrConfig.PLAYWRIGHT_NAME);
-      REST_SOLR_FIELD_NAME_MAP.put(REST_FIELD_SPEAKER, ExtractSolrConfig.SPEAKER_NAME);
+      REST_SOLR_FACET_FIELD_NAME_MAP.put(REST_FACET_FIELD_MANUSCRIPT, ExtractSolrConfig.MANUSCRIPT_FACET);
+      REST_SOLR_FACET_FIELD_NAME_MAP.put(REST_FACET_FIELD_PLAY, ExtractSolrConfig.PLAY_FACET);
+      REST_SOLR_FACET_FIELD_NAME_MAP.put(REST_FACET_FIELD_PLAYWRIGHT, ExtractSolrConfig.PLAYWRIGHT_FACET);
+      REST_SOLR_FACET_FIELD_NAME_MAP.put(REST_FACET_FIELD_SPEAKER, ExtractSolrConfig.SPEAKER_FACET);
 
       // NOTE THIS IS NOT THREAD-SAFE!!!!
-      REST_SOLR_FIELD_NAME_MAP.entrySet().stream()
-         .forEach(e -> SOLR_REST_FIELD_NAME_MAP.put(e.getValue().getName(), e.getKey()));
+      REST_SOLR_FACET_FIELD_NAME_MAP.entrySet().stream()
+         .forEach(e -> SOLR_REST_FACET_FIELD_NAME_MAP.put(e.getValue().getName(), e.getKey()));
    }
 
 
@@ -43,7 +43,7 @@ public class SearchAdapter
 
       dto.facets = results.getFacets().parallelStream()
             .collect(Collectors.toMap(
-                  f ->  SOLR_REST_FIELD_NAME_MAP.get(f.getFieldName()),
+                  f ->  SOLR_REST_FACET_FIELD_NAME_MAP.get(f.getFieldName()),
                   f -> f.getValues().stream()
                         .map(SearchAdapter::toDTO)
                         .collect(Collectors.toList())
@@ -56,6 +56,7 @@ public class SearchAdapter
    {
       RestApiV1.FacetItem dto = new RestApiV1.FacetItem();
 
+      dto.id = item.getId();
       dto.label = item.getLabel();
       dto.count = item.getCount();
       dto.selected = item.isSelected();

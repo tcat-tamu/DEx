@@ -16,12 +16,14 @@ public interface FacetItemList extends Iterable<FacetItem>
    public static interface FacetItem
    {
       /**
+       * @return the ID
+       */
+      String getId();
+
+      /**
        * @return the label
        */
       String getLabel();
-
-      // TODO The label may eventually be considered a human-readable value. The underlying facet
-      //      value (e.g. an ID) might be retrieved using a separate getValue() method.
 
       // TODO There are no use cases for this in the DEx project, but what about range facets like numbers and dates?
 

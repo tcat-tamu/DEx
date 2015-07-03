@@ -21,13 +21,15 @@ public class ExtractDocument
    }
 
 
-   public static ExtractDocument create(DramaticExtract extract, ExtractManipulationUtil extractManipulationUtil) throws SearchException
+   public static ExtractDocument create(DramaticExtract extract, ExtractManipulationUtil extractManipulationUtil, FacetValueManipulationUtil facetValueManipulationUtil) throws SearchException
    {
       ExtractDocument doc = new ExtractDocument();
 
       doc.document.set(ExtractSolrConfig.ID, extract.getId());
 
-      doc.document.set(ExtractSolrConfig.MANUSCRIPT_ID, extract.getManuscriptRef().getId());
+      String manuscriptId = extract.getManuscriptRef().getId();
+      doc.document.set(ExtractSolrConfig.MANUSCRIPT_ID, manuscriptId);
+      doc.document.set(ExtractSolrConfig.MANUSCRIPT_FACET, facetValueManipulationUtil.getWorkFacetValue(manuscriptId));
       doc.document.set(ExtractSolrConfig.MANUSCRIPT_TITLE, extract.getManuscriptRef().getDisplayTitle());
 
       try
@@ -42,17 +44,23 @@ public class ExtractDocument
 
       for (PlaywrightRef ref : extract.getPlaywrightRefs())
       {
-         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_ID, ref.getId());
+         String playwrightId = ref.getId();
+         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_ID, playwrightId);
+         doc.document.set(ExtractSolrConfig.PLAYWRIGHT_FACET, facetValueManipulationUtil.getPersonFacetValue(playwrightId));
          doc.document.set(ExtractSolrConfig.PLAYWRIGHT_NAME, ref.getDisplayName());
       }
 
       SourceRef playSource = extract.getSource();
-      doc.document.set(ExtractSolrConfig.PLAY_ID, playSource.getId());
+      String playId = playSource.getId();
+      doc.document.set(ExtractSolrConfig.PLAY_ID, playId);
+      doc.document.set(ExtractSolrConfig.PLAY_FACET, facetValueManipulationUtil.getWorkFacetValue(playId));
       doc.document.set(ExtractSolrConfig.PLAY_TITLE, playSource.getDisplayTitle());
 
       for (SpeakerRef ref : extract.getSpeakerRefs())
       {
-         doc.document.set(ExtractSolrConfig.SPEAKER_ID, ref.getId());
+         String speakerId = ref.getId();
+         doc.document.set(ExtractSolrConfig.SPEAKER_ID, speakerId);
+         doc.document.set(ExtractSolrConfig.SPEAKER_FACET, facetValueManipulationUtil.getPersonFacetValue(speakerId));
          doc.document.set(ExtractSolrConfig.SPEAKER_NAME, ref.getDisplayName());
       }
 

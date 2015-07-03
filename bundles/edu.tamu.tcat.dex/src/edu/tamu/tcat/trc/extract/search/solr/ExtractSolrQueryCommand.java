@@ -23,6 +23,7 @@ import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.FacetItemList;
 import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
+import edu.tamu.tcat.trc.extract.search.solr.FacetValueManipulationUtil.FacetValue;
 
 
 public class ExtractSolrQueryCommand implements ExtractQueryCommand
@@ -37,11 +38,16 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    private Collection<String> playIds = new ArrayList<>();
    private Collection<String> speakerIds = new ArrayList<>();
 
+   private final FacetValueManipulationUtil facetValueManipulationUtil;
 
-   public ExtractSolrQueryCommand(SolrServer solrServer, TrcQueryBuilder queryBuilder)
+
+   public ExtractSolrQueryCommand(SolrServer solrServer,
+                                  TrcQueryBuilder queryBuilder,
+                                  FacetValueManipulationUtil facetValueManipulationUtil)
    {
       this.solrServer = solrServer;
       this.queryBuilder = queryBuilder;
+      this.facetValueManipulationUtil = facetValueManipulationUtil;
       queryBuilder.max(DEFAULT_MAX_RESULTS);
    }
 
@@ -55,32 +61,32 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
 
          if (!manuscriptIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_TITLE, manuscriptIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_MANUSCRIPT);
+            queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_FACET, manuscriptIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_MANUSCRIPT);
          }
 
          if (!playwrightIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.PLAYWRIGHT_NAME, playwrightIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAYWRIGHT);
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAYWRIGHT_FACET, playwrightIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAYWRIGHT);
          }
 
          if (!playIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.PLAY_TITLE, playIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAY);
+            queryBuilder.filterMulti(ExtractSolrConfig.PLAY_FACET, playIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_PLAY);
          }
 
          if (!speakerIds.isEmpty())
          {
-            queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_NAME, speakerIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_SPEAKER);
+            queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_FACET, speakerIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_SPEAKER);
          }
 
          QueryResponse response = solrServer.query(queryBuilder.get());
          SolrDocumentList results = response.getResults();
 
          Map<String, Collection<String>> selectedFacets = new HashMap<>();
-         selectedFacets.put(ExtractSolrConfig.MANUSCRIPT_TITLE.getName(), manuscriptIds);
-         selectedFacets.put(ExtractSolrConfig.PLAYWRIGHT_NAME.getName(), playwrightIds);
-         selectedFacets.put(ExtractSolrConfig.PLAY_TITLE.getName(), playIds);
-         selectedFacets.put(ExtractSolrConfig.SPEAKER_NAME.getName(), speakerIds);
+         selectedFacets.put(ExtractSolrConfig.MANUSCRIPT_FACET.getName(), manuscriptIds);
+         selectedFacets.put(ExtractSolrConfig.PLAYWRIGHT_FACET.getName(), playwrightIds);
+         selectedFacets.put(ExtractSolrConfig.PLAY_FACET.getName(), playIds);
+         selectedFacets.put(ExtractSolrConfig.SPEAKER_FACET.getName(), speakerIds);
 
          Collection<FacetItemList> facets = response.getFacetFields().parallelStream()
                .map(solrField -> FacetItemListImpl.fromSolr(solrField, selectedFacets.getOrDefault(solrField.getName(), Collections.emptyList())))
@@ -124,7 +130,11 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void filterManuscript(Collection<String> manuscriptIds) throws SearchException
    {
-      this.manuscriptIds.addAll(manuscriptIds);
+      Collection<String> facetValues = manuscriptIds.stream()
+         .map(facetValueManipulationUtil::getWorkFacetValue)
+         .collect(Collectors.toList());
+
+      this.manuscriptIds.addAll(facetValues);
    }
 
    @Override
@@ -136,7 +146,11 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void filterPlaywright(Collection<String> playwrightIds) throws SearchException
    {
-      this.playwrightIds.addAll(playwrightIds);
+      Collection<String> facetValues = playwrightIds.stream()
+            .map(facetValueManipulationUtil::getPersonFacetValue)
+            .collect(Collectors.toList());
+
+      this.playwrightIds.addAll(facetValues);
    }
 
    @Override
@@ -148,7 +162,11 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void filterPlay(Collection<String> playIds) throws SearchException
    {
-      this.playIds.addAll(playIds);
+      Collection<String> facetValues = playIds.stream()
+            .map(facetValueManipulationUtil::getWorkFacetValue)
+            .collect(Collectors.toList());
+
+      this.playIds.addAll(facetValues);
    }
 
    @Override
@@ -160,7 +178,11 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    @Override
    public void filterSpeaker(Collection<String> speakerIds) throws SearchException
    {
-      this.speakerIds.addAll(speakerIds);
+      Collection<String> facetValues = speakerIds.stream()
+         .map(facetValueManipulationUtil::getPersonFacetValue)
+         .collect(Collectors.toList());
+
+      this.speakerIds.addAll(facetValues);
    }
 
    @Override
@@ -193,9 +215,20 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
 
       public static FacetItemListImpl fromSolr(FacetField solrField, Collection<String> selectedItems)
       {
-         Supplier<List<FacetItem>> valuesSupplier = () -> solrField.getValues().stream()
-               .map(solrItem -> FacetItemImpl.fromSolr(solrItem, selectedItems.contains(solrItem.getName())))
-               .collect(Collectors.toList());
+         Supplier<List<FacetItem>> valuesSupplier = () ->
+            {
+               // add items returned by Solr
+               List<FacetItem> values = solrField.getValues().stream()
+                     .map(solrItem -> FacetItemImpl.fromSolr(solrItem, selectedItems.remove(solrItem.getName())))
+                     .collect(Collectors.toList());
+
+               // add remaining selected items
+               selectedItems.stream()
+                     .map(selectedItem -> FacetItemImpl.fromFacetValue(selectedItem, 0, true))
+                     .forEach(values::add);
+
+               return values;
+            };
 
          return new FacetItemListImpl(solrField.getName(), valuesSupplier);
       }
@@ -221,20 +254,34 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
 
    private static class FacetItemImpl implements FacetItem
    {
+      private final String id;
       private final String label;
       private final long count;
       private final boolean selected;
 
       public static FacetItemImpl fromSolr(Count solrCount, boolean selected)
       {
-         return new FacetItemImpl(solrCount.getName(), solrCount.getCount(), selected);
+         return fromFacetValue(solrCount.getName(), solrCount.getCount(), selected);
       }
 
-      private FacetItemImpl(String label, long count, boolean selected)
+      public static FacetItemImpl fromFacetValue(String facetValue, long count, boolean selected)
       {
+         FacetValue splitValue = FacetValueManipulationUtil.splitFacetValue(facetValue);
+         return new FacetItemImpl(splitValue.id, splitValue.label, count, selected);
+      }
+
+      private FacetItemImpl(String id, String label, long count, boolean selected)
+      {
+         this.id = id;
          this.label = label;
          this.count = count;
          this.selected = selected;
+      }
+
+      @Override
+      public String getId()
+      {
+         return id;
       }
 
       @Override

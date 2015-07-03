@@ -206,8 +206,14 @@ public class ServiceHelper
          ConfigurationProperties config = getConfig();
          dess.setConfig(config);
 
-         ExtractRepository repo = getExtractRepository();
-         dess.setRepo(repo);
+         ExtractRepository extractRepo = getExtractRepository();
+         dess.setRepo(extractRepo);
+
+         PeopleRepository peopleRepo = getPeopleRepository();
+         dess.setRepo(peopleRepo);
+
+         WorkRepository workRepo = getWorkRepository();
+         dess.setRepo(workRepo);
 
          ExtractManipulationUtil extractManipulationUtil = getExtractManipulationUtil();
          dess.setExtractManipulationUtil(extractManipulationUtil);

@@ -15,17 +15,21 @@ public class ExtractSolrConfig implements SolrIndexConfig
    public static final SolrIndexField<String> ID = new BasicFields.BasicString("id");
    public static final BasicFields.SearchProxyField<ExtractSearchProxy> SEARCH_PROXY = new BasicFields.SearchProxyField<ExtractSearchProxy>("extract_proxy", ExtractSearchProxy.class);
    public static final SolrIndexField<String> MANUSCRIPT_ID = new BasicFields.BasicString("mss_shelfmark");
+   public static final SolrIndexField<String> MANUSCRIPT_FACET = new BasicFields.BasicString("mss_facet_value");
    public static final SolrIndexField<String> MANUSCRIPT_TITLE = new BasicFields.BasicString("mss_title");
    public static final SolrIndexField<String> MANUSCRIPT_TITLE_SEARCHABLE = new BasicFields.BasicString("mss_title_searchable");
    public static final SolrIndexField<String> NORMALIZED = new BasicFields.BasicString("normalized");
    public static final SolrIndexField<String> ORIGINAL = new BasicFields.BasicString("original");
    public static final SolrIndexField<String> PLAYWRIGHT_ID = new BasicFields.BasicString("playwright_id");
+   public static final SolrIndexField<String> PLAYWRIGHT_FACET = new BasicFields.BasicString("playwright_facet_value");
    public static final SolrIndexField<String> PLAYWRIGHT_NAME = new BasicFields.BasicString("playwright_name");
    public static final SolrIndexField<String> PLAYWRIGHT_NAME_SEARCHABLE = new BasicFields.BasicString("playwright_name_searchable");
    public static final SolrIndexField<String> PLAY_ID = new BasicFields.BasicString("play_id");
+   public static final SolrIndexField<String> PLAY_FACET = new BasicFields.BasicString("play_facet_value");
    public static final SolrIndexField<String> PLAY_TITLE = new BasicFields.BasicString("play_title");
    public static final SolrIndexField<String> PLAY_TITLE_SEARCHABLE = new BasicFields.BasicString("play_title_searchable");
    public static final SolrIndexField<String> SPEAKER_ID = new BasicFields.BasicString("speaker_id");
+   public static final SolrIndexField<String> SPEAKER_FACET = new BasicFields.BasicString("speaker_facet_value");
    public static final SolrIndexField<String> SPEAKER_NAME = new BasicFields.BasicString("speaker_name");
    public static final SolrIndexField<String> SPEAKER_NAME_SEARCHABLE = new BasicFields.BasicString("speaker_name_searchable");
 
@@ -49,10 +53,10 @@ public class ExtractSolrConfig implements SolrIndexConfig
       params.setFacet(true);
       params.setFacetLimit(10);
       params.setFacetMinCount(1);
-      addFacetField(params, MANUSCRIPT_TITLE.getName(), FACET_EXCLUDE_TAG_MANUSCRIPT);
-      addFacetField(params, PLAYWRIGHT_NAME.getName(), FACET_EXCLUDE_TAG_PLAYWRIGHT);
-      addFacetField(params, PLAY_TITLE.getName(), FACET_EXCLUDE_TAG_PLAY);
-      addFacetField(params, SPEAKER_NAME.getName(), FACET_EXCLUDE_TAG_SPEAKER);
+      addFacetField(params, MANUSCRIPT_FACET.getName(), FACET_EXCLUDE_TAG_MANUSCRIPT);
+      addFacetField(params, PLAYWRIGHT_FACET.getName(), FACET_EXCLUDE_TAG_PLAYWRIGHT);
+      addFacetField(params, PLAY_FACET.getName(), FACET_EXCLUDE_TAG_PLAY);
+      addFacetField(params, SPEAKER_FACET.getName(), FACET_EXCLUDE_TAG_SPEAKER);
    }
 
    private static void addFacetField(SolrQuery params, String solrFieldName, String excludeTag)
@@ -94,14 +98,18 @@ public class ExtractSolrConfig implements SolrIndexConfig
    {
       return Arrays.asList(ID,
             MANUSCRIPT_ID,
+            MANUSCRIPT_FACET,
             MANUSCRIPT_TITLE,
             NORMALIZED,
             ORIGINAL,
             PLAYWRIGHT_ID,
+            PLAYWRIGHT_FACET,
             PLAYWRIGHT_NAME,
             PLAY_ID,
+            PLAY_FACET,
             PLAY_TITLE,
             SPEAKER_ID,
+            SPEAKER_FACET,
             SPEAKER_NAME);
    }
 
@@ -118,10 +126,13 @@ public class ExtractSolrConfig implements SolrIndexConfig
    public Collection<? extends SolrIndexField<?>> getMultiValuedFields()
    {
       return Arrays.asList(PLAYWRIGHT_ID,
+            PLAYWRIGHT_FACET,
             PLAYWRIGHT_NAME,
             PLAY_ID,
+            PLAY_FACET,
             PLAY_TITLE,
             SPEAKER_ID,
+            SPEAKER_FACET,
             SPEAKER_NAME);
    }
 
