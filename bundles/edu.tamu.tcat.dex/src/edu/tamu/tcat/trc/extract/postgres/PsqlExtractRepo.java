@@ -35,14 +35,20 @@ public class PsqlExtractRepo implements ExtractRepository
 {
    private static final Logger logger = Logger.getLogger(PsqlExtractRepo.class.getName());
 
-   private static final String SELECT_EXTRACT_SQL = "SELECT extract FROM extracts WHERE id = ?";
+   private static final String SELECT_EXTRACT_SQL = "SELECT extract FROM extracts WHERE id = ? AND active = TRUE";
+
+   // HACK: not sure of the best way to do this
+   private static final String SELECT_EXTRACT_BY_MANUSCRIPT_SQL = "SELECT id FROM extracts WHERE extract->'manuscript'->>'id' = ? AND active = TRUE";
+
    private static final String UPDATE_EXTRACT_SQL = "UPDATE extracts SET extract = ? WHERE id = ?";
    private static final String CREATE_EXTRACT_SQL = "INSERT INTO extracts (extract, id) VALUES (?, ?)";
    private static final String DELETE_EXTRACT_SQL = "UPDATE extracts SET active = FALSE WHERE id = ?";
 
    private static final String SQL_SELECT_COLUMN_EXTRACT = "extract";
+   private static final String SQL_SELECT_COLUMN_ID = "id";
 
    private static final int SQL_SELECT_PARAM_ID = 1;
+   private static final int SQL_SELECT_BY_MANUSCRIPT_PARAM_ID = 1;
    private static final int SQL_UPDATE_PARAM_EXTRACT = 1;
    private static final int SQL_UPDATE_PARAM_ID = 2;
    private static final int SQL_DELETE_PARAM_ID = 1;
@@ -242,6 +248,13 @@ public class PsqlExtractRepo implements ExtractRepository
    }
 
    @Override
+   public void removebyManuscriptId(String manuscriptId) throws DramaticExtractException
+   {
+      ExecutorTask<Integer> task = makeDeleteByManuscriptIdTask(manuscriptId);
+      executor.submit(task);
+   }
+
+   @Override
    public AutoCloseable register(UpdateListener<UpdateEvent> ears)
    {
       return listeners.register(ears);
@@ -357,6 +370,42 @@ public class PsqlExtractRepo implements ExtractRepository
          catch (SQLException e)
          {
             throw new IllegalStateException("Failed to deactivate extract [" + id + "]", e);
+         }
+      };
+   }
+
+   private ExecutorTask<Integer> makeDeleteByManuscriptIdTask(String manuscriptId)
+   {
+      return (conn) ->
+      {
+         try (PreparedStatement ps = conn.prepareCall(SELECT_EXTRACT_BY_MANUSCRIPT_SQL))
+         {
+            ps.setString(SQL_SELECT_BY_MANUSCRIPT_PARAM_ID, manuscriptId);
+
+            Integer count = Integer.valueOf(0);
+            try (ResultSet rs = ps.executeQuery())
+            {
+               while (rs.next())
+               {
+                  String id = rs.getString(SQL_SELECT_COLUMN_ID);
+                  try
+                  {
+                     // delegate to remove() for event handling
+                     remove(id);
+                     count++;
+                  }
+                  catch (DramaticExtractException e)
+                  {
+                     logger.log(Level.SEVERE, "Unable to remove extract [" + id + "] for manuscript [" + manuscriptId + "].", e);
+                  }
+               }
+            }
+
+            return count;
+         }
+         catch (SQLException e)
+         {
+            throw new IllegalStateException("Failed to find extracts by manuscript ID [" + manuscriptId + "]", e);
          }
       };
    }

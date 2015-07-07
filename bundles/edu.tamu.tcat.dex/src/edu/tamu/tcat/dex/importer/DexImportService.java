@@ -176,7 +176,12 @@ public class DexImportService
       editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
       editManuscriptCommand.execute();
 
-      // TODO: delete extracts associated with manuscript prior to adding new ones or find a way to update existing extracts
+      try {
+         extractRepo.removebyManuscriptId(manuscript.id);
+      }
+      catch (DramaticExtractException e) {
+         logger.log(Level.WARNING, "Unable to remove existing extracts from manuscript [" + manuscript.id + "].", e);
+      }
 
       for (ExtractImportDTO extract : manuscript.extracts)
       {

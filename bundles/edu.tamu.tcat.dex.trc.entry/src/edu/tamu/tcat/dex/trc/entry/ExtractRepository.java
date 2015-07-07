@@ -70,4 +70,11 @@ public interface ExtractRepository
     * @return A registration handle that allows the listener to be removed.
     */
    AutoCloseable register(UpdateListener<UpdateEvent> ears);
+
+   /**
+    * Deletes extracts belonging to the given manuscript.
+    * @param id
+    * @throws DramaticExtractException
+    */
+   void removebyManuscriptId(String manuscriptId) throws DramaticExtractException;
 }

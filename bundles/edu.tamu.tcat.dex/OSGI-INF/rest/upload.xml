@@ -4,4 +4,5 @@
    <service>
       <provide interface="edu.tamu.tcat.dex.rest.UploadResource"/>
    </service>
+   <reference bind="setImportService" cardinality="1..1" interface="edu.tamu.tcat.dex.importer.DexImportService" name="DexImportService" policy="static"/>
 </scr:component>
