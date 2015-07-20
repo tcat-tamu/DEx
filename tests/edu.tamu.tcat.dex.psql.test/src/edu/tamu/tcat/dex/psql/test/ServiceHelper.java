@@ -16,7 +16,7 @@ import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.core.IdFactory;
 import edu.tamu.tcat.trc.entries.types.bib.postgres.PsqlWorkRepo;
-import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
+import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.postgres.PsqlPeopleRepo;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
 import edu.tamu.tcat.trc.extract.postgres.PsqlDataSourceProvider;

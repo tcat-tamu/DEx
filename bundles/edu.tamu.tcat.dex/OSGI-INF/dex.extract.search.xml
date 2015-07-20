@@ -3,7 +3,7 @@
    <implementation class="edu.tamu.tcat.trc.extract.search.solr.DramaticExtractsSearchService"/>
    <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository" name="ExtractRepository" policy="static"/>
    <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository" name="PeopleRepository" policy="static"/>
-   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository" name="WorkRepository" policy="static"/>
+   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository" name="WorkRepository" policy="static"/>
    <reference bind="setConfig" cardinality="1..1" interface="edu.tamu.tcat.osgi.config.ConfigurationProperties" name="ConfigurationProperties" policy="static"/>
    <service>
       <provide interface="edu.tamu.tcat.trc.extract.search.ExtractSearchService"/>

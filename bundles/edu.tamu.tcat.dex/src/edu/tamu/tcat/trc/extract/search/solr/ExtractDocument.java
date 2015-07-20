@@ -8,8 +8,8 @@ import edu.tamu.tcat.dex.trc.entry.SourceRef;
 import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
-import edu.tamu.tcat.trc.entries.search.SearchException;
-import edu.tamu.tcat.trc.entries.search.solr.impl.TrcDocument;
+import edu.tamu.tcat.trc.search.SearchException;
+import edu.tamu.tcat.trc.search.solr.impl.TrcDocument;
 
 public class ExtractDocument
 {

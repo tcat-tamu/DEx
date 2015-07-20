@@ -18,12 +18,12 @@ import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
-import edu.tamu.tcat.trc.entries.search.SearchException;
-import edu.tamu.tcat.trc.entries.search.solr.impl.TrcQueryBuilder;
-import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
+import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
+import edu.tamu.tcat.trc.search.SearchException;
+import edu.tamu.tcat.trc.search.solr.impl.TrcQueryBuilder;
 
 public class DramaticExtractsSearchService implements ExtractSearchService
 {

@@ -9,15 +9,15 @@ import java.util.Set;
 
 import edu.tamu.tcat.dex.TrcBiblioType;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
-import edu.tamu.tcat.trc.entries.types.bib.AuthorList;
-import edu.tamu.tcat.trc.entries.types.bib.AuthorReference;
-import edu.tamu.tcat.trc.entries.types.bib.Edition;
-import edu.tamu.tcat.trc.entries.types.bib.PublicationInfo;
-import edu.tamu.tcat.trc.entries.types.bib.Title;
-import edu.tamu.tcat.trc.entries.types.bib.TitleDefinition;
-import edu.tamu.tcat.trc.entries.types.bib.Work;
-import edu.tamu.tcat.trc.entries.types.bib.dto.AuthorRefDV;
-import edu.tamu.tcat.trc.entries.types.bib.dto.TitleDV;
+import edu.tamu.tcat.trc.entries.types.biblio.AuthorList;
+import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
+import edu.tamu.tcat.trc.entries.types.biblio.Edition;
+import edu.tamu.tcat.trc.entries.types.biblio.PublicationInfo;
+import edu.tamu.tcat.trc.entries.types.biblio.Title;
+import edu.tamu.tcat.trc.entries.types.biblio.TitleDefinition;
+import edu.tamu.tcat.trc.entries.types.biblio.Work;
+import edu.tamu.tcat.trc.entries.types.biblio.dto.AuthorRefDV;
+import edu.tamu.tcat.trc.entries.types.biblio.dto.TitleDV;
 
 public class ManuscriptDTO
 {

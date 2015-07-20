@@ -8,7 +8,7 @@ import edu.tamu.tcat.dex.trc.entry.ManuscriptRef;
 import edu.tamu.tcat.dex.trc.entry.SourceRef;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
-import edu.tamu.tcat.trc.entries.search.SearchException;
+import edu.tamu.tcat.trc.search.SearchException;
 
 public class ExtractSearchProxy
 {

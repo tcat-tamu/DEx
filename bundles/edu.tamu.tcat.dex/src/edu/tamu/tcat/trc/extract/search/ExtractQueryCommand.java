@@ -2,7 +2,8 @@ package edu.tamu.tcat.trc.extract.search;
 
 import java.util.Collection;
 
-import edu.tamu.tcat.trc.entries.search.SearchException;
+import edu.tamu.tcat.trc.search.SearchException;
+
 
 /**
  * Command for use in querying the associated {@link ExtractSearchService} which provides instances.

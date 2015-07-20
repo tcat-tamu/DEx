@@ -2,8 +2,8 @@ package edu.tamu.tcat.trc.extract.search.solr;
 
 import java.util.Objects;
 
-import edu.tamu.tcat.trc.entries.types.bib.Work;
-import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
+import edu.tamu.tcat.trc.entries.types.biblio.Work;
+import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.Person;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
 

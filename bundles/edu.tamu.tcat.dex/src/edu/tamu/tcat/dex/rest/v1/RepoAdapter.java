@@ -7,11 +7,11 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.tamu.tcat.trc.entries.types.bib.AuthorList;
-import edu.tamu.tcat.trc.entries.types.bib.AuthorReference;
-import edu.tamu.tcat.trc.entries.types.bib.Title;
-import edu.tamu.tcat.trc.entries.types.bib.TitleDefinition;
-import edu.tamu.tcat.trc.entries.types.bib.Work;
+import edu.tamu.tcat.trc.entries.types.biblio.AuthorList;
+import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
+import edu.tamu.tcat.trc.entries.types.biblio.Title;
+import edu.tamu.tcat.trc.entries.types.biblio.TitleDefinition;
+import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.bio.Person;
 import edu.tamu.tcat.trc.entries.types.bio.PersonName;
 

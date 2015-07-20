@@ -1,7 +1,7 @@
 package edu.tamu.tcat.trc.extract.search;
 
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
-import edu.tamu.tcat.trc.entries.search.SearchException;
+import edu.tamu.tcat.trc.search.SearchException;
 
 /**
  * The main API for searching a {@link ExtractRepository}.

@@ -16,7 +16,7 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
-   
+
    <!-- equinox runtime -->
    <plugin id="org.apache.felix.gogo.command" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
    <plugin id="org.apache.felix.gogo.runtime" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
@@ -48,4 +48,15 @@
    
    <!-- project plugins -->
    <plugin id="edu.tamu.tcat.dex" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.dex.trc.entry" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.core" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.biblio" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.postgres" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.rest" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.bio" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.bio.postgres" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.bio.rest" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.entries.types.bio.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin id="edu.tamu.tcat.trc.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
 </feature>

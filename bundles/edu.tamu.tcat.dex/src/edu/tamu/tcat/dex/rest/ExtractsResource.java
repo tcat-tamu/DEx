@@ -20,11 +20,11 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
-import edu.tamu.tcat.trc.entries.search.SearchException;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
+import edu.tamu.tcat.trc.search.SearchException;
 
 @Path("/extracts")
 @Produces(MediaType.APPLICATION_JSON)

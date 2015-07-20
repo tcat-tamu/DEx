@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import edu.tamu.tcat.trc.entries.search.solr.SolrIndexField;
 import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
 import edu.tamu.tcat.trc.extract.search.solr.ExtractSolrConfig;
+import edu.tamu.tcat.trc.search.solr.SolrIndexField;
 
 public class SearchAdapter
 {

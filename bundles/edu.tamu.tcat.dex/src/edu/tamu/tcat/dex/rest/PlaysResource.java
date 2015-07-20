@@ -13,8 +13,8 @@ import edu.tamu.tcat.dex.TrcBiblioType;
 import edu.tamu.tcat.dex.rest.v1.RepoAdapter;
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
-import edu.tamu.tcat.trc.entries.types.bib.Work;
-import edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository;
+import edu.tamu.tcat.trc.entries.types.biblio.Work;
+import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 
 @Path("/plays")
 public class PlaysResource

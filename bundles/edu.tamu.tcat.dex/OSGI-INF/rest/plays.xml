@@ -4,5 +4,5 @@
    <service>
       <provide interface="edu.tamu.tcat.dex.rest.PlaysResource"/>
    </service>
-   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.bib.repo.WorkRepository" name="WorkRepository" policy="static"/>
+   <reference bind="setRepo" cardinality="1..1" interface="edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository" name="WorkRepository" policy="static"/>
 </scr:component>

@@ -17,13 +17,13 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
-import edu.tamu.tcat.trc.entries.search.SearchException;
-import edu.tamu.tcat.trc.entries.search.solr.impl.TrcQueryBuilder;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.FacetItemList;
 import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
 import edu.tamu.tcat.trc.extract.search.solr.FacetValueManipulationUtil.FacetValue;
+import edu.tamu.tcat.trc.search.SearchException;
+import edu.tamu.tcat.trc.search.solr.impl.TrcQueryBuilder;
 
 
 public class ExtractSolrQueryCommand implements ExtractQueryCommand
