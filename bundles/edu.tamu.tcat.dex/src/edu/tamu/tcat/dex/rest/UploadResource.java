@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -78,7 +79,7 @@ public class UploadResource
       catch (DexImportException e)
       {
          logger.log(Level.WARNING, "Unable to import manuscript", e);
-         return "oops!";
+         throw new BadRequestException("Unable to import manuscript", e);
       }
    }
 
@@ -106,7 +107,7 @@ public class UploadResource
       catch (DexImportException e)
       {
          logger.log(Level.WARNING, "Unable to import people and plays", e);
-         return "oops!";
+         throw new BadRequestException("Unable to import people and plays", e);
       }
    }
 }
