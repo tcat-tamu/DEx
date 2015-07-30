@@ -19,17 +19,17 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 
 public class TestManuscriptImporter
 {
-   private static final String TEI_BASE_PATH = "/home/CITD/matt.barry/Documents/Projects/dex";
+   private static final String TEI_BASE_PATH = "/home/CITD/matthew.barry/Dropbox/Shared/DEx MSS for Matthew";
 
    private static final String[] files = {
-      TEI_BASE_PATH + "/Sample Files/BLMSAdd10309.xml",
-      TEI_BASE_PATH + "/Sample Files/BLMSAdd64078.xml",
-      TEI_BASE_PATH + "/Sample Files/BLMSLansdowne1185.new.xml",
-      TEI_BASE_PATH + "/Sample Files/BodleianMSSancroft29.xml",
-      TEI_BASE_PATH + "/Sample Files/DEx_Sample_BLAddMS22608.xml",
-      TEI_BASE_PATH + "/Sample Files/FolgerMSVa87_22Apr.xml",
-      TEI_BASE_PATH + "/Sample Files/Harvard MS Fr. 487.xml",
-      TEI_BASE_PATH + "/Sample Files/UChicago_MS824.xml"
+      TEI_BASE_PATH + "/BLMSAdd10309.xml",
+      TEI_BASE_PATH + "/BLMSAdd22608.xml",
+      TEI_BASE_PATH + "/BLMSAdd64078.xml",
+      TEI_BASE_PATH + "/BLMSLansdowne1185.xml",
+      TEI_BASE_PATH + "/BodleianMSSancroft29.xml",
+      TEI_BASE_PATH + "/FolgerMSVa87_22Apr.xml",
+      TEI_BASE_PATH + "/Harvard MS Fr. 487.xml",
+      TEI_BASE_PATH + "/UChicago_MS824.xml"
    };
 
    private static final ManuscriptParser importer = new ManuscriptParser();
@@ -50,7 +50,10 @@ public class TestManuscriptImporter
          {
             ManuscriptImportDTO manuscript = ManuscriptParser.load(tei);
             manuscripts.put(p.getFileName().toString(), manuscript);
-
+         }
+         catch (DexImportException e) {
+            System.err.println("Unable to import [" + filePath + "].");
+            throw e;
          }
       }
 

@@ -17,12 +17,13 @@ import edu.tamu.tcat.dex.importer.DexImportService;
 
 public class TestDexImportService
 {
-   private static final String TEI_BASE_PATH = "\\\\citd.tamu.edu\\citdfs\\projects\\DEX\\data";
+   private static final String TEI_BASE_PATH = "/home/CITD/matthew.barry/Dropbox/Shared/DEx MSS for Matthew";
 
    private static final String PEOPLE_PLAYS_TEI_PATH = TEI_BASE_PATH + "/peopleandplays_13April.xml";
 
    private static final String[] MANUSCRIPT_TEI_PATHS = {
       TEI_BASE_PATH + "/BLMSAdd10309.xml",
+      TEI_BASE_PATH + "/BLMSAdd22608.xml",
       TEI_BASE_PATH + "/BLMSAdd64078.xml",
       TEI_BASE_PATH + "/BLMSLansdowne1185.xml",
       TEI_BASE_PATH + "/BodleianMSSancroft29.xml",

@@ -13,11 +13,12 @@ import edu.tamu.tcat.dex.importer.PeopleAndPlaysParser.ImportResult;
 
 public class TestPeopleAndPlaysImporter
 {
+   private static final String TEI_BASE_PATH = "/home/CITD/matthew.barry/Dropbox/Shared/DEx MSS for Matthew";
 
    @Test
    public void testLoad() throws DexImportException, IOException
    {
-      String inputFilePath = "/home/CITD/matt.barry/Documents/Projects/dex/Sample Files/peopleandplays.xml";
+      String inputFilePath = TEI_BASE_PATH + "/peopleandplays_13April.xml";
 
       ImportResult result;
       try (FileReader fileReader = new FileReader(inputFilePath))
