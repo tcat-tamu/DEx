@@ -10,8 +10,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 
 import edu.tamu.tcat.dex.TrcBiblioType;
+import edu.tamu.tcat.dex.importer.DexImportService;
 import edu.tamu.tcat.dex.rest.v1.RepoAdapter;
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
@@ -22,15 +24,22 @@ import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 public class ManuscriptsResource
 {
    private WorkRepository repo;
+   private DexImportService importService;
 
    public void setRepo(WorkRepository repo)
    {
       this.repo = repo;
    }
 
+   public void setImportService(DexImportService importService)
+   {
+      this.importService = importService;
+   }
+
    public void activate()
    {
       Objects.requireNonNull(repo, "No works repository provided.");
+      Objects.requireNonNull(importService, "No import service provided.");
    }
 
    @GET
@@ -67,6 +76,14 @@ public class ManuscriptsResource
       {
          throw new NotFoundException("Unable to find manuscript [" + id + "]");
       }
+   }
+
+   @GET
+   @Path("/{id}/tei")
+   @Produces(MediaType.APPLICATION_XML)
+   public StreamingOutput getTei(@PathParam("id") String id)
+   {
+      return (out) -> importService.exportManuscriptTEI(id, out);
    }
 
 }

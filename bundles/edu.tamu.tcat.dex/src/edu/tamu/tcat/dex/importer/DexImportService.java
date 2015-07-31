@@ -2,7 +2,13 @@ package edu.tamu.tcat.dex.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +28,7 @@ import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
@@ -43,9 +50,13 @@ public class DexImportService
 {
    private static final Logger logger = Logger.getLogger(DexImportService.class.getName());
 
+   private static final String CONFIG_TEI_FILE_LOCATION = "dex.tei.filecache.path";
+
    private ExtractRepository extractRepo;
    private PeopleRepository peopleRepo;
    private WorkRepository worksRepo;
+
+   private String teiFileLocation;
 
    private AutoCloseable workListenerRegistration;
    private AutoCloseable peopleListenerRegistration;
@@ -66,11 +77,17 @@ public class DexImportService
       this.worksRepo = repo;
    }
 
+   public void setConfig(ConfigurationProperties config)
+   {
+      teiFileLocation = config.getPropertyValue(CONFIG_TEI_FILE_LOCATION, String.class);
+   }
+
    public void activate()
    {
       Objects.requireNonNull(extractRepo, "No extract repository provided");
       Objects.requireNonNull(peopleRepo, "No people repository provided");
       Objects.requireNonNull(worksRepo, "No works repository provided");
+      Objects.requireNonNull(teiFileLocation, "No TEI file location provided");
 
       extractListenerRegistration = extractRepo.register(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " extract [" + evt.getEntityId() + "]."));
       workListenerRegistration = worksRepo.addUpdateListener(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " work [" + evt.getEntityId() + "]."));
@@ -124,10 +141,24 @@ public class DexImportService
     */
    public void importManuscriptTEI(String manuscriptId, InputStream tei) throws DexImportException
    {
+      // save TEI to file on disk
+      String filename = manuscriptId + ".xml";
+      Path teiFilePath = Paths.get(teiFileLocation, filename);
+      try
+      {
+         Files.copy(tei, teiFilePath, StandardCopyOption.REPLACE_EXISTING);
+      }
+      catch (IOException e)
+      {
+         throw new DexImportException("Unable to save TEI content to file", e);
+      }
+
+      // read saved TEI and import into system
       ManuscriptImportDTO manuscript;
       try
       {
-         manuscript = ManuscriptParser.load(tei);
+         InputStream input = Files.newInputStream(teiFilePath, StandardOpenOption.READ);
+         manuscript = ManuscriptParser.load(input);
       }
       catch (IOException e)
       {
@@ -161,6 +192,20 @@ public class DexImportService
       importResult.characters.values().stream()
          .filter(c -> !c.names.isEmpty())
          .forEach(this::saveCharacter);
+   }
+
+   public void exportManuscriptTEI(String manuscriptId, OutputStream out)
+   {
+      String filename = manuscriptId + ".xml";
+      Path teiPath = Paths.get(teiFileLocation, filename);
+      try
+      {
+         Files.copy(teiPath, out);
+      }
+      catch (IOException e)
+      {
+         throw new IllegalArgumentException("Unable to export manuscript with ID [" + manuscriptId + "].", e);
+      }
    }
 
    /**
