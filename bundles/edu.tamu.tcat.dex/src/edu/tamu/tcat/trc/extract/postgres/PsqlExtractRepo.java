@@ -25,7 +25,6 @@ import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserverAdapter;
-import edu.tamu.tcat.trc.entries.notification.EntryUpdateHelper;
 import edu.tamu.tcat.trc.entries.notification.ObservableTaskWrapper;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
@@ -76,7 +75,7 @@ public class PsqlExtractRepo implements ExtractRepository
    {
       Objects.requireNonNull(executor, "No SQL Executor provided");
       eventFactory = new BaseUpdateEventFactory(EXTRACT_REPO_ACTOR_ID);
-      listeners = new EntryUpdateHelper<>();
+      listeners = new EntryUpdateHelper<>(4);
       mapper = new ObjectMapper();
    }
 
