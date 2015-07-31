@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.rest.v1;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,5 +65,22 @@ public class RestApiV1
       public String id;
       public String name;
       public List<PlayReference> plays = new ArrayList<>();
+   }
+
+   public static class PlayBibEntry
+   {
+      public String id;
+      public List<String> playwrights = new ArrayList<>();
+      public String title;
+      public List<EditionBibEntry> editions = new ArrayList<>();
+   }
+
+   public static class EditionBibEntry
+   {
+      public String id;
+      public List<String> editors = new ArrayList<>();
+      public String title;
+      public URI link;
+      public String date;
    }
 }

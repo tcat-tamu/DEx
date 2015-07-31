@@ -1,5 +1,7 @@
 package edu.tamu.tcat.dex.rest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.ws.rs.GET;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import edu.tamu.tcat.dex.TrcBiblioType;
 import edu.tamu.tcat.dex.rest.v1.RepoAdapter;
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
+import edu.tamu.tcat.dex.rest.v1.RestApiV1.PlayBibEntry;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
@@ -36,6 +39,28 @@ public class PlaysResource
       repo = null;
    }
 
+   @GET
+   @Path("/")
+   @Produces(MediaType.APPLICATION_JSON)
+   public List<RestApiV1.PlayBibEntry> bibliography()
+   {
+      List<RestApiV1.PlayBibEntry> bibEntries = new ArrayList<>();
+
+      // HACK: listWorks is deprecated, but I don't see a short-term alternative.
+      Iterable<Work> works = this.repo.listWorks();
+
+      for (Work work : works)
+      {
+         if (!TrcBiblioType.Play.toString().equals(work.getType())) {
+            continue;
+         }
+
+         PlayBibEntry dto = RepoAdapter.toPlayBibEntryDTO(work);
+         bibEntries.add(dto);
+      }
+
+      return bibEntries;
+   }
 
    @GET
    @Path("/{id}")
