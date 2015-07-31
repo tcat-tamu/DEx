@@ -2,6 +2,7 @@ package edu.tamu.tcat.trc.extract.search.solr;
 
 import java.util.Objects;
 
+import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.Person;
@@ -47,7 +48,7 @@ public class FacetValueManipulationUtil
     * @return
     * @throws IllegalStateException when unable to get an associated title for the work ID.
     */
-   public String getWorkFacetValue(String id)
+   public String getWorkFacetValue(String id) throws FacetValueException
    {
       try
       {
@@ -55,9 +56,13 @@ public class FacetValueManipulationUtil
          String title = work.getTitle().getCanonicalTitle().getFullTitle();
          return id + FACET_ID_LABEL_DELIMITER + title;
       }
+      catch (NoSuchCatalogRecordException e)
+      {
+         throw new FacetValueException("unable to find work [" + id + "] for faceting.", e);
+      }
       catch (Exception e)
       {
-         throw new IllegalStateException("unable to facet by manuscript ID [" + id + "]", e);
+         throw new FacetValueException("unable to get facet value for work [" + id + "].", e);
       }
    }
 
@@ -68,7 +73,7 @@ public class FacetValueManipulationUtil
     * @return
     * @throws IllegalStateException when unable to get an associated name for the person ID.
     */
-   public String getPersonFacetValue(String id)
+   public String getPersonFacetValue(String id) throws FacetValueException
    {
       try
       {
@@ -76,9 +81,13 @@ public class FacetValueManipulationUtil
          String name = person.getCanonicalName().getDisplayName();
          return id + FACET_ID_LABEL_DELIMITER + name;
       }
+      catch (NoSuchCatalogRecordException e)
+      {
+         throw new FacetValueException("unable to find person [" + id + "] for faceting.", e);
+      }
       catch (Exception e)
       {
-         throw new IllegalStateException("unable to facet by person ID [" + id + "]", e);
+         throw new FacetValueException("unable to get facet value for person [" + id + "].", e);
       }
    }
 

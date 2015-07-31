@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -23,6 +25,8 @@ import edu.tamu.tcat.osgi.config.ConfigurationProperties;
  */
 public class ExtractManipulationUtil
 {
+   private static final Logger logger = Logger.getLogger(ExtractManipulationUtil.class.getName());
+
    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
    private static final String CONFIG_TRANSFORMER_ORIGINAL = "dex.xslt.tei.original";
@@ -83,6 +87,9 @@ public class ExtractManipulationUtil
 
    private static String applyTransformer(Transformer transformer, Document document) throws ExtractManipulationException
    {
+      Objects.requireNonNull(transformer, "No XSLT transformer provided.");
+      Objects.requireNonNull(document, "No XML document provided.");
+
       DOMSource teiSource = new DOMSource(document);
       Writer resultWriter = new StringWriter();
       StreamResult result = new StreamResult(resultWriter);
@@ -93,7 +100,9 @@ public class ExtractManipulationUtil
       }
       catch (TransformerException e)
       {
-         throw new ExtractManipulationException("Unable to apply XSLT transformation to TEI source document", e);
+         // throw new ExtractManipulationException("Unable to apply XSLT transformation to TEI source document", e);
+         logger.log(Level.SEVERE, "Unable to apply XSLT transformation to TEI source document", e);
+         return "";
       }
 
       return resultWriter.toString();

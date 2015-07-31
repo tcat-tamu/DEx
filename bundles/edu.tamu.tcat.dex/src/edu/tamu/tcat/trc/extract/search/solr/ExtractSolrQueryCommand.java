@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrServer;
@@ -29,6 +31,8 @@ import edu.tamu.tcat.trc.search.solr.impl.TrcQueryBuilder;
 public class ExtractSolrQueryCommand implements ExtractQueryCommand
 {
    private static final int DEFAULT_MAX_RESULTS = 25;
+
+   private static final Logger logger = Logger.getLogger(ExtractSolrQueryCommand.class.getName());
 
    private final SolrServer solrServer;
    private final TrcQueryBuilder queryBuilder;
@@ -57,8 +61,6 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    {
       try
       {
-         // TODO: facet by ID, not by display text
-
          if (!manuscriptIds.isEmpty())
          {
             queryBuilder.filterMulti(ExtractSolrConfig.MANUSCRIPT_FACET, manuscriptIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_MANUSCRIPT);
@@ -131,7 +133,8 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    public void filterManuscript(Collection<String> manuscriptIds) throws SearchException
    {
       Collection<String> facetValues = manuscriptIds.stream()
-         .map(facetValueManipulationUtil::getWorkFacetValue)
+         .map(this::getWorkFacetValue)
+         .filter(Objects::nonNull)
          .collect(Collectors.toList());
 
       this.manuscriptIds.addAll(facetValues);
@@ -147,7 +150,8 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    public void filterPlaywright(Collection<String> playwrightIds) throws SearchException
    {
       Collection<String> facetValues = playwrightIds.stream()
-            .map(facetValueManipulationUtil::getPersonFacetValue)
+            .map(this::getPersonFacetValue)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
       this.playwrightIds.addAll(facetValues);
@@ -163,7 +167,8 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    public void filterPlay(Collection<String> playIds) throws SearchException
    {
       Collection<String> facetValues = playIds.stream()
-            .map(facetValueManipulationUtil::getWorkFacetValue)
+            .map(this::getWorkFacetValue)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
       this.playIds.addAll(facetValues);
@@ -179,7 +184,8 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    public void filterSpeaker(Collection<String> speakerIds) throws SearchException
    {
       Collection<String> facetValues = speakerIds.stream()
-         .map(facetValueManipulationUtil::getPersonFacetValue)
+         .map(this::getPersonFacetValue)
+         .filter(Objects::nonNull)
          .collect(Collectors.toList());
 
       this.speakerIds.addAll(facetValues);
@@ -218,6 +224,43 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       queryBuilder.facetLimit(count);
    }
 
+   /**
+    * Delegates to {@link FacetValueManipulationUtil}; returns null and logs error if thrown
+    *
+    * @param id
+    * @return
+    */
+   private String getWorkFacetValue(String id)
+   {
+      try
+      {
+         return facetValueManipulationUtil.getWorkFacetValue(id);
+      }
+      catch (FacetValueException e)
+      {
+         logger.log(Level.WARNING, "unable to look up facet value for work [" + id + "].", e);
+         return null;
+      }
+   }
+
+   /**
+    * Delegates to {@link FacetValueManipulationUtil}; returns null and logs error if thrown
+    *
+    * @param id
+    * @return
+    */
+   private String getPersonFacetValue(String id)
+   {
+      try
+      {
+         return facetValueManipulationUtil.getPersonFacetValue(id);
+      }
+      catch (FacetValueException e)
+      {
+         logger.log(Level.WARNING, "unable to look up facet value for person [" + id + "].", e);
+         return null;
+      }
+   }
 
    private static class FacetItemListImpl implements FacetItemList
    {
