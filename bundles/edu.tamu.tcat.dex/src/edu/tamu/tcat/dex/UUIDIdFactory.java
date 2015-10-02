@@ -2,7 +2,7 @@ package edu.tamu.tcat.dex;
 
 import java.util.UUID;
 
-import edu.tamu.tcat.trc.entries.core.IdFactory;
+import edu.tamu.tcat.trc.repo.IdFactory;
 
 
 public class UUIDIdFactory implements IdFactory
