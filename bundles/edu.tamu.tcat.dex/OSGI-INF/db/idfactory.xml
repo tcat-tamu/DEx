@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" name="edu.tamu.tcat.dex.idfactory">
    <implementation class="edu.tamu.tcat.dex.UUIDIdFactory"/>
    <service>
-      <provide interface="edu.tamu.tcat.trc.entries.core.IdFactory"/>
+      <provide interface="edu.tamu.tcat.trc.repo.IdFactory"/>
    </service>
 </scr:component>
