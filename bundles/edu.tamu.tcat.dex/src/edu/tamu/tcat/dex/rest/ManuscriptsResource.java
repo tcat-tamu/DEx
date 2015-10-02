@@ -2,13 +2,11 @@ package edu.tamu.tcat.dex.rest;
 
 import java.util.Objects;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -40,20 +38,6 @@ public class ManuscriptsResource
    {
       Objects.requireNonNull(repo, "No works repository provided.");
       Objects.requireNonNull(importService, "No import service provided.");
-   }
-
-   @GET
-   @Path("/")
-   @Produces(MediaType.APPLICATION_JSON)
-   public void browseAll(@DefaultValue("1") @QueryParam("p") int page,
-                         @DefaultValue("-1") @QueryParam("n") int numResultsPerPage)
-   {
-      throw new UnsupportedOperationException("not yet implemented");
-      // use faceting to get all manuscripts from the Solr Server:
-      //    resp = GET {solr-endpoint}/select?rows=0&wt=json&facet=true&facet.field=mss_title
-      //    return resp.facet_counts.facet_fields.mss_title[::2]
-      // --OR--
-      // list all works where work.getType() == TrcBiblioType.Manuscript.toString()
    }
 
    @GET
