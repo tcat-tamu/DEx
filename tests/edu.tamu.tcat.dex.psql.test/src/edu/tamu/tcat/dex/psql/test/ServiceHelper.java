@@ -14,15 +14,15 @@ import edu.tamu.tcat.dex.importer.DexImportService;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
 import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
-import edu.tamu.tcat.trc.entries.core.IdFactory;
 import edu.tamu.tcat.trc.entries.types.bib.postgres.PsqlWorkRepo;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.postgres.PsqlPeopleRepo;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
-import edu.tamu.tcat.trc.extract.postgres.PsqlDataSourceProvider;
 import edu.tamu.tcat.trc.extract.postgres.PsqlExtractRepo;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 import edu.tamu.tcat.trc.extract.search.solr.DramaticExtractsSearchService;
+import edu.tamu.tcat.trc.repo.IdFactory;
+import edu.tamu.tcat.trc.repo.postgres.PsqlDataSourceProvider;
 
 public class ServiceHelper
 {
