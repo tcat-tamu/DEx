@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -23,10 +24,12 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.trc.entries.notification.BaseUpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserverAdapter;
 import edu.tamu.tcat.trc.entries.notification.ObservableTaskWrapper;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
+import edu.tamu.tcat.trc.entries.notification.UpdateEvent.UpdateAction;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
 import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
@@ -407,5 +410,55 @@ public class PsqlExtractRepo implements ExtractRepository
             throw new IllegalStateException("Failed to find extracts by manuscript ID [" + manuscriptId + "]", e);
          }
       };
+   }
+
+   /**
+    * Provides a common utility for creating {@link UpdateEvent}s
+    *
+    * @todo This class may be refactored into edu.tamu.tcat.trc.entries.notification
+    *
+    * @param <T> The type of object that will be referenced in the constructed {@link UpdateEvent} instances
+    */
+   public static class BaseUpdateEventFactory
+   {
+      private final UUID actor;
+
+      public BaseUpdateEventFactory(UUID actor)
+      {
+         this.actor = actor;
+      }
+
+      /**
+       * Creates an update event to notify listeners of an object's creation.
+       *
+       * @param id
+       * @return
+       */
+      public UpdateEvent makeCreateEvent(String id)
+      {
+         return new BaseUpdateEvent(id, UpdateAction.CREATE, actor, Instant.now());
+      }
+
+      /**
+       * Creates an update event to notify listeners of an object's modification.
+       *
+       * @param id
+       * @return
+       */
+      public UpdateEvent makeUpdateEvent(String id)
+      {
+         return new BaseUpdateEvent(id, UpdateAction.UPDATE, actor, Instant.now());
+      }
+
+      /**
+       * Creates an update event to notify listeners of an object's deletion.
+       *
+       * @param id
+       * @return
+       */
+      public UpdateEvent makeDeleteEvent(String id)
+      {
+         return new BaseUpdateEvent(id, UpdateAction.DELETE, actor, Instant.now());
+      }
    }
 }
