@@ -40,7 +40,6 @@ public class PlaysResource
    }
 
    @GET
-   @Path("/")
    @Produces(MediaType.APPLICATION_JSON)
    public List<RestApiV1.PlayBibEntry> bibliography()
    {
