@@ -85,16 +85,22 @@ public class ExtractDocument
       String playId = playSource.getId();
       doc.document.set(ExtractSolrConfig.PLAY_ID, playId);
       doc.document.set(ExtractSolrConfig.PLAY_TITLE, playSource.getDisplayTitle());
-      try
+      if (playId == null)
       {
-         doc.document.set(ExtractSolrConfig.PLAY_FACET, facetValueManipulationUtil.getWorkFacetValue(playId));
+         System.err.println("XXX No play id for extract [" + extract.getId() + "]");
       }
-      catch (FacetValueException e)
+      else
       {
-         // TODO: this message needs to be sent to the user
-         logger.log(Level.WARNING, "Unable to resolve facet value for play [" + playId + "]. Faceting by this play will not be available for extract [" + extract.getId() + "].", e);
+         try
+         {
+            doc.document.set(ExtractSolrConfig.PLAY_FACET, facetValueManipulationUtil.getWorkFacetValue(playId));
+         }
+         catch (FacetValueException e)
+         {
+            // TODO: this message needs to be sent to the user
+            logger.log(Level.WARNING, "Unable to resolve facet value for play [" + playId + "]. Faceting by this play will not be available for extract [" + extract.getId() + "].", e);
+         }
       }
-
       for (SpeakerRef ref : extract.getSpeakerRefs())
       {
          String speakerId = ref.getId();
