@@ -88,7 +88,7 @@ under the License.
       <repository>
          <id>Thematic Research Collection (dev)</id>
          <layout>p2</layout>
-         <url>https://build.citd.tamu.edu/hudson/job/oss.trc-dev/lastSuccessfulBuild/artifact/targetPlatform</url>
+         <url>https://tcat-tamu.github.io/releng/p2</url>
       </repository>
    </repositories>
 
