@@ -49,25 +49,6 @@ public class ExtractsResource
       Objects.requireNonNull(searchService, "No search service specified");
    }
 
-//   @GET
-//   @Path("/")
-//   @Produces(MediaType.APPLICATION_JSON)
-//   public RestApiV1.ResultList browseAll(@DefaultValue("1") @QueryParam("page") int page,
-//                         @DefaultValue("-1") @QueryParam("numResults") int numResultsPerPage)
-//   {
-//      try {
-//         ExtractQueryCommand queryCommand = searchService.createQueryCommand();
-//         queryCommand.queryAll();
-//         queryCommand.setOffset(numResultsPerPage * (page-1));
-//         queryCommand.setMaxResults(numResultsPerPage);
-//         SearchExtractResult results = queryCommand.execute();
-//         return SearchAdapter.toDto(results, page, numResultsPerPage);
-//      }
-//      catch (SearchException e) {
-//         throw new ServerErrorException("Unable to execute fetch-all", Status.INTERNAL_SERVER_ERROR, e);
-//      }
-//   }
-
    // TODO: faceting
    @GET
    @Path("/search")
