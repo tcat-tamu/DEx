@@ -335,7 +335,7 @@ public class DexImportService
                   })
             .collect(Collectors.toList()));
 
-      // TODO: remove all editions prior to adding new ones or find a way to update existing editions
+      clearEditions(play, editCommand);
 
       for (EditionDTO edition : play.editions)
       {
@@ -370,6 +370,29 @@ public class DexImportService
       }
 
       editCommand.execute();
+   }
+
+   private void clearEditions(PlayImportDTO play, EditWorkCommand editCommand)
+   {
+      // HACK: remove all existing editions. --
+      //       -- TODO find a way to update existing editions
+      //       We should have a way to determine if a work exists and to retrieve the current
+      //       state from the work repo. See new API model for TRC repos and impl on work repo.
+      try {
+         Work existing = worksRepo.getWork(play.id);
+         existing.getEditions().forEach(ed ->
+         {
+            try {
+               editCommand.removeEdition(ed.getId());
+            } catch (Exception ex) {
+               // no-op
+            }
+         });
+      }
+      catch (Exception ex)
+      {
+         // TODO almost certainly indicates that the work does not exist (i.e., normal use case).
+      }
    }
 
    /**
