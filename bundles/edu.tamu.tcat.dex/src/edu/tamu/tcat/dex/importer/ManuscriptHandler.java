@@ -64,6 +64,8 @@ class ManuscriptHandler extends DefaultHandler
    private Stack<Object> objectStack;
 
    private boolean rawMode;
+   private int extractNumber;
+   private String currentFolioIdent;
 
    private ManuscriptImportDTO manuscript;
 
@@ -87,6 +89,8 @@ class ManuscriptHandler extends DefaultHandler
 
       manuscript = new ManuscriptImportDTO();
 
+      currentFolioIdent = null;
+      extractNumber = 0;
       rawMode = false;
    }
 
@@ -119,6 +123,11 @@ class ManuscriptHandler extends DefaultHandler
 
          ExtractImportDTO extract = new ExtractImportDTO();
          extract.id = UUID.randomUUID().toString();
+         extract.msIndex = extractNumber++;
+
+         if (currentFolioIdent != null) {
+            extract.folioIdent = currentFolioIdent;
+         }
 
          // inherit manuscript author by default
          // TODO: parse per-extract authors
@@ -155,6 +164,10 @@ class ManuscriptHandler extends DefaultHandler
                extract.speakerIds.add(speakerId);
             }
          }
+      }
+      else if (qName.equals("pb"))
+      {
+         currentFolioIdent = attributes.getValue("n");
       }
    }
 

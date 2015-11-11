@@ -14,6 +14,15 @@ public interface DramaticExtract
     */
    String getId();
 
+   /**
+    * @return The numeric index at which this extract occurs in its parent manuscript.
+    */
+   int getManuscriptIndex();
+
+   /**
+    * @return An identifier referencing this extract's folio within its parent manuscript.
+    */
+   String getFolioIdent();
 
    /**
     * @return The name of the extract's author. Usually the author of the manuscript.

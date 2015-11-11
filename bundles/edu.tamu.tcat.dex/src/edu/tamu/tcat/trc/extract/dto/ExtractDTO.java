@@ -29,6 +29,8 @@ public class ExtractDTO
    private static final Logger logger = Logger.getLogger(ExtractDTO.class.getName());
 
    public String id;
+   public int msIndex;
+   public String folioIdent;
    public String author;
    public ReferenceDTO manuscript = new ReferenceDTO();
    public ReferenceDTO source = new ReferenceDTO();
@@ -47,6 +49,8 @@ public class ExtractDTO
    {
       DramaticExtractImpl extract = new DramaticExtractImpl();
       extract.id = dto.id;
+      extract.msIndex = dto.msIndex;
+      extract.folioIdent = dto.folioIdent;
       extract.author = dto.author;
 
       if (dto.manuscript != null)
@@ -153,6 +157,8 @@ public class ExtractDTO
       ExtractDTO dto = new ExtractDTO();
 
       dto.id = extract.getId();
+      dto.msIndex = extract.getManuscriptIndex();
+      dto.folioIdent = extract.getFolioIdent();
       dto.author = extract.getAuthor();
 
       ManuscriptRef mRef = extract.getManuscriptRef();
@@ -191,6 +197,8 @@ public class ExtractDTO
    public static class DramaticExtractImpl implements DramaticExtract
    {
       private String id;
+      private int msIndex;
+      private String folioIdent;
       private String author;
       private ManuscriptRef manuscript;
       private SourceRef source;
@@ -203,6 +211,18 @@ public class ExtractDTO
       public String getId()
       {
          return id;
+      }
+
+      @Override
+      public int getManuscriptIndex()
+      {
+         return msIndex;
+      }
+
+      @Override
+      public String getFolioIdent()
+      {
+         return folioIdent;
       }
 
       @Override
