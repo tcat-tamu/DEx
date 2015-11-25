@@ -46,7 +46,6 @@ Import-Package: com.fasterxml.jackson.core;version="2.3.1",
  org.apache.solr.client.solrj.response;version="4.9.0",
  org.apache.solr.common;version="4.9.0",
  org.apache.solr.common.params;version="4.9.0",
- org.glassfish.jersey.media.multipart;version="2.16.0",
  org.postgresql.util;version="9.3.1102"
 Service-Component: OSGI-INF/config.xml,
  OSGI-INF/dex.import.xml,
@@ -72,3 +71,4 @@ Export-Package: edu.tamu.tcat.dex.importer,
  edu.tamu.tcat.trc.extract.postgres,
  edu.tamu.tcat.trc.extract.search,
  edu.tamu.tcat.trc.extract.search.solr
+Require-Bundle: com.eclipsesource.jaxrs.jersey-all
