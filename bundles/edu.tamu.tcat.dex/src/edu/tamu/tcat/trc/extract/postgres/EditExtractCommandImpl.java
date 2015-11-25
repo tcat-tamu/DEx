@@ -57,6 +57,8 @@ public class EditExtractCommandImpl implements EditExtractCommand
       setSourceTitle(dto.source == null ? null : dto.source.title);
       setSourceRef(dto.sourceRef);
       setTEIContent(dto.teiContent);
+      setFolioIdentifier(dto.folioIdent);
+      setMsIndex(dto.msIndex);
 
       // speedup by not using converting to API types just to convert back
       this.dto.speakers = Collections.unmodifiableSet(new HashSet<>(dto.speakers));
@@ -73,6 +75,17 @@ public class EditExtractCommandImpl implements EditExtractCommand
       dto.author = author;
    }
 
+   @Override
+   public void setFolioIdentifier(String folio)
+   {
+      dto.folioIdent = folio;
+   }
+
+   @Override
+   public void setMsIndex(int order)
+   {
+      dto.msIndex = order;
+   }
    @Override
    public void setManuscriptId(String manuscriptId)
    {

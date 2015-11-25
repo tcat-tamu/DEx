@@ -70,4 +70,8 @@ public interface EditExtractCommand
     * @throws DramaticExtractException
     */
    Future<String> execute() throws DramaticExtractException;
+
+   void setFolioIdentifier(String folio);
+
+   void setMsIndex(int order);
 }

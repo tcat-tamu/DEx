@@ -116,25 +116,7 @@ public class ExtractDTO
             .collect(Collectors.toSet());
 
       extract.playwrights = dto.playwrights.parallelStream()
-            .map(refDTO ->
-            {
-               PlaywrightRef ref = new PlaywrightRef()
-               {
-                  @Override
-                  public String getId()
-                  {
-                     return refDTO.id;
-                  }
-
-                  @Override
-                  public String getDisplayName()
-                  {
-                     return refDTO.title;
-                  }
-               };
-
-               return ref;
-            })
+            .map(ExtractDTO::adaptPlaywrightReference)
             .collect(Collectors.toSet());
 
       try
@@ -150,6 +132,24 @@ public class ExtractDTO
       }
 
       return extract;
+   }
+
+   private static PlaywrightRef adaptPlaywrightReference(ReferenceDTO refDTO)
+   {
+      return new PlaywrightRef()
+      {
+         @Override
+         public String getId()
+         {
+            return refDTO.id;
+         }
+
+         @Override
+         public String getDisplayName()
+         {
+            return refDTO.title;
+         }
+      };
    }
 
    public static ExtractDTO create(DramaticExtract extract)

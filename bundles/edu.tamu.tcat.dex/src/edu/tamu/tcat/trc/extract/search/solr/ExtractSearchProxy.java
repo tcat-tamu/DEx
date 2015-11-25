@@ -29,6 +29,8 @@ public class ExtractSearchProxy
    public String id;
    public ReferenceDTO manuscript;
    public String author;
+   public String folio;
+   public int msOrder;
    public ReferenceDTO source;
    public String sourceLineRef;
    public String normalized;
@@ -41,6 +43,8 @@ public class ExtractSearchProxy
       ExtractSearchProxy proxy = new ExtractSearchProxy();
 
       proxy.id = extract.getId();
+      proxy.folio = extract.getFolioIdent();
+      proxy.msOrder = extract.getManuscriptIndex();
 
       ManuscriptRef mRef = extract.getManuscriptRef();
       proxy.manuscript = ReferenceDTO.create(mRef.getId(), mRef.getDisplayTitle());
