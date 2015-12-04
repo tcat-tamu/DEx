@@ -73,7 +73,7 @@ class ManuscriptHandler extends DefaultHandler
     * Set to {@code false} when the current {@code <div>} element does not represent a dramatic
     * extract, but, for example, a heading.
     */
-   private boolean divIsExtract;
+   private boolean inExtractDiv;    // FIXME does not get set to false when no-longer in extract div
 
 
    public ManuscriptImportDTO getManuscript()
@@ -114,56 +114,13 @@ class ManuscriptHandler extends DefaultHandler
 
       if (qName.equals("div"))
       {
-         divIsExtract = "extract".equals(attributes.getValue("type"));
-
-         if (!divIsExtract)
-         {
-            return;
-         }
-
-         ExtractImportDTO extract = new ExtractImportDTO();
-         extract.id = UUID.randomUUID().toString();
-         extract.msIndex = extractNumber++;
-
-         if (currentFolioIdent != null) {
-            extract.folioIdent = currentFolioIdent;
-         }
-
-         // inherit manuscript author by default
-         // TODO: parse per-extract authors
-         extract.author = manuscript.author;
-
-         extract.sourceRef = attributes.getValue("n");
-
-         manuscript.extracts.add(extract);
-
-         String corresp = attributes.getValue("corresp");
-         if (corresp != null)
-         {
-            extract.sourceId = corresp.substring(corresp.indexOf('#') + 1);
-         }
-
-         objectStack.push(extract);
-
-         XmlStringBuilder xsb = new XmlStringBuilder();
-         xsb.startTag(qName, attributes);
-         rawMode = true;
-         objectStack.push(xsb);
+         inExtractDiv = "extract".equals(attributes.getValue("type"));
+         if (inExtractDiv)
+            handleExtractDiv(qName, attributes);
       }
-      else if (qName.equals("sp") && isParentElement("div") && divIsExtract)
+      else if (qName.equals("sp") && isParentElement("div") && inExtractDiv)
       {
-         String who = attributes.getValue("who");
-         if (who != null)
-         {
-            String[] speakerRefs = who.trim().split("\\s+");
-            for (String ref : speakerRefs)
-            {
-               String speakerId = ref.substring(ref.indexOf('#') + 1);
-
-               ExtractImportDTO extract = (ExtractImportDTO)objectStack.get(objectStack.size() - 2);
-               extract.speakerIds.add(speakerId);
-            }
-         }
+         handleSpeakerStartElement(attributes);
       }
       else if (qName.equals("pb"))
       {
@@ -171,11 +128,59 @@ class ManuscriptHandler extends DefaultHandler
       }
    }
 
+   private void handleSpeakerStartElement(Attributes attributes)
+   {
+      String who = attributes.getValue("who");
+      if (who != null)
+      {
+         String[] speakerRefs = who.trim().split("\\s+");
+         for (String ref : speakerRefs)
+         {
+            String speakerId = ref.substring(ref.indexOf('#') + 1);
+
+            ExtractImportDTO extract = (ExtractImportDTO)objectStack.get(objectStack.size() - 2);
+            extract.speakerIds.add(speakerId);
+         }
+      }
+   }
+
+   private void handleExtractDiv(String qName, Attributes attributes)
+   {
+      ExtractImportDTO extract = new ExtractImportDTO();
+      extract.id = UUID.randomUUID().toString();
+      extract.msIndex = extractNumber++;
+
+      if (currentFolioIdent != null) {
+         extract.folioIdent = currentFolioIdent;
+      }
+
+      // inherit manuscript author by default
+      // TODO: parse per-extract authors
+      extract.author = manuscript.author;
+
+      extract.sourceRef = attributes.getValue("n");
+
+      manuscript.extracts.add(extract);
+
+      String corresp = attributes.getValue("corresp");
+      if (corresp != null)
+      {
+         extract.sourceId = corresp.substring(corresp.indexOf('#') + 1);
+      }
+
+      objectStack.push(extract);
+
+      XmlStringBuilder xsb = new XmlStringBuilder();
+      xsb.startTag(qName, attributes);
+      rawMode = true;
+      objectStack.push(xsb);
+   }
+
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException
    {
       // just finished dramatic extract definition
-      if (qName.equals("div") && divIsExtract)
+      if (qName.equals("div") && inExtractDiv)
       {
          XmlStringBuilder xsb = (XmlStringBuilder)objectStack.pop();
          xsb.endTag("div");
@@ -184,6 +189,7 @@ class ManuscriptHandler extends DefaultHandler
 
          // parse TEI XML string into W3C DOM
          extract.teiContent = xsb.toString().trim();
+         inExtractDiv = false;
          rawMode = false;
       }
 
@@ -205,16 +211,17 @@ class ManuscriptHandler extends DefaultHandler
       {
          XmlStringBuilder xsb = (XmlStringBuilder)objectStack.peek();
          xsb.text(value);
-         return;
       }
-
-      if (isCurrentElement("title") && isParentElement("titleStmt"))
+      else
       {
-         manuscript.title = value.trim();
-      }
-      else if (isCurrentElement("persName") && isParentElement("author"))
-      {
-         manuscript.author = value.trim();
+         if (isCurrentElement("title") && isParentElement("titleStmt"))
+         {
+            manuscript.title = value.trim();
+         }
+         else if (isCurrentElement("persName") && isParentElement("author"))
+         {
+            manuscript.author = value.trim();
+         }
       }
    }
 
