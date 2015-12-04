@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.common.SolrInputDocument;
 
 import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
@@ -42,12 +41,12 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    private ExtractRepository extractRepo;
    private PeopleRepository peopleRepo;
    private WorkRepository workRepo;
-   private ExtractManipulationUtil extractManipulationUtil;
-   private FacetValueManipulationUtil facetValueManipulationUtil;
    private ConfigurationProperties config;
    private SolrServer solrServer;
    private AutoCloseable repoListenerRegistration;
 
+   private ExtractManipulationUtil extractManipulationUtil;
+   private SearchableDocumentFactory solrDocFactory;
 
    public void setRepo(ExtractRepository repo)
    {
@@ -82,13 +81,11 @@ public class DramaticExtractsSearchService implements ExtractSearchService
       Objects.requireNonNull(config, "No configuration supplied.");
       Objects.requireNonNull(extractManipulationUtil, "No extract manipulation utility provided.");
 
-      facetValueManipulationUtil = new FacetValueManipulationUtil();
-      facetValueManipulationUtil.setRepo(peopleRepo);
-      facetValueManipulationUtil.setRepo(workRepo);
-      facetValueManipulationUtil.activate();
-
       // listen for updates from the repository
       repoListenerRegistration = extractRepo.register(this::handleUpdateEvent);
+
+      FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
+      solrDocFactory = new SearchableDocumentFactory(extractManipulationUtil, facetUtil);
 
       // Solr setup
       URI solrBaseUri = config.getPropertyValue(CONFIG_SOLR_API_ENDPOINT, URI.class);
@@ -111,9 +108,6 @@ public class DramaticExtractsSearchService implements ExtractSearchService
          }
       }
 
-      facetValueManipulationUtil.dispose();
-      facetValueManipulationUtil = null;
-
       extractRepo = null;
       peopleRepo = null;
       workRepo = null;
@@ -126,7 +120,8 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    public ExtractQueryCommand createQueryCommand() throws SearchException
    {
       TrcQueryBuilder qb = new TrcQueryBuilder(solrServer, new ExtractSolrConfig());
-      return new ExtractSolrQueryCommand(solrServer, qb, facetValueManipulationUtil);
+      FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
+      return new ExtractSolrQueryCommand(solrServer, qb, facetUtil);
    }
 
    /**
@@ -157,12 +152,14 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     */
    protected void onCreate(UpdateEvent evt)
    {
+      // these should create a task and delegate, monitor task queue and commit after
+      // timeout or fixed number of updates
+      Objects.requireNonNull(solrDocFactory, "Solr document factory is not available.");
       String id = evt.getEntityId();
       try {
          DramaticExtract extract = extractRepo.get(id);
-         ExtractDocument extractDocument = ExtractDocument.create(extract, extractManipulationUtil, facetValueManipulationUtil);
-         SolrInputDocument solrDocument = extractDocument.getDocument();
-         solrServer.add(solrDocument);
+
+         solrServer.add(solrDocFactory.create(extract));
          solrServer.commit();
       }
       catch (ExtractNotAvailableException e) {
@@ -170,10 +167,6 @@ public class DramaticExtractsSearchService implements ExtractSearchService
       }
       catch (DramaticExtractException e) {
          logger.log(Level.SEVERE, "Failed to retrieve extract [" + id + "] on create event.", e);
-      }
-      catch (SearchException e)
-      {
-         logger.log(Level.SEVERE, "Failed to create extract search document for extract [" + id + "].", e);
       }
       catch (SolrServerException | IOException e)
       {

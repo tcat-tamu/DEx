@@ -1,7 +1,5 @@
 package edu.tamu.tcat.trc.extract.search.solr;
 
-import java.util.Objects;
-
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
@@ -15,31 +13,14 @@ public class FacetValueManipulationUtil
     */
    private static final String FACET_ID_LABEL_DELIMITER = "::";
 
-   private PeopleRepository peopleRepo;
-   private WorkRepository workRepo;
+   private final PeopleRepository peopleRepo;
+   private final WorkRepository workRepo;
 
-   public void setRepo(PeopleRepository repo)
+   public FacetValueManipulationUtil(PeopleRepository pRepo, WorkRepository wRepo)
    {
-      peopleRepo = repo;
+      peopleRepo = pRepo;
+      workRepo = wRepo;
    }
-
-   public void setRepo(WorkRepository repo)
-   {
-      workRepo = repo;
-   }
-
-   public void activate()
-   {
-      Objects.requireNonNull(peopleRepo, "No people repository supplied.");
-      Objects.requireNonNull(workRepo, "No work repository supplied.");
-   }
-
-   public void dispose()
-   {
-      peopleRepo = null;
-      workRepo = null;
-   }
-
 
    /**
     * Transforms a work ID into a value for faceting.
