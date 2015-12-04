@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.trc.extract;
 
+@Deprecated
 public class Pair<A, B>
 {
    public A first;
