@@ -16,10 +16,10 @@ import javax.ws.rs.core.Response.Status;
 
 import edu.tamu.tcat.dex.rest.v1.RestApiV1;
 import edu.tamu.tcat.dex.rest.v1.SearchAdapter;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
-import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
-import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.extract.ExtractNotAvailableException;
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractSearchService;

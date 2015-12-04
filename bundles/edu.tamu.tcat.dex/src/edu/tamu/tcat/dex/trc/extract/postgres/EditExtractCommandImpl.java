@@ -18,10 +18,10 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
-import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
-import edu.tamu.tcat.dex.trc.entry.Pair;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
+import edu.tamu.tcat.dex.trc.extract.Pair;
 import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 

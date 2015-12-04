@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.trc.entry;
+package edu.tamu.tcat.dex.trc.extract;
 
 public interface PlaywrightRef
 {

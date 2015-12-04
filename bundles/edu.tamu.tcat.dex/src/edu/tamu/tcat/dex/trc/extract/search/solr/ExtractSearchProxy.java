@@ -3,11 +3,10 @@ package edu.tamu.tcat.dex.trc.extract.search.solr;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.ManuscriptRef;
-import edu.tamu.tcat.dex.trc.entry.SourceRef;
-import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
-import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.ManuscriptRef;
+import edu.tamu.tcat.dex.trc.extract.SourceRef;
+import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.trc.search.SearchException;
 
 public class ExtractSearchProxy
@@ -60,7 +59,7 @@ public class ExtractSearchProxy
          proxy.normalized = extractManipulationUtil.toNormalized(extract.getTEIContent());
          proxy.original = extractManipulationUtil.toOriginal(extract.getTEIContent());
       }
-      catch (ExtractManipulationException e)
+      catch (Exception e)
       {
          throw new SearchException("Unable to transform TEI for search proxy", e);
       }

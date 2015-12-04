@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.trc.entry;
+package edu.tamu.tcat.dex.trc.extract;
 
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;

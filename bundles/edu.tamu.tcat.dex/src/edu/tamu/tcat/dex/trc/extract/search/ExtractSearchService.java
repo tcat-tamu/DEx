@@ -1,6 +1,6 @@
 package edu.tamu.tcat.dex.trc.extract.search;
 
-import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.trc.search.SearchException;
 
 /**

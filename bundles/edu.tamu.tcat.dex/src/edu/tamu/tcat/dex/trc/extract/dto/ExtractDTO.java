@@ -18,11 +18,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.ManuscriptRef;
-import edu.tamu.tcat.dex.trc.entry.PlaywrightRef;
-import edu.tamu.tcat.dex.trc.entry.SourceRef;
-import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.ManuscriptRef;
+import edu.tamu.tcat.dex.trc.extract.PlaywrightRef;
+import edu.tamu.tcat.dex.trc.extract.SourceRef;
+import edu.tamu.tcat.dex.trc.extract.SpeakerRef;
 
 public class ExtractDTO
 {

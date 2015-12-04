@@ -10,13 +10,13 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
-import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
-import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
-import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.extract.ExtractNotAvailableException;
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractSearchService;
+import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;

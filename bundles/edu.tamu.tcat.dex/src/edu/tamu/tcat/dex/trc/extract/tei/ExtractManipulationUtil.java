@@ -1,10 +1,9 @@
-package edu.tamu.tcat.dex.trc.entry.tei.transform;
+package edu.tamu.tcat.dex.trc.extract.tei;
 
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
@@ -16,7 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 
 /**
@@ -76,17 +75,17 @@ public class ExtractManipulationUtil
       throw new UnsupportedOperationException();
    }
 
-   public String toOriginal(Document teiContent) throws ExtractManipulationException
+   public String toOriginal(Document teiContent)
    {
       return applyTransformer(originalTransformer, teiContent);
    }
 
-   public String toNormalized(Document teiContent) throws ExtractManipulationException
+   public String toNormalized(Document teiContent)
    {
       return applyTransformer(normalizedTransformer, teiContent);
    }
 
-   private static String applyTransformer(Transformer transformer, Document document) throws ExtractManipulationException
+   private static String applyTransformer(Transformer transformer, Document document)
    {
       Objects.requireNonNull(transformer, "No XSLT transformer provided.");
       Objects.requireNonNull(document, "No XML document provided.");
@@ -101,9 +100,7 @@ public class ExtractManipulationUtil
       }
       catch (TransformerException e)
       {
-         // throw new ExtractManipulationException("Unable to apply XSLT transformation to TEI source document", e);
-         logger.log(Level.SEVERE, "Unable to apply XSLT transformation to TEI source document", e);
-         return "";
+         throw new IllegalStateException("Unable to apply XSLT transformation to TEI source document", e);
       }
 
       return resultWriter.toString();

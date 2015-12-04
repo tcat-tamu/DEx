@@ -19,11 +19,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.tcat.db.exec.sql.SqlExecutor;
 import edu.tamu.tcat.db.exec.sql.SqlExecutor.ExecutorTask;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
-import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
-import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
-import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
+import edu.tamu.tcat.dex.trc.extract.ExtractNotAvailableException;
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.entries.notification.BaseUpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;

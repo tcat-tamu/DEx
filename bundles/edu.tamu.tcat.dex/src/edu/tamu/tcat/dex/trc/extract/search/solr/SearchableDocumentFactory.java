@@ -9,12 +9,11 @@ import java.util.function.Consumer;
 import org.apache.solr.common.SolrInputDocument;
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
-import edu.tamu.tcat.dex.trc.entry.PlaywrightRef;
-import edu.tamu.tcat.dex.trc.entry.SourceRef;
-import edu.tamu.tcat.dex.trc.entry.SpeakerRef;
-import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationException;
-import edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
+import edu.tamu.tcat.dex.trc.extract.PlaywrightRef;
+import edu.tamu.tcat.dex.trc.extract.SourceRef;
+import edu.tamu.tcat.dex.trc.extract.SpeakerRef;
+import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.trc.search.SearchException;
 import edu.tamu.tcat.trc.search.solr.impl.TrcDocument;
 
@@ -177,7 +176,7 @@ public class SearchableDocumentFactory
             document.set(ExtractSolrConfig.NORMALIZED, normalized);
             document.set(ExtractSolrConfig.ORIGINAL, original);
          }
-         catch (ExtractManipulationException e)
+         catch (Exception e)
          {
             problems.addParseError(content.toString());
          }
