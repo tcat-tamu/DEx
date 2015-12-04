@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" dispose="dispose" name="edu.tamu.tcat.dex.tei.transform">
-   <implementation class="edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil"/>
-   <service>
-      <provide interface="edu.tamu.tcat.dex.trc.entry.tei.transform.ExtractManipulationUtil"/>
-   </service>
+   <implementation class="edu.tamu.tcat.dex.trc.extract.search.solr.ExtractManipulationUtil"/>
    <reference bind="setConfiguration" cardinality="1..1" interface="edu.tamu.tcat.osgi.config.ConfigurationProperties" name="ConfigurationProperties" policy="static"/>
+   <service>
+      <provide interface="edu.tamu.tcat.dex.trc.extract.search.solr.ExtractManipulationUtil"/>
+   </service>
 </scr:component>

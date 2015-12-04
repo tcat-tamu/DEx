@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" name="edu.tamu.tcat.dex.extract.repo">
-   <implementation class="edu.tamu.tcat.trc.extract.postgres.PsqlExtractRepo"/>
+   <implementation class="edu.tamu.tcat.dex.trc.extract.postgres.PsqlExtractRepo"/>
    <service>
-      <provide interface="edu.tamu.tcat.dex.trc.entry.ExtractRepository"/>
+      <provide interface="edu.tamu.tcat.dex.trc.extract.ExtractRepository"/>
    </service>
    <reference bind="setSqlExecutor" cardinality="1..1" interface="edu.tamu.tcat.db.exec.sql.SqlExecutor" name="SqlExecutor" policy="static"/>
 </scr:component>

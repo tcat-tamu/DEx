@@ -17,46 +17,214 @@
       [Enter License Description here.]
    </license>
 
-   <!-- equinox runtime -->
-   <plugin id="org.apache.felix.gogo.command" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.apache.felix.gogo.runtime" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.apache.felix.gogo.shell" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.core.jobs" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.app" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.common" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.console" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.ds" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.registry" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.simpleconfigurator" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.util" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.osgi" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.osgi.services" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin
+         id="org.apache.felix.gogo.command"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
-   <!-- servlet bridge -->
-   <!-- <plugin id="org.eclipse.equinox.common" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
-   <plugin id="org.eclipse.equinox.http.registry" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.http.servlet" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="org.eclipse.equinox.http.servletbridge" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <!-- <plugin id="org.eclipse.equinox.registry" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
-   <!-- <plugin id="org.eclipse.osgi" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
-   <!-- <plugin id="org.eclipse.osgi.services" download-size="0" install-size="0" version="0.0.0" unpack="false"/> -->
-   <plugin id="org.eclipse.update.configurator" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   
-   <!-- JAX-RS -->
-   <plugin id="com.eclipsesource.jaxrs.jersey-all" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="com.eclipsesource.jaxrs.publisher" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   
-   <!-- project plugins -->
-   <plugin id="edu.tamu.tcat.dex" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.dex.trc.entry" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.core" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.biblio" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.postgres" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.rest" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.biblio.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.bio" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.bio.postgres" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.bio.rest" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.entries.types.bio.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
-   <plugin id="edu.tamu.tcat.trc.search.solr" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+   <plugin
+         id="org.apache.felix.gogo.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.felix.gogo.shell"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.jobs"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.app"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.console"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.ds"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.registry"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.simpleconfigurator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.osgi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.osgi.services"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.registry"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.servlet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.equinox.http.servletbridge"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.update.configurator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.eclipsesource.jaxrs.jersey-all"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.eclipsesource.jaxrs.publisher"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.dex"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.biblio"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.biblio.postgres"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.biblio.rest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.biblio.search.solr"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.bio"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.bio.postgres"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.bio.rest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.entries.types.bio.search.solr"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.tamu.tcat.trc.search.solr"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
