@@ -15,20 +15,26 @@ public class ExtractSolrConfig implements SolrIndexConfig
 {
    public static final SolrIndexField<String> ID = new BasicFields.BasicString("id");
    public static final BasicFields.SearchProxyField<ExtractSearchProxy> SEARCH_PROXY = new BasicFields.SearchProxyField<ExtractSearchProxy>("extract_proxy", ExtractSearchProxy.class);
+
    public static final SolrIndexField<String> MANUSCRIPT_ID = new BasicFields.BasicString("mss_shelfmark");
+   public static final SolrIndexField<Integer> MANUSCRIPT_INDEX = new BasicFields.BasicInteger("mss_index");
    public static final SolrIndexField<String> MANUSCRIPT_FACET = new BasicFields.BasicString("mss_facet_value");
    public static final SolrIndexField<String> MANUSCRIPT_TITLE = new BasicFields.BasicString("mss_title");
    public static final SolrIndexField<String> MANUSCRIPT_TITLE_SEARCHABLE = new BasicFields.BasicString("mss_title_searchable");
+
    public static final SolrIndexField<String> NORMALIZED = new BasicFields.BasicString("normalized");
    public static final SolrIndexField<String> ORIGINAL = new BasicFields.BasicString("original");
+
    public static final SolrIndexField<String> PLAYWRIGHT_ID = new BasicFields.BasicString("playwright_id");
    public static final SolrIndexField<String> PLAYWRIGHT_FACET = new BasicFields.BasicString("playwright_facet_value");
    public static final SolrIndexField<String> PLAYWRIGHT_NAME = new BasicFields.BasicString("playwright_name");
    public static final SolrIndexField<String> PLAYWRIGHT_NAME_SEARCHABLE = new BasicFields.BasicString("playwright_name_searchable");
+
    public static final SolrIndexField<String> PLAY_ID = new BasicFields.BasicString("play_id");
    public static final SolrIndexField<String> PLAY_FACET = new BasicFields.BasicString("play_facet_value");
    public static final SolrIndexField<String> PLAY_TITLE = new BasicFields.BasicString("play_title");
    public static final SolrIndexField<String> PLAY_TITLE_SEARCHABLE = new BasicFields.BasicString("play_title_searchable");
+
    public static final SolrIndexField<String> SPEAKER_ID = new BasicFields.BasicString("speaker_id");
    public static final SolrIndexField<String> SPEAKER_FACET = new BasicFields.BasicString("speaker_facet_value");
    public static final SolrIndexField<String> SPEAKER_NAME = new BasicFields.BasicString("speaker_name");
@@ -89,9 +95,9 @@ public class ExtractSolrConfig implements SolrIndexConfig
    }
 
    @Override
-   public Class<ExtractDocument> getIndexDocumentType()
+   public Class<SearchableDocumentFactory> getIndexDocumentType()
    {
-      return ExtractDocument.class;
+      return SearchableDocumentFactory.class;
    }
 
    @Override
@@ -99,6 +105,7 @@ public class ExtractSolrConfig implements SolrIndexConfig
    {
       return Arrays.asList(ID,
             MANUSCRIPT_ID,
+            MANUSCRIPT_INDEX,
             MANUSCRIPT_FACET,
             MANUSCRIPT_TITLE,
             NORMALIZED,
