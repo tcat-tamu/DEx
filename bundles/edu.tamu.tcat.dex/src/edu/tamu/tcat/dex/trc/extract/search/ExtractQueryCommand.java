@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.search;
+package edu.tamu.tcat.dex.trc.extract.search;
 
 import java.util.Collection;
 

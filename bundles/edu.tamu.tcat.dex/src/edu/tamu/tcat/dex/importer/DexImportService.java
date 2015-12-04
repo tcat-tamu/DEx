@@ -28,6 +28,8 @@ import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
+import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
@@ -43,8 +45,6 @@ import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.dto.PersonNameDTO;
 import edu.tamu.tcat.trc.entries.types.bio.repo.EditPersonCommand;
 import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
-import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
-import edu.tamu.tcat.trc.extract.dto.ReferenceDTO;
 
 public class DexImportService
 {

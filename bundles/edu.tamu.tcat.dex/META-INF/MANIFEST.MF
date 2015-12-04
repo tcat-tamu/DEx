@@ -67,8 +67,8 @@ Service-Component: OSGI-INF/config.xml,
  OSGI-INF/trc/bio.repo.xml
 Export-Package: edu.tamu.tcat.dex.importer,
  edu.tamu.tcat.dex.importer.model,
- edu.tamu.tcat.trc.extract.dto,
- edu.tamu.tcat.trc.extract.postgres,
- edu.tamu.tcat.trc.extract.search,
- edu.tamu.tcat.trc.extract.search.solr
+ edu.tamu.tcat.dex.trc.extract.dto,
+ edu.tamu.tcat.dex.trc.extract.postgres,
+ edu.tamu.tcat.dex.trc.extract.search,
+ edu.tamu.tcat.dex.trc.extract.search.solr
 Require-Bundle: com.eclipsesource.jaxrs.jersey-all

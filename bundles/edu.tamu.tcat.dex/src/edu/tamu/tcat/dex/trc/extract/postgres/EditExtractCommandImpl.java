@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.postgres;
+package edu.tamu.tcat.dex.trc.extract.postgres;
 
 import java.io.StringWriter;
 import java.util.Collections;
@@ -22,8 +22,8 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtract;
 import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.Pair;
-import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
-import edu.tamu.tcat.trc.extract.dto.ReferenceDTO;
+import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
+import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 
 public class EditExtractCommandImpl implements EditExtractCommand
 {

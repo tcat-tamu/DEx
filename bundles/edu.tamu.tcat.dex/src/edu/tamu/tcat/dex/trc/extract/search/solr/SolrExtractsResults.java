@@ -1,11 +1,11 @@
-package edu.tamu.tcat.trc.extract.search.solr;
+package edu.tamu.tcat.dex.trc.extract.search.solr;
 
 import java.util.Collection;
 import java.util.List;
 
-import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
-import edu.tamu.tcat.trc.extract.search.FacetItemList;
-import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
+import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
+import edu.tamu.tcat.dex.trc.extract.search.FacetItemList;
+import edu.tamu.tcat.dex.trc.extract.search.SearchExtractResult;
 
 public class SolrExtractsResults implements SearchExtractResult
 {

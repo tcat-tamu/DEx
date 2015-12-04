@@ -3,7 +3,7 @@ package edu.tamu.tcat.dex.importer.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
+import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 
 public class ExtractImportDTO extends ExtractDTO
 {

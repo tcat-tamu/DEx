@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.dto;
+package edu.tamu.tcat.dex.trc.extract.dto;
 
 public class ReferenceDTO
 {

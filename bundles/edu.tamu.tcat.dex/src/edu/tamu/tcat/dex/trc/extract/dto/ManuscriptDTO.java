@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.dto;
+package edu.tamu.tcat.dex.trc.extract.dto;
 
 import java.util.Collection;
 import java.util.Collections;

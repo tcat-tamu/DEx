@@ -1,9 +1,9 @@
-package edu.tamu.tcat.trc.extract.search;
+package edu.tamu.tcat.dex.trc.extract.search;
 
 import java.util.Iterator;
 import java.util.List;
 
-import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
+import edu.tamu.tcat.dex.trc.extract.search.FacetItemList.FacetItem;
 
 /**
  * Provides an API to access the faceted values of a search field.

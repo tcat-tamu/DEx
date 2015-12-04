@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.postgres;
+package edu.tamu.tcat.dex.trc.extract.postgres;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -24,6 +24,7 @@ import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.entry.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.entries.notification.BaseUpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserverAdapter;
@@ -31,7 +32,6 @@ import edu.tamu.tcat.trc.entries.notification.ObservableTaskWrapper;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent.UpdateAction;
 import edu.tamu.tcat.trc.entries.notification.UpdateListener;
-import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 
 public class PsqlExtractRepo implements ExtractRepository
 {

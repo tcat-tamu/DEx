@@ -1,9 +1,9 @@
-package edu.tamu.tcat.trc.extract.search;
+package edu.tamu.tcat.dex.trc.extract.search;
 
 import java.util.Collection;
 import java.util.List;
 
-import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
+import edu.tamu.tcat.dex.trc.extract.search.solr.ExtractSearchProxy;
 
 /**
  * The result set of {@link ExtractSearchProxy}'s matched by an {@link ExtractQueryCommand}.

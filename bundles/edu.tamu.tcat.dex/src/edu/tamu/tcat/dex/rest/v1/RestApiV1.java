@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.tamu.tcat.trc.extract.search.solr.ExtractSearchProxy;
+import edu.tamu.tcat.dex.trc.extract.search.solr.ExtractSearchProxy;
 
 public class RestApiV1
 {

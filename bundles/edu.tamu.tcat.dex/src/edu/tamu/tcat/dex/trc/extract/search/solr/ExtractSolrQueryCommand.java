@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.search.solr;
+package edu.tamu.tcat.dex.trc.extract.search.solr;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,11 +21,11 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 
-import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
-import edu.tamu.tcat.trc.extract.search.FacetItemList;
-import edu.tamu.tcat.trc.extract.search.FacetItemList.FacetItem;
-import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
-import edu.tamu.tcat.trc.extract.search.solr.FacetValueManipulationUtil.FacetValue;
+import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
+import edu.tamu.tcat.dex.trc.extract.search.FacetItemList;
+import edu.tamu.tcat.dex.trc.extract.search.SearchExtractResult;
+import edu.tamu.tcat.dex.trc.extract.search.FacetItemList.FacetItem;
+import edu.tamu.tcat.dex.trc.extract.search.solr.FacetValueManipulationUtil.FacetValue;
 import edu.tamu.tcat.trc.search.SearchException;
 import edu.tamu.tcat.trc.search.solr.impl.TrcQueryBuilder;
 

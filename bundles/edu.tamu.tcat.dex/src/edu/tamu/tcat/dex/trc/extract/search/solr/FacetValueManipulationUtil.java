@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.search.solr;
+package edu.tamu.tcat.dex.trc.extract.search.solr;
 
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;

@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.postgres;
+package edu.tamu.tcat.dex.trc.extract.postgres;
 
 import java.util.List;
 import java.util.Objects;

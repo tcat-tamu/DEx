@@ -1,4 +1,4 @@
-package edu.tamu.tcat.trc.extract.search.solr;
+package edu.tamu.tcat.dex.trc.extract.search.solr;
 
 public class FacetValueException extends Exception
 {
