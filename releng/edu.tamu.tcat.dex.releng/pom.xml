@@ -55,7 +55,6 @@ under the License.
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.product</module>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.feature</module>
       <module>${repo-dex-bundles-path}/edu.tamu.tcat.dex</module>
-      <module>${repo-dex-bundles-path}/edu.tamu.tcat.dex.trc.entry</module>
    </modules>
 
    <repositories>
