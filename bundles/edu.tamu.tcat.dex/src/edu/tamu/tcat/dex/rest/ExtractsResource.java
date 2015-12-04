@@ -24,7 +24,6 @@ import edu.tamu.tcat.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.trc.extract.search.ExtractSearchService;
 import edu.tamu.tcat.trc.extract.search.SearchExtractResult;
-import edu.tamu.tcat.trc.search.SearchException;
 
 @Path("/extracts")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +62,7 @@ public class ExtractsResource
                                @QueryParam("f.pl[]") List<String> playFilters,
                                @QueryParam("sp") String speakerQuery,
                                @QueryParam("f.sp[]") List<String> speakerFilters,
+                               @QueryParam("sort") String sortBy,
                                @DefaultValue("1") @QueryParam("p") int page,
                                @DefaultValue("-1") @QueryParam("n") int numResultsPerPage,
                                @DefaultValue("10") @QueryParam("f.n") int numFacets)
@@ -134,7 +134,7 @@ public class ExtractsResource
          SearchExtractResult results = queryCommand.execute();
          return SearchAdapter.toDTO(results, page, numResultsPerPage);
       }
-      catch (SearchException e) {
+      catch (Exception e) {
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
       }
    }

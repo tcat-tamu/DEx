@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -81,7 +83,14 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
             queryBuilder.filterMulti(ExtractSolrConfig.SPEAKER_FACET, speakerIds, ExtractSolrConfig.FACET_EXCLUDE_TAG_SPEAKER);
          }
 
-         QueryResponse response = solrServer.query(queryBuilder.get());
+         SolrQuery solrParams = (SolrQuery)queryBuilder.get();
+
+         // for a single MS, sort results by the order they appear in the manuscript
+         if (manuscriptIds.size() == 1) {
+            solrParams.addSort(ExtractSolrConfig.MANUSCRIPT_INDEX.getName(), ORDER.asc);
+         }
+
+         QueryResponse response = solrServer.query(solrParams);
          SolrDocumentList results = response.getResults();
 
          Map<String, Collection<String>> selectedFacets = new HashMap<>();
