@@ -25,6 +25,7 @@ import edu.tamu.tcat.osgi.config.ConfigurationProperties;
  */
 public class ExtractManipulationUtil
 {
+   // FIXME rename This is a parsing service - name should reflect that.
    private static final Logger logger = Logger.getLogger(ExtractManipulationUtil.class.getName());
 
    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();

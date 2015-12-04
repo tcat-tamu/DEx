@@ -48,6 +48,8 @@ import edu.tamu.tcat.trc.extract.dto.ReferenceDTO;
 
 public class DexImportService
 {
+   // TODO perhaps set this up in the app layer (i.e. REST resource) rather than as an OSGi service
+
    private static final Logger logger = Logger.getLogger(DexImportService.class.getName());
 
    private static final String CONFIG_TEI_FILE_LOCATION = "dex.tei.filecache.path";
