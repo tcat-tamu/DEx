@@ -1,4 +1,4 @@
-package edu.tamu.tcat.dex.trc.extract.tei;
+package edu.tamu.tcat.dex.trc.extract.search.solr;
 
 import java.io.File;
 import java.io.StringWriter;

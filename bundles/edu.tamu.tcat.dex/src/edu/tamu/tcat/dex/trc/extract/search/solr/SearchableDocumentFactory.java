@@ -13,7 +13,6 @@ import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.dex.trc.extract.PlaywrightRef;
 import edu.tamu.tcat.dex.trc.extract.SourceRef;
 import edu.tamu.tcat.dex.trc.extract.SpeakerRef;
-import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.trc.search.SearchException;
 import edu.tamu.tcat.trc.search.solr.impl.TrcDocument;
 

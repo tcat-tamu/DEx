@@ -6,7 +6,6 @@ import java.util.List;
 import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.dex.trc.extract.ManuscriptRef;
 import edu.tamu.tcat.dex.trc.extract.SourceRef;
-import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.trc.search.SearchException;
 
 public class ExtractSearchProxy

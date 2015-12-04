@@ -16,7 +16,6 @@ import edu.tamu.tcat.dex.trc.extract.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.dex.trc.extract.search.ExtractSearchService;
-import edu.tamu.tcat.dex.trc.extract.tei.ExtractManipulationUtil;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.notification.UpdateEvent;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
