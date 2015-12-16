@@ -67,7 +67,7 @@ under the License.
 
       <repository>
          <id>Eclipse Orbit Luna SR2</id>
-         <layout>p2</layout>
+         <layoutcd>p2</layout>
          <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</url>
       </repository>
       
@@ -76,13 +76,7 @@ under the License.
          <layout>p2</layout>
          <url>http://hstaudacher.github.io/osgi-jax-rs-connector</url>
       </repository>
-      
-      <repository>
-         <id>SDA SDK</id>
-         <layout>p2</layout>
-         <url>https://sda-dev.citd.tamu.edu/sdk</url>
-      </repository>
-      
+            
       <repository>
          <id>Thematic Research Collection (dev)</id>
          <layout>p2</layout>
