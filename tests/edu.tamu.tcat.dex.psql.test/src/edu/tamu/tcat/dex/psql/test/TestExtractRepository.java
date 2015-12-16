@@ -20,10 +20,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import edu.tamu.tcat.dex.trc.entry.DramaticExtractException;
-import edu.tamu.tcat.dex.trc.entry.EditExtractCommand;
-import edu.tamu.tcat.dex.trc.entry.ExtractRepository;
-import edu.tamu.tcat.dex.trc.entry.Pair;
+import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
+import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.Pair;
 
 public class TestExtractRepository
 {
