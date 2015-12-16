@@ -67,7 +67,7 @@ under the License.
 
       <repository>
          <id>Eclipse Orbit Luna SR2</id>
-         <layoutcd>p2</layout>
+         <layout>p2</layout>
          <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</url>
       </repository>
       
