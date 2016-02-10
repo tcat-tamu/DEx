@@ -33,6 +33,7 @@ public class RestApiV1
       public String id;
       public String title;
       public String author;
+      public String links;
    }
 
    public static class PlayReference

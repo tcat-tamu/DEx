@@ -1,7 +1,11 @@
 package edu.tamu.tcat.dex.importer;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.Attributes;
@@ -13,6 +17,8 @@ import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 
 class ManuscriptHandler extends DefaultHandler
 {
+   private static final Logger logger = Logger.getLogger(PeopleAndPlaysHandler.class.getName());
+
    private static class XmlStringBuilder
    {
       private StringBuilder sb;
@@ -126,6 +132,43 @@ class ManuscriptHandler extends DefaultHandler
       {
          currentFolioIdent = attributes.getValue("n");
       }
+      else if (qName.equals("graphic") && isParentElement("facsimile"))
+      {
+         try
+         {
+            // append facsimile link to list of links
+            URI target = new URI(attributes.getValue("url"));
+
+            // HACK HACK HACK comma-separated list of HTML links‽‽‽
+            if (!manuscript.links.isEmpty())
+            {
+               manuscript.links += ", ";
+            }
+            manuscript.links += "<a href=\"" + target.toString() + "\">Facsimile</a>";
+         }
+         catch (URISyntaxException e) {
+            logger.log(Level.WARNING, "malformed URI in link attribute", e);
+         }
+      }
+      else if (qName.equals("bibl") && isParentElement("listBibl"))
+      {
+         // push link title
+         objectStack.push(attributes.getValue("type"));
+      }
+      else if (qName.equals("link") && isParentElement("bibl"))
+      {
+         // push link target
+         URI target = null;
+         try
+         {
+            target = new URI(attributes.getValue("target"));
+         }
+         catch (URISyntaxException e)
+         {
+            logger.log(Level.WARNING, "malformed URI in link attribute", e);
+         }
+         objectStack.push(target);
+      }
    }
 
    private void handleSpeakerStartElement(Attributes attributes)
@@ -191,6 +234,26 @@ class ManuscriptHandler extends DefaultHandler
          extract.teiContent = xsb.toString().trim();
          inExtractDiv = false;
          rawMode = false;
+      }
+      else if (qName.equals("bibl") && isParentElement("listBibl"))
+      {
+         // append link to manuscript list of links
+         URI target = (URI)objectStack.pop();
+         String title = (String)objectStack.pop();
+
+         if (target != null && title != null && !title.isEmpty())
+         {
+            // HACK HACK HACK comma-separated list of HTML links‽‽‽
+            if (manuscript.links == null)
+            {
+               manuscript.links = "";
+            }
+            else if (!manuscript.links.isEmpty())
+            {
+               manuscript.links += ", ";
+            }
+            manuscript.links += "<a href=\"" + target.toString() + "\">" + title + "</a>";
+         }
       }
 
       elementStack.pop();

@@ -36,6 +36,7 @@ public class RepoAdapter
 
       dto.id = work.getId();
       dto.title = getTitle(work.getTitle());
+      dto.links = work.getSummary();
 
       AuthorList authorList = work.getAuthors();
       AuthorReference authorReference = authorList == null || authorList.size() == 0 ? null : authorList.get(0);

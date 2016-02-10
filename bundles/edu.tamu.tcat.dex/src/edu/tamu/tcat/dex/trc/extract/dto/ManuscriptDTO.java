@@ -24,6 +24,7 @@ public class ManuscriptDTO
    public String id;
    public String title;
    public String author;
+   public String links;
 
    public static Work instantiate(ManuscriptDTO dto)
    {
@@ -31,6 +32,7 @@ public class ManuscriptDTO
       manuscript.id = dto.id;
       manuscript.authors = singletonAuthorList(dto.author);
       manuscript.title = singletonTitleDef(dto.title);
+      manuscript.summary = dto.links;
 
       return manuscript;
    }
@@ -40,6 +42,7 @@ public class ManuscriptDTO
       ManuscriptDTO dto = new ManuscriptDTO();
       dto.id = manuscript.getId();
       dto.title = manuscript.getTitle().getCanonicalTitle().getFullTitle();
+      dto.links = manuscript.getSummary();
 
       AuthorReference authorRef = manuscript.getAuthors().get(0);
       String firstName = authorRef.getFirstName();
