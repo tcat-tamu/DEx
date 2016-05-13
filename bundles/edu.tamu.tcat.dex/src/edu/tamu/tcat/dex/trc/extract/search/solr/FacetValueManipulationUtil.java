@@ -34,10 +34,10 @@ public class FacetValueManipulationUtil
       try
       {
          Work work = workRepo.getWork(id);
-         String title = work.getTitle().getCanonicalTitle().getFullTitle();
+         String title = work.getTitle().get("canonical").getFullTitle();
          return id + FACET_ID_LABEL_DELIMITER + title;
       }
-      catch (NoSuchCatalogRecordException e)
+      catch (IllegalArgumentException e)
       {
          throw new FacetValueException("unable to find work [" + id + "] for faceting.", e);
       }

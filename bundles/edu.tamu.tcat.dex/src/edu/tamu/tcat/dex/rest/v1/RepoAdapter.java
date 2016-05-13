@@ -165,7 +165,7 @@ public class RepoAdapter
          return "";
       }
 
-      return getTitle(titleDefinition.getCanonicalTitle());
+      return getTitle(titleDefinition.get("canonical"));
    }
 
    private static String getTitle(Title title)
