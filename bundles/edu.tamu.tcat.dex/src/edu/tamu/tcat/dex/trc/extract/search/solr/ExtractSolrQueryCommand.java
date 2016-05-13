@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.trc.extract.search.solr;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,9 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
@@ -23,8 +24,8 @@ import org.apache.solr.common.SolrDocumentList;
 
 import edu.tamu.tcat.dex.trc.extract.search.ExtractQueryCommand;
 import edu.tamu.tcat.dex.trc.extract.search.FacetItemList;
-import edu.tamu.tcat.dex.trc.extract.search.SearchExtractResult;
 import edu.tamu.tcat.dex.trc.extract.search.FacetItemList.FacetItem;
+import edu.tamu.tcat.dex.trc.extract.search.SearchExtractResult;
 import edu.tamu.tcat.dex.trc.extract.search.solr.FacetValueManipulationUtil.FacetValue;
 import edu.tamu.tcat.trc.search.SearchException;
 import edu.tamu.tcat.trc.search.solr.impl.TrcQueryBuilder;
@@ -36,7 +37,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
 
    private static final Logger logger = Logger.getLogger(ExtractSolrQueryCommand.class.getName());
 
-   private final SolrServer solrServer;
+   private final SolrClient solrServer;
    private final TrcQueryBuilder queryBuilder;
 
    private Collection<String> manuscriptIds = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
    private final FacetValueManipulationUtil facetValueManipulationUtil;
 
 
-   public ExtractSolrQueryCommand(SolrServer solrServer,
+   public ExtractSolrQueryCommand(SolrClient solrServer,
                                   TrcQueryBuilder queryBuilder,
                                   FacetValueManipulationUtil facetValueManipulationUtil)
    {
@@ -107,7 +108,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
          List<ExtractSearchProxy> extracts = queryBuilder.unpack(results, ExtractSolrConfig.SEARCH_PROXY);
          return new SolrExtractsResults(this, extracts, totalFound, facets);
       }
-      catch (SolrServerException e)
+      catch (IOException | SolrServerException e)
       {
          throw new SearchException("An error occurred while querying the works core.", e);
       }

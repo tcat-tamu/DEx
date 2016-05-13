@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
@@ -41,7 +41,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    private PeopleRepository peopleRepo;
    private WorkRepository workRepo;
    private ConfigurationProperties config;
-   private SolrServer solrServer;
+   private HttpSolrClient solrServer;
    private AutoCloseable repoListenerRegistration;
 
    private ExtractManipulationUtil extractManipulationUtil;
@@ -118,7 +118,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    @Override
    public ExtractQueryCommand createQueryCommand() throws SearchException
    {
-      TrcQueryBuilder qb = new TrcQueryBuilder(solrServer, new ExtractSolrConfig());
+      TrcQueryBuilder qb = new TrcQueryBuilder(new ExtractSolrConfig());
       FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
       return new ExtractSolrQueryCommand(solrServer, qb, facetUtil);
    }
