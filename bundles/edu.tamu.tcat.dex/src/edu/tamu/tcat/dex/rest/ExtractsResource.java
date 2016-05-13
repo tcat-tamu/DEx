@@ -134,7 +134,9 @@ public class ExtractsResource
          SearchExtractResult results = queryCommand.execute();
          return SearchAdapter.toDTO(results, page, numResultsPerPage);
       }
-      catch (Exception e) {
+      catch (Throwable e)
+      {
+         e.printStackTrace();
          throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
       }
    }

@@ -45,9 +45,7 @@ public class PlaysResource
    {
       List<RestApiV1.PlayBibEntry> bibEntries = new ArrayList<>();
 
-      // HACK: listWorks is deprecated, but I don't see a short-term alternative.
-      Iterable<Work> works = this.repo.listWorks();
-
+      Iterable<Work> works = () -> this.repo.getAllWorks();
       for (Work work : works)
       {
          if (!TrcBiblioType.Play.toString().equals(work.getType())) {

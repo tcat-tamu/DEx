@@ -24,6 +24,7 @@ import edu.tamu.tcat.dex.importer.model.ExtractImportDTO;
 import edu.tamu.tcat.dex.importer.model.ManuscriptImportDTO;
 import edu.tamu.tcat.dex.importer.model.PlayImportDTO;
 import edu.tamu.tcat.dex.importer.model.PlayImportDTO.EditionDTO;
+import edu.tamu.tcat.dex.importer.model.PlayImportDTO.PlaywrightReferenceDTO;
 import edu.tamu.tcat.dex.importer.model.PlaywrightImportDTO;
 import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
@@ -32,13 +33,11 @@ import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
-import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
-import edu.tamu.tcat.trc.entries.types.biblio.dto.AuthorRefDV;
-import edu.tamu.tcat.trc.entries.types.biblio.dto.PublicationInfoDV;
-import edu.tamu.tcat.trc.entries.types.biblio.dto.TitleDV;
-import edu.tamu.tcat.trc.entries.types.biblio.dto.WorkDV;
+import edu.tamu.tcat.trc.entries.types.biblio.dto.AuthorReferenceDTO;
+import edu.tamu.tcat.trc.entries.types.biblio.dto.PublicationInfoDTO;
+import edu.tamu.tcat.trc.entries.types.biblio.dto.TitleDTO;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.EditWorkCommand;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.EditionMutator;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
@@ -92,8 +91,6 @@ public class DexImportService
       Objects.requireNonNull(teiFileLocation, "No TEI file location provided");
 
       extractListenerRegistration = extractRepo.register(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " extract [" + evt.getEntityId() + "]."));
-      workListenerRegistration = worksRepo.addUpdateListener(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " work [" + evt.getEntityId() + "]."));
-      peopleListenerRegistration = peopleRepo.addUpdateListener(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " person [" + evt.getEntityId() + "]."));
    }
 
    public void dispose()
@@ -168,7 +165,6 @@ public class DexImportService
       }
 
       manuscript.id = manuscriptId;
-
       saveManuscript(manuscript);
    }
 
@@ -220,7 +216,8 @@ public class DexImportService
       EditWorkCommand editManuscriptCommand = createOrEditWork(manuscript.id);
 
       Work manuscriptWork = ManuscriptImportDTO.instantiate(manuscript);
-      editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
+
+//      editManuscriptCommand.setAll(WorkDV.create(manuscriptWork));
       editManuscriptCommand.execute();
 
       try {
@@ -244,7 +241,6 @@ public class DexImportService
                         }
                         catch (Exception e)
                         {
-                           // logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "] in [" + manuscript.id + "].", e);
                            logger.log(Level.WARNING, "Unable to resolve name of referenced speaker [" + id + "] in [" + manuscript.id + "].");
                         }
 
@@ -264,29 +260,7 @@ public class DexImportService
     */
    private void saveExtract(ExtractImportDTO extract)
    {
-      String sourceTitle = null;
-      try
-      {
-         // resolve extract source and set source display title on extract
-         Work source = worksRepo.getWork(extract.sourceId);
-         sourceTitle = source.getTitle().getCanonicalTitle().getFullTitle();
-
-         // set playwrights on extract
-         for (AuthorReference aRef : source.getAuthors())
-         {
-            String firstName = aRef.getFirstName();
-            String lastName = aRef.getLastName();
-            String name = (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
-            extract.playwrights.add(ReferenceDTO.create(aRef.getId(), name.trim()));
-         }
-      }
-      catch (NoSuchCatalogRecordException e)
-      {
-         // logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + extract.manuscript.id + "].", e);
-         logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + extract.manuscript.id + "].");
-      }
-      extract.source = ReferenceDTO.create(extract.sourceId, sourceTitle);
-
+      updateSourceDocumentTitle(extract);
       try
       {
          EditExtractCommand editExtractCommand = extractRepo.createOrEdit(extract.id);
@@ -297,9 +271,34 @@ public class DexImportService
       catch (DramaticExtractException e)
       {
          // TODO: accumulate and report at end.
-         // logger.log(Level.WARNING, "unable to import extract [" + extract.id + "] in [" + extract.manuscript.id + "].", e);
          logger.log(Level.WARNING, "unable to import extract [" + extract.id + "] in [" + extract.manuscript.id + "].");
       }
+   }
+
+   private void updateSourceDocumentTitle(ExtractImportDTO extract)
+   {
+      String sourceTitle = null;
+      try
+      {
+         // resolve extract source and set source display title on extract
+         Work source = worksRepo.getWork(extract.sourceId);
+         sourceTitle = source.getTitle().get("canonical").getFullTitle();
+
+         // set playwrights on extract
+         for (AuthorReference aRef : source.getAuthors())
+         {
+            String firstName = aRef.getFirstName();
+            String lastName = aRef.getLastName();
+            String name = (firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName);
+            extract.playwrights.add(ReferenceDTO.create(aRef.getId(), name.trim()));
+         }
+      }
+      catch (IllegalArgumentException e)
+      {
+         logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + extract.manuscript.id + "].");
+      }
+
+      extract.source = ReferenceDTO.create(extract.sourceId, sourceTitle);
    }
 
    /**
@@ -314,64 +313,70 @@ public class DexImportService
       editCommand.setType(TrcBiblioType.Play.toString());
 
       editCommand.setTitles(play.titles.stream()
-            .map(t ->
-                  {
-                     TitleDV dto = new TitleDV();
-                     dto.title = t;
-                     dto.type = "Canonical";
-
-                     return dto;
-                  })
+            .map(this::adaptToTitle)
             .collect(Collectors.toList()));
 
       editCommand.setAuthors(play.playwrightRefs.stream()
-            .map(ref ->
-                  {
-                     AuthorRefDV dto = new AuthorRefDV();
-                     dto.role = "Playwright";
-                     dto.authorId = ref.playwrightId;
-                     // HACK: storing author reference's full name in lastName field.
-                     dto.lastName = ref.displayName;
-
-                     return dto;
-                  })
+            .map(this::adaptToAuthor)
             .collect(Collectors.toList()));
 
       clearEditions(play, editCommand);
 
-      for (EditionDTO edition : play.editions)
-      {
-         EditionMutator editionMutator = editCommand.createEdition();
-
-         TitleDV titleDTO = new TitleDV();
-         titleDTO.title = edition.title;
-         editionMutator.setTitles(Collections.singleton(titleDTO));
-
-         editionMutator.setAuthors(edition.editors.stream()
-               .map(name ->
-                     {
-                        AuthorRefDV dto = new AuthorRefDV();
-                        dto.role = "Editor";
-                        dto.lastName = name;
-
-                        return dto;
-                     })
-               .collect(Collectors.toList()));
-
-         PublicationInfoDV pubInfoDTO = new PublicationInfoDV();
-         pubInfoDTO.publisher = edition.publisher;
-         pubInfoDTO.date = new DateDescriptionDTO();
-         pubInfoDTO.date.description = edition.date;
-         editionMutator.setPublicationInfo(pubInfoDTO);
-
-         // HACK: link to online play edition is currently being stored in the summary field.
-         if (edition.link != null)
-         {
-            editionMutator.setSummary(edition.link.toString());
-         }
-      }
+      play.editions.stream().forEach(ed -> addEdition(editCommand, ed));
 
       editCommand.execute();
+   }
+
+   private TitleDTO adaptToTitle(String t)
+   {
+      TitleDTO dto = new TitleDTO();
+      dto.title = t;
+      dto.type = "Canonical";
+
+      return dto;
+   }
+
+   private AuthorReferenceDTO adaptToAuthor(PlaywrightReferenceDTO ref)
+   {
+      AuthorReferenceDTO dto = new AuthorReferenceDTO();
+      dto.role = "Playwright";
+      dto.authorId = ref.playwrightId;
+
+      // HACK: storing author reference's full name in lastName field.
+      dto.lastName = ref.displayName;
+      return dto;
+   }
+
+   private void addEdition(EditWorkCommand editCommand, EditionDTO edition)
+   {
+      EditionMutator editionMutator = editCommand.createEdition();
+
+      TitleDTO titleDTO = new TitleDTO();
+      titleDTO.title = edition.title;
+      editionMutator.setTitles(Collections.singleton(titleDTO));
+
+      editionMutator.setAuthors(edition.editors.stream()
+            .map(name ->
+                  {
+                     AuthorReferenceDTO dto = new AuthorReferenceDTO();
+                     dto.role = "Editor";
+                     dto.lastName = name;
+
+                     return dto;
+                  })
+            .collect(Collectors.toList()));
+
+      PublicationInfoDTO pubInfoDTO = new PublicationInfoDTO();
+      pubInfoDTO.publisher = edition.publisher;
+      pubInfoDTO.date = new DateDescriptionDTO();
+      pubInfoDTO.date.description = edition.date;
+      editionMutator.setPublicationInfo(pubInfoDTO);
+
+      // HACK: link to online play edition is currently being stored in the summary field.
+      if (edition.link != null)
+      {
+         editionMutator.setSummary(edition.link.toString());
+      }
    }
 
    private void clearEditions(PlayImportDTO play, EditWorkCommand editCommand)
@@ -405,7 +410,6 @@ public class DexImportService
    private void savePlaywright(PlaywrightImportDTO playwright)
    {
       EditPersonCommand editCommand = createOrEditPerson(playwright.id);
-
       List<PersonNameDTO> personNames = playwright.names.stream()
          .map(n ->
                {
@@ -458,7 +462,7 @@ public class DexImportService
       {
          return peopleRepo.update(id);
       }
-      catch (NoSuchCatalogRecordException e)
+      catch (Exception e)
       {
          return peopleRepo.create(id);
       }
@@ -469,11 +473,11 @@ public class DexImportService
       // HACK: I don't think this is what try/catch blocks are meant to do...
       try
       {
-         return worksRepo.edit(id);
+         return worksRepo.editWork(id);
       }
-      catch (NoSuchCatalogRecordException e)
+      catch (Exception e)
       {
-         return worksRepo.create(id);
+         return worksRepo.createWork(id);
       }
    }
 
