@@ -8,7 +8,7 @@
   <parent>
     <relativePath>../../../pom.xml</relativePath>
     <groupId>edu.tamu.tcat</groupId>
-    <artifactId>trc</artifactId>
+    <artifactId>dex.main</artifactId>
     <version>1</version>
   </parent>
 

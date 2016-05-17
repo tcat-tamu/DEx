@@ -54,6 +54,7 @@ under the License.
    <modules>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.product</module>
       <module>${repo-dex-releng-path}/edu.tamu.tcat.dex.war.feature</module>
+      <module>${repo-dex-releng-path}/edu.tamu.tcat.trc.base.feature</module>
       <module>${repo-dex-bundles-path}/edu.tamu.tcat.dex</module>
    </modules>
 
@@ -66,9 +67,15 @@ under the License.
       </repository>
 
       <repository>
-         <id>Eclipse Orbit Luna SR2</id>
+         <id>Eclipse Orbit Luna SR1</id>
          <layout>p2</layout>
          <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</url>
+      </repository>
+
+      <repository>
+         <id>Eclipse Orbit Mars</id>
+         <layout>p2</layout>
+         <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository</url>
       </repository>
       
       <repository>

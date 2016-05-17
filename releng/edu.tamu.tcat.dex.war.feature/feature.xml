@@ -21,147 +21,147 @@
          id="edu.tamu.tcat.dex"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.entries.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.20160414-1939"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.entries.types.biblio"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.1.20160513-2015"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.entries.types.bio"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.20160414-1939"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.search.solr"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.20160414-1939"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.entries.types.biblio.impl"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.2.20160513-2015"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc.entries.types.bio.impl"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.1.20160425-2027"
          unpack="false"/>
 
    <plugin
          id="com.eclipsesource.jaxrs.jersey-all"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.10.1.SR1"
          unpack="false"/>
 
    <plugin
          id="com.eclipsesource.jaxrs.publisher"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="5.3.1.201602281253"
          unpack="false"/>
 
    <plugin
          id="com.fasterxml.jackson.jaxrs.jackson-jaxrs-base"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.3.1"
          unpack="false"/>
 
    <plugin
          id="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.3.1"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.trc"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.2.20160425-2123"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.osgi.config"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.1.0.20150627-2017"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.osgi.services.util"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.3.1.20150627-2017"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.hathitrust"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.2.0.20150728-2137"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.lang"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.6.0.v201404270220"
          unpack="false"/>
 
    <plugin
          id="org.apache.httpcomponents.httpclient"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="4.3.6.v201411290715"
          unpack="false"/>
 
    <plugin
          id="org.apache.httpcomponents.httpcore"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="4.3.3.v201411290715"
          unpack="false"/>
 
    <plugin
          id="org.apache.commons.io"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="2.2.0.v201405211200"
          unpack="false"/>
 
    <plugin
          id="org.apache.opennlp.tools"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.6.0"
          unpack="false"/>
 
    <plugin
          id="edu.tamu.tcat.pairtree"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1.20150728-2137"
          unpack="false"/>
 
 </feature>
