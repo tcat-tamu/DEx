@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="dispose" name="edu.tamu.tcat.trc.entries.bib.repo">
-   <implementation class="edu.tamu.tcat.trc.entries.types.bib.postgres.PsqlWorkRepo"/>
+   <implementation class="edu.tamu.tcat.trc.entries.types.biblio.postgres.WorkRepositoryImpl"/>
    <service>
       <provide interface="edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository"/>
    </service>
