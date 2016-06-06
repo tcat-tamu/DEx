@@ -470,15 +470,14 @@ public class DexImportService
 
    private EditWorkCommand createOrEditWork(String id)
    {
-      // HACK: I don't think this is what try/catch blocks are meant to do...
-      try
-      {
-         return worksRepo.editWork(id);
+      Work work = null;
+      try {
+         work = worksRepo.getWork(id);
+      } catch (IllegalArgumentException ex) {
+         // no-op
       }
-      catch (Exception e)
-      {
-         return worksRepo.createWork(id);
-      }
+      
+      return work == null ? worksRepo.createWork(id) : worksRepo.editWork(id);
    }
 
 }
