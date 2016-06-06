@@ -44,8 +44,15 @@ public class ExtractsResource
 
    public void activate()
    {
-      Objects.requireNonNull(repo, "No repository specified");
-      Objects.requireNonNull(searchService, "No search service specified");
+      try {
+         Objects.requireNonNull(repo, "No repository specified");
+         Objects.requireNonNull(searchService, "No search service specified");
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         throw e;
+      }
    }
 
    // TODO: faceting

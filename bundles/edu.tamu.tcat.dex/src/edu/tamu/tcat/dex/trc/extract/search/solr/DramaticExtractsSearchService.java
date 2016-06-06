@@ -74,25 +74,33 @@ public class DramaticExtractsSearchService implements ExtractSearchService
 
    public void activate()
    {
-      Objects.requireNonNull(extractRepo, "No extracts repository supplied.");
-      Objects.requireNonNull(peopleRepo, "No people repository supplied.");
-      Objects.requireNonNull(workRepo, "No works repository supplied.");
-      Objects.requireNonNull(config, "No configuration supplied.");
-      Objects.requireNonNull(extractManipulationUtil, "No extract manipulation utility provided.");
+      try 
+      {
+         Objects.requireNonNull(extractRepo, "No extracts repository supplied.");
+         Objects.requireNonNull(peopleRepo, "No people repository supplied.");
+         Objects.requireNonNull(workRepo, "No works repository supplied.");
+         Objects.requireNonNull(config, "No configuration supplied.");
+         Objects.requireNonNull(extractManipulationUtil, "No extract manipulation utility provided.");
 
-      // listen for updates from the repository
-      repoListenerRegistration = extractRepo.register(this::handleUpdateEvent);
+         // listen for updates from the repository
+         repoListenerRegistration = extractRepo.register(this::handleUpdateEvent);
 
-      FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
-      solrDocFactory = new SearchableDocumentFactory(extractManipulationUtil, facetUtil);
+         FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
+         solrDocFactory = new SearchableDocumentFactory(extractManipulationUtil, facetUtil);
 
-      // Solr setup
-      URI solrBaseUri = config.getPropertyValue(CONFIG_SOLR_API_ENDPOINT, URI.class);
-      String solrCore = config.getPropertyValue(CONFIG_SOLR_CORE, String.class);
+         // Solr setup
+         URI solrBaseUri = config.getPropertyValue(CONFIG_SOLR_API_ENDPOINT, URI.class);
+         String solrCore = config.getPropertyValue(CONFIG_SOLR_CORE, String.class);
 
-      URI coreUri = solrBaseUri.resolve(solrCore);
+         URI coreUri = solrBaseUri.resolve(solrCore);
 
-      solrServer = new HttpSolrServer(coreUri.toString());
+         solrServer = new HttpSolrServer(coreUri.toString());
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, "Failed to start dramatic extracts search service", ex);
+         throw ex;
+      }
    }
 
    public void dispose()

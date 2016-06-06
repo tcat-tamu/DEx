@@ -76,10 +76,19 @@ public class PsqlExtractRepo implements ExtractRepository
 
    public void activate()
    {
-      Objects.requireNonNull(executor, "No SQL Executor provided");
-      eventFactory = new BaseUpdateEventFactory(EXTRACT_REPO_ACTOR_ID);
-      listeners = new EntryUpdateHelper<>(4);
-      mapper = new ObjectMapper();
+      try 
+      {
+         Objects.requireNonNull(executor, "No SQL Executor provided");
+         
+         eventFactory = new BaseUpdateEventFactory(EXTRACT_REPO_ACTOR_ID);
+         listeners = new EntryUpdateHelper<>(4);
+         mapper = new ObjectMapper();
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, "Failed to start extract repository service", ex);
+         throw ex;
+      }
    }
 
    public void dispose()
