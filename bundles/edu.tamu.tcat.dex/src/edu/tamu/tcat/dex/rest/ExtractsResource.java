@@ -2,6 +2,8 @@ package edu.tamu.tcat.dex.rest;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -29,6 +31,8 @@ import edu.tamu.tcat.dex.trc.extract.search.SearchExtractResult;
 @Produces(MediaType.APPLICATION_JSON)
 public class ExtractsResource
 {
+   private static final Logger logger = Logger.getLogger(ExtractsResource.class.getName());
+
    private ExtractRepository repo;
    private ExtractSearchService searchService;
 
@@ -44,14 +48,15 @@ public class ExtractsResource
 
    public void activate()
    {
-      try {
+      try 
+      {
          Objects.requireNonNull(repo, "No repository specified");
          Objects.requireNonNull(searchService, "No search service specified");
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-         e.printStackTrace();
-         throw e;
+         logger.log(Level.SEVERE, "Failed to start /extracts REST resource.", ex);
+         throw ex;
       }
    }
 

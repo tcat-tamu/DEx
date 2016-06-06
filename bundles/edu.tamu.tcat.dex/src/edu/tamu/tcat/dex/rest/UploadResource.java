@@ -47,7 +47,15 @@ public class UploadResource
 
    public void activate()
    {
-      Objects.requireNonNull(importService, "No import service supplied.");
+      try 
+      {
+         Objects.requireNonNull(importService, "No import service supplied.");
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, "Failed to start /upload REST resource.", ex);
+         throw ex;
+      }
    }
 
    public void dispose()

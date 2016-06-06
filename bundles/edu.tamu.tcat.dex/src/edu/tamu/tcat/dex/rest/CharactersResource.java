@@ -1,6 +1,8 @@
 package edu.tamu.tcat.dex.rest;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -18,6 +20,8 @@ import edu.tamu.tcat.trc.entries.types.bio.repo.PeopleRepository;
 @Path("/chars")
 public class CharactersResource
 {
+   private static final Logger logger = Logger.getLogger(CharactersResource.class.getName());
+   
    private PeopleRepository repo;
 
    public void setRepo(PeopleRepository repo)
@@ -27,7 +31,15 @@ public class CharactersResource
 
    public void activate()
    {
-      Objects.requireNonNull(repo, "No repository provided");
+      try 
+      {
+         Objects.requireNonNull(repo, "No repository provided");
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, "Failed to start /chars REST resource.", ex);
+         throw ex;
+      }
    }
 
    public void dispose()

@@ -1,6 +1,8 @@
 package edu.tamu.tcat.dex.rest;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -21,6 +23,8 @@ import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 @Path("/mss")
 public class ManuscriptsResource
 {
+   private static final Logger logger = Logger.getLogger(ManuscriptsResource.class.getName());
+
    private WorkRepository repo;
    private DexImportService importService;
 
@@ -36,8 +40,16 @@ public class ManuscriptsResource
 
    public void activate()
    {
-      Objects.requireNonNull(repo, "No works repository provided.");
-      Objects.requireNonNull(importService, "No import service provided.");
+      try 
+      {
+         Objects.requireNonNull(repo, "No works repository provided.");
+         Objects.requireNonNull(importService, "No import service provided.");
+      }
+      catch (Exception ex)
+      {
+         logger.log(Level.SEVERE, "Failed to start /mss REST resource.", ex);
+         throw ex;
+      }
    }
 
    @GET
