@@ -146,13 +146,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.update.configurator"
-         download-size="0"
-         install-size="0"
-         version="3.3.300.v20140518-1928"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.felix.gogo.command"
          download-size="0"
          install-size="0"

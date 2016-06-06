@@ -102,20 +102,6 @@
          unpack="false"/>
 
    <plugin
-         id="edu.tamu.tcat.osgi.config"
-         download-size="0"
-         install-size="0"
-         version="1.1.0.20150627-2017"
-         unpack="false"/>
-
-   <plugin
-         id="edu.tamu.tcat.osgi.services.util"
-         download-size="0"
-         install-size="0"
-         version="1.3.1.20150627-2017"
-         unpack="false"/>
-
-   <plugin
          id="edu.tamu.tcat.hathitrust"
          download-size="0"
          install-size="0"
@@ -127,20 +113,6 @@
          download-size="0"
          install-size="0"
          version="2.6.0.v201404270220"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.httpcomponents.httpclient"
-         download-size="0"
-         install-size="0"
-         version="4.3.6.v201411290715"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.httpcomponents.httpcore"
-         download-size="0"
-         install-size="0"
-         version="4.3.3.v201411290715"
          unpack="false"/>
 
    <plugin
