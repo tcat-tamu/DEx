@@ -270,14 +270,7 @@ public class DexImportService
       editionMutator.setTitles(Collections.singleton(titleDTO));
 
       editionMutator.setAuthors(edition.editors.stream()
-            .map(name ->
-                  {
-                     AuthorReferenceDTO dto = new AuthorReferenceDTO();
-                     dto.role = "Editor";
-                     dto.lastName = name;
-
-                     return dto;
-                  })
+            .map(this::adaptEditionEditor)
             .collect(Collectors.toList()));
 
       PublicationInfoDTO pubInfoDTO = new PublicationInfoDTO();
@@ -288,11 +281,17 @@ public class DexImportService
 
       // HACK: link to online play edition is currently being stored in the summary field.
       if (edition.link != null)
-      {
          editionMutator.setSummary(edition.link.toString());
-      }
    }
 
+   private AuthorReferenceDTO adaptEditionEditor(String name)
+   {
+      AuthorReferenceDTO dto = new AuthorReferenceDTO();
+      dto.role = "Editor";
+      dto.lastName = name;
+
+      return dto;
+   }
    private void clearEditions(PlayImportDTO play, EditWorkCommand editCommand)
    {
       // HACK: remove all existing editions. --
@@ -325,13 +324,7 @@ public class DexImportService
    {
       EditPersonCommand editCommand = createOrEditPerson(playwright.id);
       List<PersonNameDTO> personNames = playwright.names.stream()
-         .map(n ->
-               {
-                  PersonNameDTO dto = new PersonNameDTO();
-                  dto.displayName = n;
-
-                  return dto;
-               })
+         .map(this::adaptToNameDto)
          .collect(Collectors.toList());
 
       // use first name listed as canonical name and all subsequent as other names
@@ -351,13 +344,7 @@ public class DexImportService
       EditPersonCommand editCommand = createOrEditPerson(character.id);
 
       List<PersonNameDTO> personNameDTOs = character.names.stream()
-            .map(name ->
-                  {
-                     PersonNameDTO dto = new PersonNameDTO();
-                     dto.displayName = name;
-
-                     return dto;
-                  })
+            .map(this::adaptToNameDto)
             .collect(Collectors.toList());
 
 
@@ -368,6 +355,13 @@ public class DexImportService
       editCommand.execute();
    }
 
+   private PersonNameDTO adaptToNameDto(String name) 
+   {
+      PersonNameDTO dto = new PersonNameDTO();
+      dto.displayName = name;
+
+      return dto;
+   }
 
    private EditPersonCommand createOrEditPerson(String id)
    {
