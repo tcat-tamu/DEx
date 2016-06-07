@@ -36,6 +36,7 @@ import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
+import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.dto.AuthorReferenceDTO;
@@ -370,14 +371,20 @@ public class DexImportService
 
    private EditPersonCommand createOrEditPerson(String id)
    {
-      // HACK: I don't think this is what try/catch blocks are meant to do...
+      Person person = null;
+      try {
+         person = peopleRepo.get(id);
+      } catch (Exception e) {
+         // no-op;
+      }
+      
       try
       {
-         return peopleRepo.update(id);
+         return person == null ? peopleRepo.create(id) : peopleRepo.update(id);
       }
-      catch (Exception e)
+      catch (NoSuchCatalogRecordException e)
       {
-         return peopleRepo.create(id);
+         throw new IllegalStateException("Failed to edit person [" + id + "]", e);
       }
    }
 
