@@ -259,7 +259,7 @@ public class PsqlExtractRepo implements ExtractRepository
    }
 
    @Override
-   public void removebyManuscriptId(String manuscriptId) throws DramaticExtractException
+   public void removeByManuscriptId(String manuscriptId) throws DramaticExtractException
    {
       ExecutorTask<Integer> task = makeDeleteByManuscriptIdTask(manuscriptId);
       executor.submit(task);

@@ -76,5 +76,5 @@ public interface ExtractRepository
     * @param id
     * @throws DramaticExtractException
     */
-   void removebyManuscriptId(String manuscriptId) throws DramaticExtractException;
+   void removeByManuscriptId(String manuscriptId) throws DramaticExtractException;
 }
