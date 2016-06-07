@@ -1,6 +1,8 @@
 package edu.tamu.tcat.dex.trc.extract.search.solr;
 
+import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
+import edu.tamu.tcat.trc.entries.types.biblio.TitleDefinition;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.repo.WorkRepository;
 import edu.tamu.tcat.trc.entries.types.bio.Person;
@@ -34,7 +36,10 @@ public class FacetValueManipulationUtil
       try
       {
          Work work = workRepo.getWork(id);
-         String title = work.getTitle().get("canonical").getFullTitle();
+         TitleDefinition t = work.getTitle();
+         String title = t != null && t.get(ExtractRepository.TITLE_TYPE) != null
+               ? t.get(ExtractRepository.TITLE_TYPE).getFullTitle()
+               : "Unknown";
          return id + FACET_ID_LABEL_DELIMITER + title;
       }
       catch (IllegalArgumentException e)

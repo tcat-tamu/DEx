@@ -38,6 +38,7 @@ import edu.tamu.tcat.osgi.config.ConfigurationProperties;
 import edu.tamu.tcat.trc.entries.common.dto.DateDescriptionDTO;
 import edu.tamu.tcat.trc.entries.repo.NoSuchCatalogRecordException;
 import edu.tamu.tcat.trc.entries.types.biblio.AuthorReference;
+import edu.tamu.tcat.trc.entries.types.biblio.TitleDefinition;
 import edu.tamu.tcat.trc.entries.types.biblio.Work;
 import edu.tamu.tcat.trc.entries.types.biblio.dto.AuthorReferenceDTO;
 import edu.tamu.tcat.trc.entries.types.biblio.dto.PublicationInfoDTO;
@@ -55,7 +56,6 @@ public class DexImportService
    // TODO perhaps set this up in the app layer (i.e. REST resource) rather than as an OSGi service
    // TODO split into MSS Import Service and People and Plays Import Service
 
-   private static final String TITLE_TYPE = "canonical";
 
    private static final Logger logger = Logger.getLogger(DexImportService.class.getName());
 
@@ -245,7 +245,7 @@ public class DexImportService
    {
       TitleDTO dto = new TitleDTO();
       dto.title = t;
-      dto.type = TITLE_TYPE;
+      dto.type = ExtractRepository.TITLE_TYPE;
 
       return dto;
    }
@@ -431,7 +431,7 @@ public class DexImportService
          
          TitleDTO title = new TitleDTO();
          title.title = manuscript.title;
-         title.type = TITLE_TYPE;
+         title.type = ExtractRepository.TITLE_TYPE;
          
          editCmd.setAuthors(Arrays.asList(author));
          editCmd.setTitles(Arrays.asList(title));
@@ -505,7 +505,10 @@ public class DexImportService
          {
             // resolve extract source and set source display title on extract
             Work source = worksRepo.getWork(extract.sourceId);
-            sourceTitle = source.getTitle().get(TITLE_TYPE).getFullTitle();
+            TitleDefinition title = source.getTitle();
+            sourceTitle = title != null && title.get(ExtractRepository.TITLE_TYPE) != null
+                  ? title.get(ExtractRepository.TITLE_TYPE).getFullTitle()
+                  : "Unknown";
    
             // set playwrights on extract
             for (AuthorReference aRef : source.getAuthors())
