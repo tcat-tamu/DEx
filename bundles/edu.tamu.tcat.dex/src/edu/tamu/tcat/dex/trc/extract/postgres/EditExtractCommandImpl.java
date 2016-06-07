@@ -1,15 +1,12 @@
 package edu.tamu.tcat.dex.trc.extract.postgres;
 
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -18,10 +15,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
-import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
-import edu.tamu.tcat.dex.trc.extract.Pair;
 import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
 
@@ -42,31 +37,6 @@ public class EditExtractCommandImpl implements EditExtractCommand
    public void setCommitHook(Function<ExtractDTO, Future<String>> hook)
    {
       commitHook = hook;
-   }
-
-
-   @Override
-   public void setAll(DramaticExtract extract)
-   {
-      ExtractDTO dto = ExtractDTO.create(extract);
-
-      setAuthor(dto.author);
-      setManuscriptId(dto.manuscript == null ? null : dto.manuscript.id);
-      setManuscriptTitle(dto.manuscript == null ? null : dto.manuscript.title);
-      setSourceId(dto.source == null ? null : dto.source.id);
-      setSourceTitle(dto.source == null ? null : dto.source.title);
-      setSourceRef(dto.sourceRef);
-      setTEIContent(dto.teiContent);
-      setFolioIdentifier(dto.folioIdent);
-      setMsIndex(dto.msIndex);
-
-      // speedup by not using converting to API types just to convert back
-      this.dto.speakers = Collections.unmodifiableSet(new HashSet<>(dto.speakers));
-      this.dto.playwrights = Collections.unmodifiableSet(new HashSet<>(dto.playwrights));
-
-//      setSpeakers(dto.speakers.parallelStream()
-//            .map(anchor -> Pair.of(anchor.id, anchor.title))
-//            .collect(Collectors.toSet()));
    }
 
    @Override
@@ -117,19 +87,15 @@ public class EditExtractCommandImpl implements EditExtractCommand
    }
 
    @Override
-   public void setSpeakers(Set<Pair<String, String>> speakers)
+   public void setSpeakers(Set<ReferenceDTO> speakers)
    {
-      dto.speakers = speakers.parallelStream()
-            .map(pair -> ReferenceDTO.create(pair.first, pair.second))
-            .collect(Collectors.toSet());
+      dto.speakers = speakers;
    }
 
    @Override
-   public void setPlaywrights(Set<Pair<String, String>> playwrights)
+   public void setPlaywrights(Set<ReferenceDTO> playwrights)
    {
-      dto.playwrights = playwrights.parallelStream()
-            .map(pair -> ReferenceDTO.create(pair.first, pair.second))
-            .collect(Collectors.toSet());
+      dto.playwrights = playwrights;
    }
 
    @Override
