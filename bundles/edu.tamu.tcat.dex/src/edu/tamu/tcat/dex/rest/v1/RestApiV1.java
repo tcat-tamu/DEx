@@ -19,7 +19,7 @@ public class RestApiV1
 
       public Map<String, List<FacetItem>> facets = new HashMap<>();
    }
-
+   
    public static class FacetItem
    {
       public String id;

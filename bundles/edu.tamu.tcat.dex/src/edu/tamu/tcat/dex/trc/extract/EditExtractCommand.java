@@ -5,15 +5,10 @@ import java.util.concurrent.Future;
 
 import org.w3c.dom.Document;
 
+import edu.tamu.tcat.dex.trc.extract.dto.ReferenceDTO;
+
 public interface EditExtractCommand
 {
-   /**
-    * Set all properties to match those from the provided extract
-    *
-    * @param extract
-    */
-   void setAll(DramaticExtract extract);
-
    /**
     * @param author Name of this extract's author (could differ from manuscript author)
     */
@@ -49,13 +44,13 @@ public interface EditExtractCommand
     * @param speakers A set of URIs corresponding to the characters who spoke the lines
     *       recorded in this extract
     */
-   void setSpeakers(Set<Pair<String, String>> speakers);
+   void setSpeakers(Set<ReferenceDTO> speakers);
 
    /**
     * @param playwrights A set of ID/name pairs corresponding to the authors of the source bibliographic
     *       entry referenced by this extract
     */
-   void setPlaywrights(Set<Pair<String, String>> playwrights);
+   void setPlaywrights(Set<ReferenceDTO> playwrights);
 
    /**
     * @param teiContent An XML Document representing the original TEI source of this extract

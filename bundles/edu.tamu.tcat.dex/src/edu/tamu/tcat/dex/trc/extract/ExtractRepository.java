@@ -5,6 +5,8 @@ import edu.tamu.tcat.trc.entries.notification.UpdateListener;
 
 public interface ExtractRepository
 {
+   public static final String TITLE_TYPE = "canonical";
+
    /**
     * Determines the existence of a dramatic extract by ID.
     * This method is expected to be cheaper than fetching the entire extract (if it exists):
@@ -76,5 +78,5 @@ public interface ExtractRepository
     * @param id
     * @throws DramaticExtractException
     */
-   void removebyManuscriptId(String manuscriptId) throws DramaticExtractException;
+   void removeByManuscriptId(String manuscriptId) throws DramaticExtractException;
 }
