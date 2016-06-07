@@ -171,6 +171,11 @@ public class SearchableDocumentFactory
          {
             String normalized = parser.toNormalized(content);
             String original = parser.toOriginal(content);
+            if (original == null) 
+            {
+               // FIXME log error
+               original = "";
+            }
 
             document.set(ExtractSolrConfig.NORMALIZED, normalized);
             document.set(ExtractSolrConfig.ORIGINAL, original);

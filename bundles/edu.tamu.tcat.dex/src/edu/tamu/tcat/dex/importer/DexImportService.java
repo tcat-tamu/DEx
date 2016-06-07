@@ -295,8 +295,10 @@ public class DexImportService
             extract.playwrights.add(ReferenceDTO.create(aRef.getId(), name.trim()));
          }
       }
-      catch (IllegalArgumentException e)
+      catch (Exception e)
       {
+         // HACK. Should be IllegalArgumentException but TRC Doc Repo throws a NullPointerException from
+         //       within the caching mechanism. 
          logger.log(Level.WARNING, "unable to resolve referenced play [" + extract.sourceId + "] in [" + extract.manuscript.id + "].");
       }
 
