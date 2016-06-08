@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -229,6 +230,11 @@ public class RepoAdapter
 
    private static List<String> getAuthors(List<AuthorReference> authorList)
    {
+      if (authorList == null)
+      {
+         return Collections.emptyList();
+      }
+
       return authorList.stream()
             .map(RepoAdapter::getName)
             .collect(Collectors.toList());
