@@ -6,4 +6,5 @@
       <provide interface="edu.tamu.tcat.dex.rest.ManuscriptsResource"/>
    </service>
    <reference bind="setImportService" cardinality="1..1" interface="edu.tamu.tcat.dex.importer.DexImportService" name="DexImportService" policy="static"/>
+   <reference bind="setExtracts" cardinality="1..1" interface="edu.tamu.tcat.dex.trc.extract.ExtractRepository" name="ExtractRepository" policy="static"/>
 </scr:component>
