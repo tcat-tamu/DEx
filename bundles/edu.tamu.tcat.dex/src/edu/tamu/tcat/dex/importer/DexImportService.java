@@ -67,8 +67,6 @@ public class DexImportService
 
    private String teiFileLocation;
 
-   private AutoCloseable workListenerRegistration;
-   private AutoCloseable peopleListenerRegistration;
    private AutoCloseable extractListenerRegistration;
 
    public void setExtractRepository(ExtractRepository repo)
@@ -98,14 +96,15 @@ public class DexImportService
       Objects.requireNonNull(worksRepo, "No works repository provided");
       Objects.requireNonNull(teiFileLocation, "No TEI file location provided");
 
-      extractListenerRegistration = extractRepo.register(evt -> logger.log(Level.INFO, evt.getUpdateAction().toString().toLowerCase() + " extract [" + evt.getEntityId() + "]."));
+      extractListenerRegistration = extractRepo.register(evt -> 
+            logger.log(Level.INFO, evt.getUpdateAction() + " extract [" + evt.getEntityId() + "]."));
    }
 
    public void dispose()
    {
       releaseRegistration(extractListenerRegistration, "extract repository");
-      releaseRegistration(workListenerRegistration, "work repository");
-      releaseRegistration(peopleListenerRegistration, "people repository");
+//      releaseRegistration(workListenerRegistration, "work repository");
+//      releaseRegistration(peopleListenerRegistration, "people repository");
 
       this.extractRepo = null;
       this.peopleRepo = null;
@@ -116,7 +115,8 @@ public class DexImportService
    {
       try
       {
-         reg.close();
+         if (reg != null)
+            reg.close();
       }
       catch (Exception e)
       {

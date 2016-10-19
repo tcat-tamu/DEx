@@ -148,8 +148,9 @@ public class ExtractsResource
       }
       catch (Throwable e)
       {
-         e.printStackTrace();
-         throw new ServerErrorException("Unable to execute search query [" + query + "]", Status.INTERNAL_SERVER_ERROR, e);
+         String msg = "Unable to execute search query [" + query + "]";
+         logger.log(Level.SEVERE, msg, e);
+         throw new ServerErrorException(msg, Status.INTERNAL_SERVER_ERROR, e);
       }
    }
 

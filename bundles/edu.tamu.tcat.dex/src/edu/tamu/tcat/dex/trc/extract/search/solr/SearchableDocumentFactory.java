@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.w3c.dom.Document;
@@ -21,6 +23,8 @@ import edu.tamu.tcat.trc.search.solr.impl.TrcDocument;
  */
 public class SearchableDocumentFactory
 {
+   private static final Logger logger = Logger.getLogger(SearchableDocumentFactory.class.getName());
+   
    private final ExtractManipulationUtil parser;
    private final FacetValueManipulationUtil facetUtil;
 
@@ -173,7 +177,7 @@ public class SearchableDocumentFactory
             String original = parser.toOriginal(content);
             if (original == null) 
             {
-               // FIXME log error
+               logger.log(Level.INFO, "Failed to parse original content from " + content);
                original = "";
             }
 

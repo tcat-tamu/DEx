@@ -110,7 +110,7 @@ public class ExtractSolrQueryCommand implements ExtractQueryCommand
       }
       catch (IOException | SolrServerException e)
       {
-         throw new SearchException("An error occurred while querying the works core.", e);
+         throw new SearchException("An error occurred while querying Solr.", e);
       }
    }
 

@@ -1,5 +1,7 @@
 package edu.tamu.tcat.dex.trc.extract.search.solr;
 
+import static java.text.MessageFormat.format;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
@@ -91,8 +93,9 @@ public class DramaticExtractsSearchService implements ExtractSearchService
          // Solr setup
          URI solrBaseUri = config.getPropertyValue(CONFIG_SOLR_API_ENDPOINT, URI.class);
          String solrCore = config.getPropertyValue(CONFIG_SOLR_CORE, String.class);
-
+         
          URI coreUri = solrBaseUri.resolve(solrCore);
+         logger.info(format("Accessing Solr {0}", coreUri));
 
          solrServer = new HttpSolrServer(coreUri.toString());
       }
