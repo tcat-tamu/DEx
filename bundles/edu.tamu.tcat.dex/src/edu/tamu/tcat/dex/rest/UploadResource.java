@@ -84,7 +84,7 @@ public class UploadResource
          importService.importManuscriptTEI(id, fileStream);
          return "success!";
       }
-      catch (DexImportException e)
+      catch (Exception e)
       {
          logger.log(Level.WARNING, "Unable to import manuscript", e);
          throw new BadRequestException("Unable to import manuscript", e);

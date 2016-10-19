@@ -1,5 +1,6 @@
 package edu.tamu.tcat.dex.trc.extract.search.solr;
 
+import java.awt.datatransfer.StringSelection;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,9 @@ public class SearchableDocumentFactory
 
    public SolrInputDocument create(DramaticExtract extract)
    {
-      return create(extract, warnings -> {});
+      return create(extract, warnings -> {
+         warnings.warnings.values().forEach(msg -> logger.log(Level.WARNING, msg));
+      });
    }
 
    public SolrInputDocument create(DramaticExtract extract, Consumer<IndexCreationProblems> errorMonitor)

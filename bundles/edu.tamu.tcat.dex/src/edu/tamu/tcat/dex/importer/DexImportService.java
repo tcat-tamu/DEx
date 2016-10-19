@@ -400,7 +400,6 @@ public class DexImportService
       private final ManuscriptImportDTO manuscript;
       
       /**
-       * 
        * @param manuscript The manuscript to be saved.
        */
       public SaveManuscriptTask(ManuscriptImportDTO manuscript)
@@ -439,7 +438,7 @@ public class DexImportService
          editCmd.setType(TrcBiblioType.Manuscript.toString());
    
          Future<String> future = editCmd.execute();
-         return CompletableFuture.supplyAsync(() -> unwrap(future));    // NOTE runs on fork-join pool
+         return CompletableFuture.completedFuture(unwrap(future));    // NOTE runs on fork-join pool
       }
       
    
