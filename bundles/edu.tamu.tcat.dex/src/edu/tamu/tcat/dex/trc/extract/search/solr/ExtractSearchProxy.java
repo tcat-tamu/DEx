@@ -3,6 +3,8 @@ package edu.tamu.tcat.dex.trc.extract.search.solr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Document;
+
 import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.dex.trc.extract.ManuscriptRef;
 import edu.tamu.tcat.dex.trc.extract.SourceRef;
@@ -53,14 +55,18 @@ public class ExtractSearchProxy
       proxy.source = ReferenceDTO.create(srcRef.getId(), srcRef.getDisplayTitle());
       proxy.sourceLineRef = srcRef.getLineReference();
 
+      Document teiContent = extract.getTEIContent();
+      
       try
       {
-         proxy.normalized = extractManipulationUtil.toNormalized(extract.getTEIContent());
-         proxy.original = extractManipulationUtil.toOriginal(extract.getTEIContent());
+         proxy.normalized = extractManipulationUtil.toNormalized(teiContent);
+         proxy.original = extractManipulationUtil.toOriginal(teiContent);
       }
       catch (Exception e)
       {
-         throw new SearchException("Unable to transform TEI for search proxy", e);
+         teiContent.getDocumentElement();
+         teiContent.toString();
+         throw new SearchException("Unable to transform TEI for search proxy: " + teiContent, e);
       }
 
       extract.getSpeakerRefs().parallelStream()

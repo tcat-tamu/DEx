@@ -24,6 +24,7 @@ import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
 import edu.tamu.tcat.dex.trc.extract.EditExtractCommand;
 import edu.tamu.tcat.dex.trc.extract.ExtractNotAvailableException;
 import edu.tamu.tcat.dex.trc.extract.ExtractRepository;
+import edu.tamu.tcat.dex.trc.extract.dto.DramaticExtractImpl;
 import edu.tamu.tcat.dex.trc.extract.dto.ExtractDTO;
 import edu.tamu.tcat.trc.entries.notification.BaseUpdateEvent;
 import edu.tamu.tcat.trc.entries.notification.DataUpdateObserver;
@@ -108,7 +109,7 @@ public class PsqlExtractRepo implements ExtractRepository
    public DramaticExtract get(String id) throws ExtractNotAvailableException, DramaticExtractException
    {
       ExtractDTO dto = getDTO(id);
-      return ExtractDTO.instantiate(dto);
+      return new DramaticExtractImpl(dto);
    }
 
    @Override

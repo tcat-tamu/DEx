@@ -11,6 +11,10 @@ import java.util.logging.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.common.SolrInputDocument;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import edu.tamu.tcat.dex.trc.extract.DramaticExtract;
 import edu.tamu.tcat.dex.trc.extract.DramaticExtractException;
@@ -44,7 +48,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    private WorkRepository workRepo;
    private ConfigurationProperties config;
    private HttpSolrClient solrServer;
-   private AutoCloseable repoListenerRegistration;
+   private AutoCloseable extractsReg;
 
    private ExtractManipulationUtil extractManipulationUtil;
    private SearchableDocumentFactory solrDocFactory;
@@ -78,6 +82,8 @@ public class DramaticExtractsSearchService implements ExtractSearchService
    {
       try 
       {
+         logger.log(Level.INFO, "Activating " + getClass().getSimpleName());
+         
          Objects.requireNonNull(extractRepo, "No extracts repository supplied.");
          Objects.requireNonNull(peopleRepo, "No people repository supplied.");
          Objects.requireNonNull(workRepo, "No works repository supplied.");
@@ -85,7 +91,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
          Objects.requireNonNull(extractManipulationUtil, "No extract manipulation utility provided.");
 
          // listen for updates from the repository
-         repoListenerRegistration = extractRepo.register(this::handleUpdateEvent);
+         extractsReg = extractRepo.register(this::handleUpdateEvent);
 
          FacetValueManipulationUtil facetUtil = new FacetValueManipulationUtil(peopleRepo, workRepo);
          solrDocFactory = new SearchableDocumentFactory(extractManipulationUtil, facetUtil);
@@ -108,12 +114,11 @@ public class DramaticExtractsSearchService implements ExtractSearchService
 
    public void dispose()
    {
-      if (repoListenerRegistration != null)
+      if (extractsReg != null)
       {
          try {
-            repoListenerRegistration.close();
-         }
-         catch (Exception e) {
+            extractsReg.close();
+         } catch (Exception e) {
             logger.log(Level.WARNING, "Unable to close extract repository listener registration", e);
          }
       }
@@ -123,7 +128,7 @@ public class DramaticExtractsSearchService implements ExtractSearchService
       workRepo = null;
       config = null;
       extractManipulationUtil = null;
-      repoListenerRegistration = null;
+      extractsReg = null;
    }
 
    @Override
@@ -141,16 +146,19 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     */
    private void handleUpdateEvent(UpdateEvent evt)
    {
+      // TODO create monitor and log errors/problems . . . 
+      //      need to find a way to pipe through to the REST API
+      IndexCreationProblems monitor = new IndexCreationProblems(evt.getEntityId());
       switch (evt.getUpdateAction())
       {
          case CREATE:
-            onCreate(evt);
+            onCreate(evt, monitor);
             break;
          case UPDATE:
-            onUpdate(evt);
+            onUpdate(evt, monitor);
             break;
          case DELETE:
-            onDelete(evt);
+            onDelete(evt, monitor);
             break;
       }
    }
@@ -160,27 +168,33 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     *
     * @param evt
     */
-   protected void onCreate(UpdateEvent evt)
+   protected void onCreate(UpdateEvent evt, IndexCreationProblems monitor)
    {
-      // these should create a task and delegate, monitor task queue and commit after
-      // timeout or fixed number of updates
       Objects.requireNonNull(solrDocFactory, "Solr document factory is not available.");
+      
       String id = evt.getEntityId();
       try {
+         logger.log(Level.INFO, "Indexing extract " + id);
+         
          DramaticExtract extract = extractRepo.get(id);
-
-         solrServer.add(solrDocFactory.create(extract));
-         solrServer.commit();
+         SolrInputDocument doc = solrDocFactory.create(extract, monitor);
+         
+         if (!monitor.isEmpty())
+         {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            String json = mapper.writeValueAsString(monitor.warnings);
+            logger.log(Level.WARNING, "Extract Indexing Errors: \n" + json);
+         }
+         
+         solrServer.add(doc);
       }
-      catch (ExtractNotAvailableException e) {
-         logger.log(Level.SEVERE, "Failed to retrieve seemingly non-existant extract [" + id + "] on create event.", e);
-      }
-      catch (DramaticExtractException e) {
+      catch (ExtractNotAvailableException | DramaticExtractException e) {
          logger.log(Level.SEVERE, "Failed to retrieve extract [" + id + "] on create event.", e);
       }
       catch (SolrServerException | IOException e)
       {
-         logger.log(Level.SEVERE, "Failed to commit extract [" + id + "] to the Solr server.", e);
+         logger.log(Level.SEVERE, format("Failed to index extract [{0}", id), e);
       }
    }
 
@@ -189,23 +203,22 @@ public class DramaticExtractsSearchService implements ExtractSearchService
     *
     * @param evt
     */
-   protected void onUpdate(UpdateEvent evt)
+   protected void onUpdate(UpdateEvent evt, IndexCreationProblems monitor)
    {
-      onCreate(evt);
+      onCreate(evt, monitor);
    }
 
    /**
     * Called when an extract is removed from the database
     * @param evt
     */
-   protected void onDelete(UpdateEvent evt)
+   protected void onDelete(UpdateEvent evt, IndexCreationProblems monitor)
    {
       String id = evt.getEntityId();
 
       try
       {
          solrServer.deleteById(id);
-         solrServer.commit();
       }
       catch (SolrServerException | IOException e)
       {

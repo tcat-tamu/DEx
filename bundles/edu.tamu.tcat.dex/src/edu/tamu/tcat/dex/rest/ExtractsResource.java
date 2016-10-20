@@ -161,8 +161,7 @@ public class ExtractsResource
    {
       try
       {
-         DramaticExtract extract = repo.get(id);
-         return ExtractDTO.create(extract);
+         return ExtractDTO.adapt(repo.get(id));
       }
       catch (ExtractNotAvailableException e)
       {
