@@ -420,6 +420,8 @@ public class DexImportService
       /** Saves information about the manuscript. */
       private CompletableFuture<String> saveManuscript()
       {
+         logger.log(Level.INFO, "Saving manuscript" + manuscript.id);
+         
          EditWorkCommand editCmd = createOrEditWork(manuscript.id);
          
          // NOTE we don't get the ID here, because there is, more or less, a one-to-one
@@ -446,6 +448,7 @@ public class DexImportService
       {
          try {
             // HACK: hope this isn't async.
+            logger.log(Level.INFO, "Removing extracts for manuscript" + manuscript.id);
             extractRepo.removeByManuscriptId(manuscript.id);
          } catch (DramaticExtractException e) {
             logger.log(Level.WARNING, "Unable to remove existing extracts from manuscript [" + manuscript.id + "].", e);
@@ -463,6 +466,8 @@ public class DexImportService
        */
       private void saveExtract(ExtractImportDTO extract)
       {
+         
+         logger.log(Level.INFO, "Saving extract " + extract.id);
          
          extract.manuscript = new ReferenceDTO();
          extract.manuscript.id = manuscript.id;

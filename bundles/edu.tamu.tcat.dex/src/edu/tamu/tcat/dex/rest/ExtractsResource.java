@@ -50,6 +50,8 @@ public class ExtractsResource
    {
       try 
       {
+         logger.log(Level.INFO, "Activating " + getClass().getSimpleName());
+         
          Objects.requireNonNull(repo, "No repository specified");
          Objects.requireNonNull(searchService, "No search service specified");
       }
@@ -79,6 +81,9 @@ public class ExtractsResource
                                @DefaultValue("-1") @QueryParam("n") int numResultsPerPage,
                                @DefaultValue("10") @QueryParam("f.n") int numFacets)
    {
+      
+      logger.log(Level.INFO, "Searching for extracts " + query);
+
       try {
          ExtractQueryCommand queryCommand = searchService.createQueryCommand();
 
@@ -161,6 +166,7 @@ public class ExtractsResource
    {
       try
       {
+         logger.log(Level.INFO, "Getting extract " + id);
          return ExtractDTO.adapt(repo.get(id));
       }
       catch (ExtractNotAvailableException e)

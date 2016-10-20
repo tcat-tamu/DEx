@@ -76,8 +76,11 @@ public class UploadResource
    @Path("/manuscript")
    @Consumes(MediaType.MULTIPART_FORM_DATA)
    @Produces(MediaType.TEXT_PLAIN)
-   public String uploadManuscript(@FormDataParam("id") String id, @FormDataParam("file") InputStream fileStream, @FormDataParam("file") FormDataContentDisposition fileInfo)
+   public String uploadManuscript(@FormDataParam("id") String id, 
+                                  @FormDataParam("file") InputStream fileStream, 
+                                  @FormDataParam("file") FormDataContentDisposition fileInfo)
    {
+      logger.log(Level.INFO, "Uploading manuscript " + id);
       try
       {
          // TODO: send (Level.WARNING) log messages about import to user
@@ -107,6 +110,9 @@ public class UploadResource
    {
       try
       {
+         
+         logger.log(Level.INFO, "Uploading people and plays ");
+         
          // TODO: send (Level.WARNING) log messages about import to user
          // TODO: convert API to use InputStream?
          importService.importPeopleAndPlaysTEI(new InputStreamReader(fileStream));

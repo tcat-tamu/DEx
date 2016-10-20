@@ -1,6 +1,7 @@
 package edu.tamu.tcat.dex.trc.extract.postgres;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +44,8 @@ public class PsqlExtractRepo implements ExtractRepository
    private static final String SELECT_EXTRACT_SQL = "SELECT extract FROM extracts WHERE id = ? AND active = TRUE";
 
    // HACK: not sure of the best way to do this
-   private static final String SELECT_EXTRACT_BY_MANUSCRIPT_SQL = "SELECT id FROM extracts WHERE extract->'manuscript'->>'id' = ? AND active = TRUE";
+   private static final String SELECT_EXTRACT_BY_MANUSCRIPT_SQL = 
+         "SELECT id FROM extracts WHERE extract->'manuscript'->>'id' = ? AND active = TRUE";
 
    private static final String UPDATE_EXTRACT_SQL = "UPDATE extracts SET extract = ? WHERE id = ?";
    private static final String CREATE_EXTRACT_SQL = "INSERT INTO extracts (extract, id) VALUES (?, ?)";
@@ -140,7 +144,7 @@ public class PsqlExtractRepo implements ExtractRepository
 
    private ExtractDTO getDTO(String id) throws DramaticExtractException
    {
-      Future<ExtractDTO> extractFuture = executor.submit(makeSelectTask(id));
+      Future<ExtractDTO> extractFuture = executor.submit((conn) -> doFindExtract(id, conn));
       try
       {
          return extractFuture.get();
@@ -153,6 +157,8 @@ public class PsqlExtractRepo implements ExtractRepository
    @Override
    public EditExtractCommand create(String id) throws DramaticExtractException
    {
+      logger.log(Level.INFO, "Creating Extract " + id);
+      
       ExtractDTO extractDTO = new ExtractDTO();
       extractDTO.id = id;
 
@@ -183,33 +189,40 @@ public class PsqlExtractRepo implements ExtractRepository
    {
       ExtractDTO originalDTO = getDTO(id);
       EditExtractCommandImpl command = new EditExtractCommandImpl(originalDTO);
-      command.setCommitHook(updatedDTO ->
-      {
-         UpdateEvent evt = eventFactory.makeUpdateEvent(id);
-         ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL);
-         DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
-         {
-            @Override
-            protected void onFinish(String id)
-            {
-               if (id != null)
-               {
-                  listeners.after(evt);
-               }
-            }
-         };
-         ObservableTaskWrapper<String> observableTask = new ObservableTaskWrapper<>(task, observer);
-         return executor.submit(observableTask);
-      });
+      command.setCommitHook(dto -> doUpdate(id, dto));
       return command;
+   }
+
+   private Future<String> doUpdate(String id, ExtractDTO updatedDTO)
+   {
+      logger.log(Level.INFO, "Updating extract " + id);
+      
+      UpdateEvent evt = eventFactory.makeUpdateEvent(id);
+      ExecutorTask<String> task = makeUpdateTask(updatedDTO, UPDATE_EXTRACT_SQL);
+      DataUpdateObserver<String> observer = new DataUpdateObserverAdapter<String>()
+      {
+         @Override
+         protected void onFinish(String id)
+         {
+            if (id != null)
+            {
+               listeners.after(evt);
+            }
+         }
+      };
+      
+      ObservableTaskWrapper<String> observableTask = new ObservableTaskWrapper<String>(task, observer);
+      return executor.submit(observableTask);
    }
 
    @Override
    public EditExtractCommand createOrEdit(String id) throws DramaticExtractException
    {
-      // HACK: not stable since an extract with a duplicate ID could be created and saved between the exists() check and when execute() is called on the command returned by create()
+      // HACK: not stable since an extract with a duplicate ID could be created and saved between
+      //       the exists() check and when execute() is called on the command returned by create()
       //
-      // This should be addressed at SQL execution with an UPSERT, which also eliminates the need for separate create() and edit() methods.
+      // This should be addressed at SQL execution with an UPSERT, which also eliminates the 
+      // need for separate create() and edit() methods.
       //
       // In PostgreSQL 9.4, an UPSERT looks like:
       //
@@ -262,8 +275,16 @@ public class PsqlExtractRepo implements ExtractRepository
    @Override
    public void removeByManuscriptId(String manuscriptId) throws DramaticExtractException
    {
-      ExecutorTask<Integer> task = makeDeleteByManuscriptIdTask(manuscriptId);
-      executor.submit(task);
+      try
+      {
+         executor.submit(conn -> deleteByMsId(manuscriptId, conn))
+                 .get(10, TimeUnit.SECONDS);
+      }
+      catch (InterruptedException | ExecutionException | TimeoutException e)
+      {
+         logger.log(Level.SEVERE, "Failed to remove manuscript.", e);
+         throw new DramaticExtractException("Failed to remove manuscript.");
+      }
    }
 
    @Override
@@ -272,42 +293,27 @@ public class PsqlExtractRepo implements ExtractRepository
       return listeners.register(ears);
    }
 
-   /**
-    * Creates an executor task to find an extract by ID
-    *
-    * @param id The ID of the extract to find
-    * @return An executor task that resolves to the extract
-    */
-   private ExecutorTask<ExtractDTO> makeSelectTask(String id)
+   private ExtractDTO doFindExtract(String id, Connection conn) throws SQLException, ExtractNotAvailableException
    {
-      return (conn) ->
+      try (PreparedStatement ps = conn.prepareStatement(SELECT_EXTRACT_SQL))
       {
-         try (PreparedStatement ps = conn.prepareStatement(SELECT_EXTRACT_SQL))
+         ps.setString(SQL_SELECT_PARAM_ID, id);
+         ResultSet rs = ps.executeQuery();
+         if (!rs.next())
+            throw new ExtractNotAvailableException("Unable to find record for extract [" + id + "]");
+         
+         PGobject pgo = (PGobject)rs.getObject(SQL_SELECT_COLUMN_EXTRACT);
+         String json = pgo.toString();
+         
+         try
          {
-            ps.setString(SQL_SELECT_PARAM_ID, id);
-
-            try (ResultSet rs = ps.executeQuery())
-            {
-               if (!rs.next())
-               {
-                  throw new ExtractNotAvailableException("Unable to find record for extract [" + id + "]");
-               }
-
-               PGobject pgo = (PGobject)rs.getObject(SQL_SELECT_COLUMN_EXTRACT);
-               String json = pgo.toString();
-
-               try
-               {
-                  return mapper.readValue(json, ExtractDTO.class);
-               }
-               catch (IOException e)
-               {
-                  // NOTE: possible data leak. If this exception is propagated to someone who isn't authorized to see this record...
-                  throw new IllegalStateException("Cannot parse person from JSON:\n" + json, e);
-               }
-            }
+            return mapper.readValue(json, ExtractDTO.class);
          }
-      };
+         catch (IOException e)
+         {
+            throw new IllegalStateException("Cannot parse person from JSON:\n" + json, e);
+         }
+      }
    }
 
    /**
@@ -320,40 +326,52 @@ public class PsqlExtractRepo implements ExtractRepository
     */
    private ExecutorTask<String> makeUpdateTask(ExtractDTO dto, String sql)
    {
-      String json;
+
+      return (conn) ->
+      {
+         return updateExtract(dto, sql, conn);
+      };
+   }
+
+   private String updateExtract(ExtractDTO dto, String sql, Connection conn)
+   {
+      String json = toJson(dto);
+      logger.log(Level.INFO, "Updating extract\n" + json);
+      try (PreparedStatement ps = conn.prepareStatement(sql))
+      {
+         ps.setString(SQL_UPDATE_PARAM_ID, dto.id);
+
+         PGobject jsonObject = new PGobject();
+         jsonObject.setType("json");
+         jsonObject.setValue(json);
+         ps.setObject(SQL_UPDATE_PARAM_EXTRACT, jsonObject);
+
+         int ct = ps.executeUpdate();
+         if (ct != 1)
+         {
+            throw new IllegalStateException("Failed to update extract. Unexpected number of rows updated [" + ct + "]");
+         }
+
+         return dto.id;
+      }
+      catch (SQLException e)
+      {
+         String msg = "Failed to update extract: [" + dto.id + "]\n" + json;
+         logger.log(Level.SEVERE, msg);
+         throw new IllegalStateException(msg, e);
+      }
+   }
+
+   private String toJson(ExtractDTO dto)
+   {
       try
       {
-         json = mapper.writeValueAsString(dto);
+         return mapper.writeValueAsString(dto);
       }
       catch (JsonProcessingException e)
       {
          throw new IllegalStateException("Unable to serialize extract into JSON string.", e);
       }
-
-      return (conn) ->
-      {
-         try (PreparedStatement ps = conn.prepareStatement(sql))
-         {
-            ps.setString(SQL_UPDATE_PARAM_ID, dto.id);
-
-            PGobject jsonObject = new PGobject();
-            jsonObject.setType("json");
-            jsonObject.setValue(json);
-            ps.setObject(SQL_UPDATE_PARAM_EXTRACT, jsonObject);
-
-            int ct = ps.executeUpdate();
-            if (ct != 1)
-            {
-               throw new IllegalStateException("Failed to update extract. Unexpected number of rows updated [" + ct + "]");
-            }
-
-            return dto.id;
-         }
-         catch (SQLException e)
-         {
-            throw new IllegalStateException("Failed to update extract: [" + dto.id + "]\n" + json, e);
-         }
-      };
    }
 
    /**
@@ -390,36 +408,42 @@ public class PsqlExtractRepo implements ExtractRepository
    {
       return (conn) ->
       {
-         try (PreparedStatement ps = conn.prepareCall(SELECT_EXTRACT_BY_MANUSCRIPT_SQL))
-         {
-            ps.setString(SQL_SELECT_BY_MANUSCRIPT_PARAM_ID, manuscriptId);
+         return deleteByMsId(manuscriptId, conn);
+      };
+   }
 
-            Integer count = Integer.valueOf(0);
-            try (ResultSet rs = ps.executeQuery())
+   private Integer deleteByMsId(String manuscriptId, Connection conn)
+   {
+      try (PreparedStatement ps = conn.prepareCall(SELECT_EXTRACT_BY_MANUSCRIPT_SQL))
+      {
+         logger.log(Level.WARNING, "Deleting extracts by manuscript id.");
+         ps.setString(SQL_SELECT_BY_MANUSCRIPT_PARAM_ID, manuscriptId);
+
+         Integer count = Integer.valueOf(0);
+         try (ResultSet rs = ps.executeQuery())
+         {
+            while (rs.next())
             {
-               while (rs.next())
+               String id = rs.getString(SQL_SELECT_COLUMN_ID);
+               try
                {
-                  String id = rs.getString(SQL_SELECT_COLUMN_ID);
-                  try
-                  {
-                     // delegate to remove() for event handling
-                     remove(id);
-                     count++;
-                  }
-                  catch (DramaticExtractException e)
-                  {
-                     logger.log(Level.SEVERE, "Unable to remove extract [" + id + "] for manuscript [" + manuscriptId + "].", e);
-                  }
+                  // delegate to remove() for event handling
+                  remove(id);
+                  count++;
+               }
+               catch (DramaticExtractException e)
+               {
+                  logger.log(Level.SEVERE, "Unable to remove extract [" + id + "] for manuscript [" + manuscriptId + "].", e);
                }
             }
+         }
 
-            return count;
-         }
-         catch (SQLException e)
-         {
-            throw new IllegalStateException("Failed to find extracts by manuscript ID [" + manuscriptId + "]", e);
-         }
-      };
+         return count;
+      }
+      catch (SQLException e)
+      {
+         throw new IllegalStateException("Failed to find extracts by manuscript ID [" + manuscriptId + "]", e);
+      }
    }
 
    /**
